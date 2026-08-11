@@ -1,8 +1,7 @@
-const API_URL =
-  process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "https://localapi.sanoq.uz";
+import { env } from "@/lib/env";
 
 export function getApiBase() {
-  return API_URL.replace(/\/$/, "");
+  return env.apiUrl.replace(/\/$/, "");
 }
 
 export async function apiFetch<T>(

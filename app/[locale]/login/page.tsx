@@ -5,7 +5,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import { Activity, ArrowLeft } from "lucide-react";
 import { LanguageSelect } from "@/components/LanguageSelect";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 declare global {
   interface Window {
@@ -20,10 +20,28 @@ export default function LoginPage() {
   const router = useRouter();
   const tgRef = useRef<HTMLDivElement>(null);
   const appCallback = `/${locale}/app`;
+  const [botName, setBotName] = useState(
+    () => process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME || "",
+  );
 
   useEffect(() => {
     if (status === "authenticated") router.replace("/app");
   }, [status, router]);
+
+  // Deployda NEXT_PUBLIC_* build paytida bo'sh bo'lishi mumkin — runtime dan olamiz
+  useEffect(() => {
+    if (botName) return;
+    void fetch("/api/debug/social-env")
+      .then((r) => r.json())
+      .then((env: { TELEGRAM_BOT_NAME?: string | null; NEXT_PUBLIC_TELEGRAM_BOT_NAME?: string | null }) => {
+        const name =
+          env.NEXT_PUBLIC_TELEGRAM_BOT_NAME ||
+          env.TELEGRAM_BOT_NAME ||
+          "";
+        if (name) setBotName(name);
+      })
+      .catch(() => {});
+  }, [botName]);
 
   useEffect(() => {
     window.onTelegramAuth = (user) => {
@@ -34,7 +52,6 @@ export default function LoginPage() {
       });
     };
 
-    const botName = process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME;
     if (!botName || !tgRef.current) return;
     tgRef.current.innerHTML = "";
     const script = document.createElement("script");
@@ -50,7 +67,7 @@ export default function LoginPage() {
     return () => {
       delete window.onTelegramAuth;
     };
-  }, [appCallback]);
+  }, [appCallback, botName]);
 
   return (
     <div className="relative flex min-h-dvh flex-col">
@@ -90,9 +107,9 @@ export default function LoginPage() {
             </button>
 
             <div className="flex justify-center py-2" ref={tgRef}>
-              {!process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME && (
+              {!botName && (
                 <p className="text-center text-xs text-muted-foreground">
-                  {t("telegram")} — set NEXT_PUBLIC_TELEGRAM_BOT_NAME
+                  {t("telegram")} — set TELEGRAM_BOT_NAME / NEXT_PUBLIC_TELEGRAM_BOT_NAME
                 </p>
               )}
             </div>

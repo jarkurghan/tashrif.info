@@ -1,24 +1,32 @@
 # tashrif.info UI
 
-Next.js App Router + Tailwind + next-intl + NextAuth (Google / Telegram) + Recharts.
+Structure (no `src/`):
 
-## Setup
+```
+app/           # Next.js App Router
+components/    # UI (marketing, demo, app)
+i18n/
+lib/
+messages/
+middleware.ts
+auth.ts
+public/
+```
+
+## Dev
 
 ```bash
 cp .env.example .env.local
-# fill GOOGLE_* and TELEGRAM_* for real login
-bun install
-bun dev
+# fill secrets
+npm install   # or bun install
+npm run dev   # or bun dev
 ```
 
-Requires API at `NEXT_PUBLIC_API_URL` (default `https://localapi.sanoq.uz`).
-Local UI domain: `https://boshqa.sanoq.uz` → `:3000`.
+## Env
 
-## Routes
+| Kind | When | Examples |
+|------|------|----------|
+| `NEXT_PUBLIC_*` | **Docker build-args** | `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_WS_URL`, `NEXT_PUBLIC_TELEGRAM_BOT_NAME` |
+| Secrets | **Container runtime** | `GOOGLE_*`, `TELEGRAM_BOT_TOKEN`, `NEXTAUTH_SECRET`, `API_URL` |
 
-- `/[locale]` — landing
-- `/[locale]/demo/*` — hard-coded demo
-- `/[locale]/login` — Google + Telegram
-- `/[locale]/app` — domains (auth)
-- `/[locale]/app/[appId]/*` — live analytics
-- `/[locale]/settings` — profile / linked accounts
+`.env.local` is for local only — not copied into Docker images.

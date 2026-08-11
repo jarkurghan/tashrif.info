@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 const WS_URL =
-  process.env.NEXT_PUBLIC_WS_URL || "wss://localapi.sanoq.uz/ws";
+  process.env.NEXT_PUBLIC_WS_URL || "wss://api.tashrif.info/ws";
 
 export function useLiveVisitors(appId: string | undefined, apiToken?: string) {
   const [count, setCount] = useState(0);

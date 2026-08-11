@@ -3,9 +3,7 @@ import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import { createHash, createHmac, timingSafeEqual } from "crypto";
 import type { Provider } from "next-auth/providers";
-
-const API_URL =
-  process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "https://localapi.sanoq.uz";
+import { env } from "@/lib/env";
 
 async function syncToApi(input: {
   provider: "google" | "telegram";
@@ -14,7 +12,7 @@ async function syncToApi(input: {
   name?: string | null;
   image?: string | null;
 }) {
-  const res = await fetch(`${API_URL}/v1/auth/sync`, {
+  const res = await fetch(`${env.apiUrl}/v1/auth/sync`, {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify(input),
@@ -33,11 +31,11 @@ async function syncToApi(input: {
 
 const providers: Provider[] = [];
 
-if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+if (env.googleClientId && env.googleClientSecret) {
   providers.push(
     Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientId: env.googleClientId,
+      clientSecret: env.googleClientSecret,
       allowDangerousEmailAccountLinking: true,
     }),
   );
@@ -57,7 +55,7 @@ providers.push(
       hash: {},
     },
     async authorize(credentials) {
-      const botToken = process.env.TELEGRAM_BOT_TOKEN;
+      const botToken = env.telegramBotToken;
       if (!botToken || !credentials) return null;
       const data: Record<string, string> = {};
       for (const [k, v] of Object.entries(credentials)) {
@@ -128,6 +126,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session;
     },
   },
-  secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
+  secret: env.nextAuthSecret || undefined,
   trustHost: true,
 });

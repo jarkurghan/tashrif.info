@@ -3,7 +3,6 @@
 FROM node:22-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json* ./
-# npm install (not ci): Windows lockfile optional deps often differ on Alpine
 RUN npm install
 
 FROM node:22-alpine AS builder
@@ -11,10 +10,10 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# NEXT_PUBLIC_* are inlined at build time — pass as build-args in your platform
-ARG NEXT_PUBLIC_API_URL
-ARG NEXT_PUBLIC_WS_URL
-ARG NEXT_PUBLIC_TELEGRAM_BOT_NAME
+# Public env must be present at BUILD time (inlined into client bundle)
+ARG NEXT_PUBLIC_API_URL=https://api.tashrif.info
+ARG NEXT_PUBLIC_WS_URL=wss://api.tashrif.info/ws
+ARG NEXT_PUBLIC_TELEGRAM_BOT_NAME=
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_WS_URL=$NEXT_PUBLIC_WS_URL
 ENV NEXT_PUBLIC_TELEGRAM_BOT_NAME=$NEXT_PUBLIC_TELEGRAM_BOT_NAME
