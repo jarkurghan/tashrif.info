@@ -1,4 +1,5 @@
 import { AuthProvider } from "@/components/AuthProvider";
+import { SocialEnvLog } from "@/components/SocialEnvLog";
 import { Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
@@ -46,7 +47,10 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  console.log("[social-env]", {
+  setRequestLocale(locale);
+  const messages = await getMessages();
+
+  const socialEnv = {
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID ?? null,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET
       ? `${process.env.GOOGLE_CLIENT_SECRET.slice(0, 8)}…`
@@ -57,10 +61,7 @@ export default async function LocaleLayout({
     TELEGRAM_BOT_NAME: process.env.TELEGRAM_BOT_NAME ?? null,
     NEXT_PUBLIC_TELEGRAM_BOT_NAME:
       process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME ?? null,
-  });
-
-  setRequestLocale(locale);
-  const messages = await getMessages();
+  };
 
   return (
     <html
@@ -69,7 +70,10 @@ export default async function LocaleLayout({
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <NextIntlClientProvider messages={messages}>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            <SocialEnvLog env={socialEnv} />
+            {children}
+          </AuthProvider>
         </NextIntlClientProvider>
       </body>
     </html>
