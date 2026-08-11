@@ -1,6 +1,6 @@
 "use client";
 
-import { signIn, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { useTranslations, useLocale } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import { Activity, ArrowLeft } from "lucide-react";
@@ -16,30 +16,51 @@ declare global {
 export default function LoginPage() {
   const t = useTranslations("login");
   const locale = useLocale();
-  const { status } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const tgRef = useRef<HTMLDivElement>(null);
   const appCallback = `/${locale}/app`;
   const [botName, setBotName] = useState(
     () => process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME || "",
   );
+  const [syncError, setSyncError] = useState(false);
 
   useEffect(() => {
-    if (status === "authenticated") router.replace("/app");
-  }, [status, router]);
+    if (new URLSearchParams(window.location.search).get("error") === "sync") {
+      setSyncError(true);
+    }
+  }, []);
 
-  // Deployda NEXT_PUBLIC_* build paytida bo'sh bo'lishi mumkin — runtime dan olamiz
+  useEffect(() => {
+    if (status !== "authenticated") return;
+
+    // Ready for dashboard
+    if (session?.apiToken) {
+      router.replace("/app");
+      return;
+    }
+
+    // Session without API token → break redirect loop
+    if (session?.error === "SyncError" || !session?.apiToken) {
+      setSyncError(true);
+      void signOut({ redirect: false });
+    }
+  }, [status, session, router]);
+
   useEffect(() => {
     if (botName) return;
     void fetch("/api/debug/social-env")
       .then((r) => r.json())
-      .then((env: { TELEGRAM_BOT_NAME?: string | null; NEXT_PUBLIC_TELEGRAM_BOT_NAME?: string | null }) => {
-        const name =
-          env.NEXT_PUBLIC_TELEGRAM_BOT_NAME ||
-          env.TELEGRAM_BOT_NAME ||
-          "";
-        if (name) setBotName(name);
-      })
+      .then(
+        (env: {
+          TELEGRAM_BOT_NAME?: string | null;
+          NEXT_PUBLIC_TELEGRAM_BOT_NAME?: string | null;
+        }) => {
+          const name =
+            env.NEXT_PUBLIC_TELEGRAM_BOT_NAME || env.TELEGRAM_BOT_NAME || "";
+          if (name) setBotName(name);
+        },
+      )
       .catch(() => {});
   }, [botName]);
 
@@ -96,6 +117,14 @@ export default function LoginPage() {
           <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
           <p className="mt-2 text-sm text-muted-foreground">{t("sub")}</p>
 
+          {syncError && (
+            <p className="mt-4 rounded-lg bg-accent-soft px-3 py-2 text-sm text-accent">
+              Login OK, but API sync failed. Check UI{" "}
+              <code className="text-xs">API_URL</code> can reach the API (
+              <code className="text-xs">/v1/auth/sync</code>).
+            </p>
+          )}
+
           <div className="mt-6 space-y-3">
             <button
               type="button"
@@ -109,7 +138,8 @@ export default function LoginPage() {
             <div className="flex justify-center py-2" ref={tgRef}>
               {!botName && (
                 <p className="text-center text-xs text-muted-foreground">
-                  {t("telegram")} — set TELEGRAM_BOT_NAME / NEXT_PUBLIC_TELEGRAM_BOT_NAME
+                  {t("telegram")} — set TELEGRAM_BOT_NAME /
+                  NEXT_PUBLIC_TELEGRAM_BOT_NAME
                 </p>
               )}
             </div>

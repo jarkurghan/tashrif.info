@@ -12,6 +12,7 @@ export default async function SettingsLayout({
   const { locale } = await params;
   setRequestLocale(locale);
   const session = await auth();
-  if (!session?.apiToken) redirect({ href: "/login", locale });
+  if (!session?.user) redirect({ href: "/login", locale });
+  if (!session.apiToken) redirect({ href: "/login?error=sync", locale });
   return children;
 }

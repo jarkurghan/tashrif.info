@@ -13,8 +13,14 @@ export default async function AppLayout({
   const { locale } = await params;
   setRequestLocale(locale);
   const session = await auth();
-  if (!session?.apiToken) {
+
+  if (!session?.user) {
     redirect({ href: "/login", locale });
+  }
+
+  // Authenticated but API JWT missing → break /app ↔ /login loop
+  if (!session.apiToken) {
+    redirect({ href: "/login?error=sync", locale });
   }
 
   return <AppShell>{children}</AppShell>;
