@@ -19,7 +19,7 @@ export default async function AppLayout({
   }
 
   // Authenticated but API JWT missing → break /app ↔ /login loop
-  if (!session.apiToken) {
+  if (!session?.apiToken) {
     redirect({ href: "/login?error=sync", locale });
   }
 
