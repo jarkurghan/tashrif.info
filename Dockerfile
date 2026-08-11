@@ -1,18 +1,22 @@
 # syntax=docker/dockerfile:1
 
+# Install with Bun (lockfile)
 FROM oven/bun:1.3-alpine AS deps
 WORKDIR /app
 COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile || bun install
 
-FROM oven/bun:1.3-alpine AS builder
+# Build with Node — Bun segfaults after a successful `next build` in Docker
+FROM node:22-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN bun run build
+ENV NODE_ENV=production
+RUN node ./node_modules/next/dist/bin/next build
 
-FROM oven/bun:1.3-alpine AS runner
+# Run standalone with Node
+FROM node:22-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
@@ -27,4 +31,4 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
 EXPOSE 3000
-CMD ["bun", "server.js"]
+CMD ["node", "server.js"]
