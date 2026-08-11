@@ -50,19 +50,6 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
   const messages = await getMessages();
 
-  const socialEnv = {
-    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID ?? null,
-    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET
-      ? `${process.env.GOOGLE_CLIENT_SECRET.slice(0, 8)}…`
-      : null,
-    TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN
-      ? `${process.env.TELEGRAM_BOT_TOKEN.slice(0, 10)}…`
-      : null,
-    TELEGRAM_BOT_NAME: process.env.TELEGRAM_BOT_NAME ?? null,
-    NEXT_PUBLIC_TELEGRAM_BOT_NAME:
-      process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME ?? null,
-  };
-
   return (
     <html
       lang={locale}
@@ -71,7 +58,7 @@ export default async function LocaleLayout({
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <NextIntlClientProvider messages={messages}>
           <AuthProvider>
-            <SocialEnvLog env={socialEnv} />
+            <SocialEnvLog />
             {children}
           </AuthProvider>
         </NextIntlClientProvider>
