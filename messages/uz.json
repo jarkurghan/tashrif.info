@@ -1,0 +1,162 @@
+{
+  "meta": {
+    "title": "tashrif.info — Zamonaviy veb analitika",
+    "description": "Tashrifchilar, seanslar, mamlakatlar va sahifalar uchun maxfiylikka e'tiborli analitika. Bir necha qator kod bilan ulang."
+  },
+  "nav": {
+    "home": "Bosh sahifa",
+    "demo": "Demo",
+    "login": "Kirish",
+    "addDomain": "Domen qo'shish",
+    "docs": "Hujjatlar"
+  },
+  "hero": {
+    "brand": "tashrif.info",
+    "headline": "Har bir tashrifni ko'ring. Yaxshiroq mahsulot yarating.",
+    "sub": "Tashrifchilar soni, unikal seanslar, mamlakatlar va sahifalar uchun zamonaviy analitika — middleware orqali bir necha qatorda ulanadi.",
+    "ctaDemo": "Demoni ko'rish",
+    "ctaAdd": "Domen qo'shish"
+  },
+  "steps": {
+    "title": "Qanday ishlaydi",
+    "sub": "SDK dan tahlilgacha uchta qadam.",
+    "one": {
+      "title": "SDK o'rnating",
+      "desc": "npm paketini qo'shing va Next.js middleware dan chaqiring."
+    },
+    "two": {
+      "title": "Ilovani ro'yxatdan o'tkazing",
+      "desc": "Dashboardda domen yarating va app_id oling."
+    },
+    "three": {
+      "title": "Trafikni jonli kuzating",
+      "desc": "Seanslar, sahifalar va mamlakatlar realtime da boardga oqadi."
+    }
+  },
+  "metricsSection": {
+    "title": "Muhim metrikalar",
+    "sub": "Keraksiz shovqinsiz aniq raqamlar.",
+    "visitors": "Tashrifchilar",
+    "sessions": "Seanslar",
+    "countries": "Mamlakatlar",
+    "pages": "Sahifalar"
+  },
+  "preview": {
+    "title": "Jonli ko'rinish",
+    "sub": "Board qanday ko'rinishini ko'rsatuvchi snapshot."
+  },
+  "footer": {
+    "product": "Mahsulot",
+    "company": "Kompaniya",
+    "legal": "Huquqiy",
+    "rights": "Barcha huquqlar himoyalangan.",
+    "privacy": "Maxfiylik",
+    "terms": "Shartlar"
+  },
+  "login": {
+    "title": "Xush kelibsiz",
+    "sub": "O'zbekistonda ommabop ijtimoiy akkaunt orqali kiring.",
+    "comingSoon": "Autentifikatsiya tez orada",
+    "google": "Google orqali davom etish",
+    "telegram": "Telegram orqali davom etish",
+    "github": "GitHub orqali davom etish",
+    "back": "Bosh sahifaga"
+  },
+  "demo": {
+    "siteName": "Demo sayt",
+    "live": "{count} jonli tashrifchi",
+    "dateRange": "So'nggi 24 soat",
+    "collapse": "Yig'ish",
+    "sections": {
+      "analytics": "Veb analitika",
+      "manage": "Boshqaruv"
+    },
+    "nav": {
+      "traffic": "Trafik",
+      "pages": "Sahifalar",
+      "locations": "Joylashuv",
+      "events": "Hodisalar",
+      "logs": "Loglar",
+      "domains": "Domenlar",
+      "access": "Kirish",
+      "reports": "Hisobotlar"
+    },
+    "titles": {
+      "traffic": "Trafik",
+      "pages": "Sahifalar",
+      "locations": "Joylashuv",
+      "events": "Hodisalar diagrammasi",
+      "logs": "So'rov loglari",
+      "domains": "Mening domenlarim",
+      "access": "Kirish va takliflar",
+      "reports": "Telegram hisobotlari"
+    },
+    "metrics": {
+      "users": "Foydalanuvchilar",
+      "sessions": "Seanslar",
+      "pageviews": "Sahifa ko'rishlar",
+      "bounce": "Qaytish darajasi",
+      "duration": "Seans davomiyligi"
+    },
+    "charts": {
+      "sessions": "Seanslar",
+      "duration": "Seans davomiyligi"
+    },
+    "tabs": {
+      "country": "Mamlakat",
+      "region": "Viloyat",
+      "city": "Shahar",
+      "page": "Sahifa",
+      "entry": "Kirish sahifalari",
+      "exit": "Chiqish sahifalari"
+    },
+    "details": "Batafsil",
+    "logs": {
+      "search": "Yo'l yoki IP qidirish…",
+      "filter": "Filtr",
+      "path": "Yo'l",
+      "country": "Mamlakat",
+      "ip": "IP",
+      "visitor": "Tashrifchi",
+      "time": "Vaqt",
+      "method": "Metod",
+      "status": "Holat",
+      "prev": "Oldingi",
+      "next": "Keyingi",
+      "showing": "{total} dan {from}–{to} ko'rsatilmoqda"
+    },
+    "domains": {
+      "add": "Domen qo'shish",
+      "name": "Domen",
+      "appId": "App ID",
+      "status": "Holat",
+      "role": "Sizning rolingiz",
+      "active": "Faol",
+      "pending": "Kutilmoqda"
+    },
+    "access": {
+      "invite": "A'zo taklif qilish",
+      "email": "Email",
+      "role": "Rol",
+      "owner": "Egasi",
+      "admin": "Admin",
+      "viewer": "Kuzatuvchi",
+      "pending": "Kutilmoqda",
+      "accepted": "Qabul qilingan",
+      "revoke": "Bekor qilish"
+    },
+    "reports": {
+      "title": "Telegram integratsiyasi",
+      "sub": "Rejali hisobotlar uchun guruh yoki kanalni ulang.",
+      "chatId": "Chat ID",
+      "randomId": "Random ID",
+      "integrate": "Integratsiya",
+      "schedule": "Hisobot jadvali",
+      "daily": "Kunlik",
+      "weekly": "Haftalik",
+      "monthly": "Oylik",
+      "connected": "Ulangan chatlar",
+      "hint": "Botni chatga qo'shing. U chat ID va random ID yuboradi — ularni shu yerga kiriting."
+    }
+  }
+}

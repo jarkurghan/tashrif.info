@@ -1,0 +1,162 @@
+{
+  "meta": {
+    "title": "tashrif.info — Modern website analytics",
+    "description": "Privacy-friendly analytics for visitors, sessions, countries, and pages. Connect in a few lines of code."
+  },
+  "nav": {
+    "home": "Home",
+    "demo": "Demo",
+    "login": "Log in",
+    "addDomain": "Add domain",
+    "docs": "Docs"
+  },
+  "hero": {
+    "brand": "tashrif.info",
+    "headline": "See every visit. Ship better products.",
+    "sub": "Modern analytics for visitor counts, unique sessions, countries, and pages — connected with a few lines of middleware.",
+    "ctaDemo": "Explore demo",
+    "ctaAdd": "Add domain"
+  },
+  "steps": {
+    "title": "How it works",
+    "sub": "From SDK to insights in three steps.",
+    "one": {
+      "title": "Install the SDK",
+      "desc": "Add the npm package and call it from Next.js middleware."
+    },
+    "two": {
+      "title": "Register your app",
+      "desc": "Create a domain in the dashboard and get your app_id."
+    },
+    "three": {
+      "title": "Watch traffic live",
+      "desc": "Sessions, pages, and countries stream into your board in realtime."
+    }
+  },
+  "metricsSection": {
+    "title": "Metrics that matter",
+    "sub": "Clear numbers without the clutter.",
+    "visitors": "Visitors",
+    "sessions": "Sessions",
+    "countries": "Countries",
+    "pages": "Pages"
+  },
+  "preview": {
+    "title": "Live preview",
+    "sub": "A snapshot of what your board looks like."
+  },
+  "footer": {
+    "product": "Product",
+    "company": "Company",
+    "legal": "Legal",
+    "rights": "All rights reserved.",
+    "privacy": "Privacy",
+    "terms": "Terms"
+  },
+  "login": {
+    "title": "Welcome back",
+    "sub": "Sign in with a social account popular in Uzbekistan.",
+    "comingSoon": "Authentication coming soon",
+    "google": "Continue with Google",
+    "telegram": "Continue with Telegram",
+    "github": "Continue with GitHub",
+    "back": "Back to home"
+  },
+  "demo": {
+    "siteName": "Demo Site",
+    "live": "{count} live visitors",
+    "dateRange": "Last 24 hours",
+    "collapse": "Collapse",
+    "sections": {
+      "analytics": "Web analytics",
+      "manage": "Manage"
+    },
+    "nav": {
+      "traffic": "Traffic",
+      "pages": "Pages",
+      "locations": "Locations",
+      "events": "Events",
+      "logs": "Logs",
+      "domains": "Domains",
+      "access": "Access",
+      "reports": "Reports"
+    },
+    "titles": {
+      "traffic": "Traffic",
+      "pages": "Pages",
+      "locations": "Locations",
+      "events": "Events chart",
+      "logs": "Request logs",
+      "domains": "My domains",
+      "access": "Access & invitations",
+      "reports": "Telegram reports"
+    },
+    "metrics": {
+      "users": "Users",
+      "sessions": "Sessions",
+      "pageviews": "Pageviews",
+      "bounce": "Bounce rate",
+      "duration": "Session duration"
+    },
+    "charts": {
+      "sessions": "Sessions",
+      "duration": "Session duration"
+    },
+    "tabs": {
+      "country": "Country",
+      "region": "Region",
+      "city": "City",
+      "page": "Page",
+      "entry": "Entry pages",
+      "exit": "Exit pages"
+    },
+    "details": "Details",
+    "logs": {
+      "search": "Search path or IP…",
+      "filter": "Filter",
+      "path": "Path",
+      "country": "Country",
+      "ip": "IP",
+      "visitor": "Visitor",
+      "time": "Time",
+      "method": "Method",
+      "status": "Status",
+      "prev": "Previous",
+      "next": "Next",
+      "showing": "Showing {from}–{to} of {total}"
+    },
+    "domains": {
+      "add": "Add domain",
+      "name": "Domain",
+      "appId": "App ID",
+      "status": "Status",
+      "role": "Your role",
+      "active": "Active",
+      "pending": "Pending"
+    },
+    "access": {
+      "invite": "Invite member",
+      "email": "Email",
+      "role": "Role",
+      "owner": "Owner",
+      "admin": "Admin",
+      "viewer": "Viewer",
+      "pending": "Pending",
+      "accepted": "Accepted",
+      "revoke": "Revoke"
+    },
+    "reports": {
+      "title": "Telegram integration",
+      "sub": "Connect a group or channel to receive scheduled reports.",
+      "chatId": "Chat ID",
+      "randomId": "Random ID",
+      "integrate": "Integrate",
+      "schedule": "Report schedule",
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "connected": "Connected chats",
+      "hint": "Add the bot to a chat. It will post a chat ID and random ID — paste them here."
+    }
+  }
+}
