@@ -83,7 +83,7 @@ export default function LoginPage() {
 
           <Link
             href="/"
-            className="mt-8 inline-flex items-center gap-2 text-sm text-muted-foreground transition hover:text-foreground"
+            className="mt-8 flex items-center justify-center gap-2 text-sm text-muted-foreground transition hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" />
             {t("back")}

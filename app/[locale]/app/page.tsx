@@ -6,14 +6,62 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { apiFetch } from "@/lib/api";
 import { AppHeader } from "@/components/app/AppHeader";
-import { Plus } from "lucide-react";
+import { Check, Copy, Plus } from "lucide-react";
 
 type AppRow = {
   id: string;
+  clientId?: string;
   domain: string;
   name: string;
   role: string;
 };
+
+type CreatedCreds = {
+  app: AppRow;
+  clientId: string;
+  clientSecret: string;
+};
+
+function CopyButton({
+  value,
+  label = "Copy",
+}: {
+  value: string;
+  label?: string;
+}) {
+  const [copied, setCopied] = useState(false);
+
+  async function onCopy() {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1600);
+    } catch {
+      // ignore
+    }
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => void onCopy()}
+      className="inline-flex shrink-0 items-center gap-1 rounded-md border border-border bg-background px-2 py-1 text-[11px] font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
+      aria-label={label}
+    >
+      {copied ? (
+        <>
+          <Check className="h-3 w-3 text-primary" />
+          Copied
+        </>
+      ) : (
+        <>
+          <Copy className="h-3 w-3" />
+          Copy
+        </>
+      )}
+    </button>
+  );
+}
 
 export default function AppsPage() {
   const { data } = useSession();
@@ -22,7 +70,7 @@ export default function AppsPage() {
   const [domain, setDomain] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [created, setCreated] = useState<AppRow | null>(null);
+  const [created, setCreated] = useState<CreatedCreds | null>(null);
 
   async function load() {
     if (!data?.apiToken) return;
@@ -49,18 +97,51 @@ export default function AppsPage() {
     if (!data?.apiToken || !domain.trim()) return;
     setError(null);
     try {
-      const res = await apiFetch<{ app: AppRow }>("/v1/apps", {
+      const res = await apiFetch<CreatedCreds>("/v1/apps", {
         method: "POST",
         token: data.apiToken,
         body: JSON.stringify({ domain: domain.trim() }),
       });
-      setCreated(res.app);
+      setCreated(res);
       setDomain("");
       await load();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Create failed");
     }
   }
+
+  async function onRotate(appId: string) {
+    if (!data?.apiToken) return;
+    if (
+      !window.confirm(
+        "Rotate client secret? The old secret stops working immediately.",
+      )
+    ) {
+      return;
+    }
+    setError(null);
+    try {
+      const res = await apiFetch<CreatedCreds>(
+        `/v1/apps/${appId}/rotate-secret`,
+        { method: "POST", token: data.apiToken },
+      );
+      setCreated(res);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Rotate failed");
+    }
+  }
+
+  const envSnippet = created
+    ? `# .env
+TASHRIF_CLIENT_ID=${created.clientId}
+TASHRIF_CLIENT_SECRET=${created.clientSecret}
+
+# middleware.ts
+import { track, buildPayload } from "tashrif";
+const { payload, setCookies } = buildPayload(req);
+for (const c of setCookies ?? []) res.cookies.set(c.name, c.value, c.options);
+void track(payload);`
+    : "";
 
   return (
     <>
@@ -90,22 +171,51 @@ export default function AppsPage() {
         </form>
 
         {error && (
-          <p className="rounded-lg bg-accent-soft px-3 py-2 text-sm text-accent">{error}</p>
+          <p className="rounded-lg bg-accent-soft px-3 py-2 text-sm text-accent">
+            {error}
+          </p>
         )}
 
         {created && (
           <div className="rounded-xl border border-primary/30 bg-primary-soft/40 p-4 text-sm">
-            <p className="font-semibold">App created</p>
-            <p className="mt-1">
-              Domain: <b>{created.domain}</b>
+            <p className="font-semibold">Save these credentials now</p>
+            <p className="mt-1 text-muted-foreground">
+              The client secret is shown only once. Store it in server env — never
+              in the browser.
             </p>
-            <p className="mt-1 font-mono text-xs">
-              app_id: {created.id}
+            <p className="mt-3">
+              Domain: <b>{created.app.domain}</b>
             </p>
-            <pre className="mt-3 overflow-x-auto rounded-lg bg-card p-3 text-xs">{`import { track, buildPayload } from "tashrif";
-// middleware.ts — TASHRIF_APP_ID=${created.id}`}</pre>
+            <dl className="mt-3 space-y-2 font-mono text-xs">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <dt className="text-muted-foreground">client_id</dt>
+                  <dd className="break-all">{created.clientId}</dd>
+                </div>
+                <CopyButton value={created.clientId} label="Copy client_id" />
+              </div>
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <dt className="text-muted-foreground">client_secret</dt>
+                  <dd className="break-all">{created.clientSecret}</dd>
+                </div>
+                <CopyButton
+                  value={created.clientSecret}
+                  label="Copy client_secret"
+                />
+              </div>
+            </dl>
+            <div className="mt-3">
+              <div className="mb-1.5 flex items-center justify-between gap-2">
+                <span className="text-xs text-muted-foreground">.env snippet</span>
+                <CopyButton value={envSnippet} label="Copy env snippet" />
+              </div>
+              <pre className="overflow-x-auto rounded-lg bg-card p-3 text-xs">
+                {envSnippet}
+              </pre>
+            </div>
             <Link
-              href={`/app/${created.id}/traffic`}
+              href={`/app/${created.app.id}/traffic`}
               className="mt-3 inline-flex text-primary underline"
             >
               Open dashboard →
@@ -123,7 +233,7 @@ export default function AppsPage() {
               <thead className="bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
                 <tr>
                   <th className="px-4 py-3 font-medium">{t("name")}</th>
-                  <th className="px-4 py-3 font-medium">{t("appId")}</th>
+                  <th className="px-4 py-3 font-medium">client_id</th>
                   <th className="px-4 py-3 font-medium">{t("role")}</th>
                   <th className="px-4 py-3 font-medium" />
                 </tr>
@@ -133,10 +243,19 @@ export default function AppsPage() {
                   <tr key={a.id} className="hover:bg-muted/30">
                     <td className="px-4 py-3 font-medium">{a.domain}</td>
                     <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
-                      {a.id}
+                      {a.clientId ?? a.id}
                     </td>
                     <td className="px-4 py-3 capitalize">{a.role}</td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="space-x-3 px-4 py-3 text-right">
+                      {a.role === "owner" && (
+                        <button
+                          type="button"
+                          onClick={() => void onRotate(a.id)}
+                          className="text-muted-foreground hover:text-foreground hover:underline"
+                        >
+                          Rotate secret
+                        </button>
+                      )}
                       <Link
                         href={`/app/${a.id}/traffic`}
                         className="text-primary hover:underline"
