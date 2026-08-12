@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { logs } from "@/lib/demo-data";
+import { Select } from "@/components/ui/Select";
 import { Filter, Search } from "lucide-react";
 import { cn } from "@/lib/cn";
 
@@ -50,19 +51,21 @@ export function LogsTable() {
         </div>
         <div className="flex items-center gap-2">
           <Filter className="h-4 w-4 text-muted-foreground" />
-          <select
+          <Select
+            aria-label={t("filter")}
             value={method}
-            onChange={(e) => {
-              setMethod(e.target.value);
+            onChange={(v) => {
+              setMethod(v);
               setPage(0);
             }}
-            className="rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/40"
-          >
-            <option value="ALL">{t("filter")}</option>
-            <option value="GET">GET</option>
-            <option value="POST">POST</option>
-            <option value="PUT">PUT</option>
-          </select>
+            className="w-[8.5rem]"
+            options={[
+              { value: "ALL", label: t("filter") },
+              { value: "GET", label: "GET" },
+              { value: "POST", label: "POST" },
+              { value: "PUT", label: "PUT" },
+            ]}
+          />
         </div>
       </div>
 

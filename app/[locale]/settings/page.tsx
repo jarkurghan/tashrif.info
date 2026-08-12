@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { apiFetch } from "@/lib/api";
-import { Link } from "@/i18n/navigation";
-import { LanguageSelect } from "@/components/LanguageSelect";
-import { Activity } from "lucide-react";
+import { AppHeader } from "@/components/app/AppHeader";
 
 export default function SettingsPage() {
   const { data } = useSession();
+  const t = useTranslations("demo");
   const [me, setMe] = useState<{
     user: { id: string; email?: string | null; name?: string | null };
     accounts: { provider: string; providerAccountId: string }[];
@@ -25,19 +25,11 @@ export default function SettingsPage() {
   }, [data?.apiToken]);
 
   return (
-    <div className="min-h-dvh bg-background">
-      <header className="flex h-16 items-center justify-between border-b border-border px-4 sm:px-6">
-        <Link href="/app" className="flex items-center gap-2 font-semibold">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <Activity className="h-4 w-4" />
-          </span>
-          Settings
-        </Link>
-        <LanguageSelect />
-      </header>
-      <main className="mx-auto max-w-lg space-y-6 p-6">
+    <>
+      <AppHeader title={t.has("nav.settings") ? t("nav.settings") : "Settings"} />
+      <main className="mx-auto max-w-lg flex-1 space-y-6 p-4 sm:p-6">
         <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
-          <h1 className="text-xl font-semibold">Profile</h1>
+          <h2 className="text-lg font-semibold">Profile</h2>
           <p className="mt-2 text-sm text-muted-foreground">
             {me?.user.name ?? data?.user?.name}
           </p>
@@ -60,14 +52,13 @@ export default function SettingsPage() {
               </li>
             ))}
             {!me?.accounts?.length && (
-              <li className="text-sm text-muted-foreground">No linked providers yet</li>
+              <li className="text-sm text-muted-foreground">
+                No linked providers yet
+              </li>
             )}
           </ul>
         </div>
-        <Link href="/app" className="text-sm text-primary underline">
-          ← Back to apps
-        </Link>
       </main>
-    </div>
+    </>
   );
 }

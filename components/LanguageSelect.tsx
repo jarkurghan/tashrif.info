@@ -3,6 +3,7 @@
 import { useLocale } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing, type Locale } from "@/i18n/routing";
+import { Select } from "@/components/ui/Select";
 import { cn } from "@/lib/cn";
 
 export function LanguageSelect({ className }: { className?: string }) {
@@ -11,22 +12,20 @@ export function LanguageSelect({ className }: { className?: string }) {
   const router = useRouter();
 
   return (
-    <select
+    <Select
       aria-label="Language"
-      className={cn(
-        "rounded-lg border border-border bg-card px-2.5 py-1.5 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring/40",
-        className,
-      )}
+      size="sm"
+      align="end"
+      className={cn("w-auto min-w-[4.5rem]", className)}
+      triggerClassName="bg-card"
       value={locale}
-      onChange={(e) => {
-        router.replace(pathname, { locale: e.target.value as Locale });
+      onChange={(next) => {
+        router.replace(pathname, { locale: next as Locale });
       }}
-    >
-      {routing.locales.map((l) => (
-        <option key={l} value={l}>
-          {l.toUpperCase()}
-        </option>
-      ))}
-    </select>
+      options={routing.locales.map((l) => ({
+        value: l,
+        label: l.toUpperCase(),
+      }))}
+    />
   );
 }

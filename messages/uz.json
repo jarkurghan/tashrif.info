@@ -63,9 +63,9 @@
   },
   "demo": {
     "siteName": "Demo sayt",
-    "live": "{count} jonli tashrifchi",
     "dateRange": "So'nggi 24 soat",
     "collapse": "Yig'ish",
+    "expand": "Yoyish",
     "sections": {
       "analytics": "Veb analitika",
       "manage": "Boshqaruv"
@@ -83,7 +83,11 @@
       "logs": "Loglar",
       "domains": "Domenlar",
       "access": "Kirish",
-      "reports": "Hisobotlar"
+      "reports": "Hisobotlar",
+      "settings": "Sozlamalar"
+    },
+    "account": {
+      "logout": "Chiqish"
     },
     "titles": {
       "traffic": "Trafik",

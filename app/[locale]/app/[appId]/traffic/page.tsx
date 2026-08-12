@@ -28,7 +28,6 @@ export default function TrafficPage() {
     users: number;
     sessions: number;
     pageviews: number;
-    live: number;
   } | null>(null);
   const [series, setSeries] = useState<
     { date: string; sessions: number; pageviews: number }[]
@@ -49,7 +48,6 @@ export default function TrafficPage() {
           users: number;
           sessions: number;
           pageviews: number;
-          live: number;
         }>(`/v1/apps/${appId}/overview`, { token }),
         apiFetch<{ series: { date: string; sessions: number; pageviews: number }[] }>(
           `/v1/apps/${appId}/timeseries`,
@@ -79,11 +77,11 @@ export default function TrafficPage() {
     <>
       <AppHeader title={t("titles.traffic")} />
       <main className="flex-1 space-y-6 p-4 sm:p-6">
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           <MetricCard
             label={t("metrics.users")}
             value={String(overview?.users ?? "—")}
-            trend={overview ? `live ${overview.live}` : "—"}
+            trend="—"
           />
           <MetricCard
             label={t("metrics.sessions")}
@@ -95,7 +93,6 @@ export default function TrafficPage() {
             value={String(overview?.pageviews ?? "—")}
             trend="—"
           />
-          <MetricCard label="Live" value={String(overview?.live ?? 0)} trend="ws" />
         </div>
 
         <div className="h-80 w-full rounded-xl border border-border bg-card p-4 shadow-sm">

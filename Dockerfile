@@ -12,9 +12,7 @@ COPY . .
 
 # Public env must be present at BUILD time (inlined into client bundle)
 ARG NEXT_PUBLIC_API_URL=https://api.tashrif.info
-ARG NEXT_PUBLIC_WS_URL=wss://api.tashrif.info/ws
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
-ENV NEXT_PUBLIC_WS_URL=$NEXT_PUBLIC_WS_URL
 
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production

@@ -58,11 +58,7 @@ export function Hero() {
 function DashboardMock() {
   return (
     <div className="relative h-full w-full overflow-hidden rounded-2xl border border-border bg-card/90 p-4 shadow-[0_24px_80px_-32px_rgba(13,148,136,0.45)] backdrop-blur">
-      <div className="mb-4 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="live-dot h-2 w-2 rounded-full bg-success" />
-          <span className="text-xs font-medium text-muted-foreground">14 live</span>
-        </div>
+      <div className="mb-4 flex items-center justify-end">
         <span className="rounded-full bg-muted px-2.5 py-1 text-[11px] text-muted-foreground">
           Last 24 hours
         </span>

@@ -11,7 +11,6 @@ export const env = {
     process.env.API_URL ||
     process.env.NEXT_PUBLIC_API_URL ||
     "https://api.tashrif.info",
-  wsUrl: process.env.NEXT_PUBLIC_WS_URL || "wss://api.tashrif.info/ws",
   googleClientId: process.env.GOOGLE_CLIENT_ID ?? "",
   googleClientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
 };
@@ -24,6 +23,5 @@ export function socialEnvSnapshot() {
       : null,
     NEXTAUTH_URL: env.nextAuthUrl || null,
     API_URL: env.apiUrl,
-    NEXT_PUBLIC_WS_URL: env.wsUrl,
   };
 }

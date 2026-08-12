@@ -1,6 +1,15 @@
 "use client";
 
-import { createContext, useContext, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
+
+const STORAGE_KEY = "tashrif_sidebar_collapsed";
 
 type DemoShellContextValue = {
   collapsed: boolean;
@@ -11,13 +20,45 @@ type DemoShellContextValue = {
 const DemoShellContext = createContext<DemoShellContextValue | null>(null);
 
 export function DemoShellProvider({ children }: { children: ReactNode }) {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsedState] = useState(false);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    try {
+      setCollapsedState(localStorage.getItem(STORAGE_KEY) === "1");
+    } catch {
+      /* ignore */
+    }
+    setReady(true);
+  }, []);
+
+  const setCollapsed = useCallback((v: boolean) => {
+    setCollapsedState(v);
+    try {
+      localStorage.setItem(STORAGE_KEY, v ? "1" : "0");
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  const toggle = useCallback(() => {
+    setCollapsedState((c) => {
+      const next = !c;
+      try {
+        localStorage.setItem(STORAGE_KEY, next ? "1" : "0");
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
+  }, []);
+
   return (
     <DemoShellContext.Provider
       value={{
-        collapsed,
+        collapsed: ready ? collapsed : false,
         setCollapsed,
-        toggle: () => setCollapsed((c) => !c),
+        toggle,
       }}
     >
       {children}

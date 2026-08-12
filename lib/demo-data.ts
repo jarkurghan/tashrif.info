@@ -61,8 +61,6 @@ export type ReportChat = {
   schedule: "daily" | "weekly" | "monthly";
 };
 
-export const LIVE_VISITORS = 14;
-
 export const metrics: Metric[] = [
   { key: "users", value: "10.6k", trend: "+1.2k" },
   { key: "sessions", value: "11.4k", trend: "+890" },

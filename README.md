@@ -26,7 +26,7 @@ npm run dev   # or bun dev
 
 | Kind | When | Examples |
 |------|------|----------|
-| `NEXT_PUBLIC_*` | **Docker build-args** | `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_WS_URL` |
+| `NEXT_PUBLIC_*` | **Docker build-args** | `NEXT_PUBLIC_API_URL` |
 | Secrets | **Container runtime** | `GOOGLE_*`, `NEXTAUTH_SECRET`, `API_URL` |
 
 `.env.local` is for local only — not copied into Docker images.

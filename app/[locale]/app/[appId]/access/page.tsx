@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { apiFetch } from "@/lib/api";
 import { AppHeader } from "@/components/app/AppHeader";
 import { UserPlus } from "lucide-react";
+import { Select } from "@/components/ui/Select";
 import { cn } from "@/lib/cn";
 
 export default function AccessPage() {
@@ -86,14 +87,15 @@ export default function AccessPage() {
           </label>
           <label className="text-sm sm:w-44">
             <span className="mb-1.5 block text-muted-foreground">{t("role")}</span>
-            <select
+            <Select
+              aria-label={t("role")}
               value={role}
-              onChange={(e) => setRole(e.target.value as "admin" | "viewer")}
-              className="w-full rounded-lg border border-border bg-background px-3 py-2"
-            >
-              <option value="admin">{t("admin")}</option>
-              <option value="viewer">{t("viewer")}</option>
-            </select>
+              onChange={(v) => setRole(v as "admin" | "viewer")}
+              options={[
+                { value: "admin", label: t("admin") },
+                { value: "viewer", label: t("viewer") },
+              ]}
+            />
           </label>
           <button
             type="submit"

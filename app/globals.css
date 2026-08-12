@@ -7,7 +7,7 @@
   --card-foreground: #0f1c1a;
   --muted: #e8eeec;
   --muted-foreground: #5b6b67;
-  --border: #d5e0dc;
+  --border: #e2ebe8;
   --primary: #0d9488;
   --primary-foreground: #f0fdfa;
   --primary-soft: #ccfbf1;
@@ -38,7 +38,7 @@
     --card-foreground: #e8f0ee;
     --muted: #1a2422;
     --muted-foreground: #9aada8;
-    --border: #243230;
+    --border: #1a2523;
     --primary: #2dd4bf;
     --primary-foreground: #042f2e;
     --primary-soft: #134e4a;
@@ -111,18 +111,6 @@ body {
   color: var(--foreground);
 }
 
-@keyframes pulse-dot {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.55;
-    transform: scale(1.35);
-  }
-}
-
 @keyframes fade-up {
   from {
     opacity: 0;
@@ -158,10 +146,6 @@ body {
 
 .animate-float {
   animation: float-soft 6s ease-in-out infinite;
-}
-
-.live-dot {
-  animation: pulse-dot 1.6s ease-in-out infinite;
 }
 
 .hero-grid {

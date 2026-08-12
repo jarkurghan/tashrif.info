@@ -63,9 +63,9 @@
   },
   "demo": {
     "siteName": "Demo Site",
-    "live": "{count} live visitors",
     "dateRange": "Last 24 hours",
     "collapse": "Collapse",
+    "expand": "Expand",
     "sections": {
       "analytics": "Web analytics",
       "manage": "Manage"
@@ -83,7 +83,11 @@
       "logs": "Logs",
       "domains": "Domains",
       "access": "Access",
-      "reports": "Reports"
+      "reports": "Reports",
+      "settings": "Settings"
+    },
+    "account": {
+      "logout": "Log out"
     },
     "titles": {
       "traffic": "Traffic",
