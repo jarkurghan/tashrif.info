@@ -3,16 +3,13 @@
 import { useState } from "react";
 import { cn } from "@/lib/cn";
 import { formatCount, type RankedItem } from "@/lib/demo-data";
-import { Maximize2 } from "lucide-react";
 
 export function RankedList({
   tabs,
   datasets,
-  detailsLabel,
 }: {
   tabs: { id: string; label: string }[];
   datasets: Record<string, RankedItem[]>;
-  detailsLabel: string;
 }) {
   const [active, setActive] = useState(tabs[0]?.id ?? "");
   const items = datasets[active] ?? [];
@@ -53,13 +50,6 @@ export function RankedList({
           </li>
         ))}
       </ul>
-      <button
-        type="button"
-        className="flex items-center justify-center gap-1.5 border-t border-border py-2.5 text-sm text-muted-foreground transition hover:text-foreground"
-      >
-        {detailsLabel}
-        <Maximize2 className="h-3.5 w-3.5" />
-      </button>
     </div>
   );
 }

@@ -78,8 +78,6 @@
     "nav": {
       "traffic": "Trafik",
       "pages": "Sahifalar",
-      "locations": "Joylashuv",
-      "events": "Hodisalar",
       "logs": "Loglar",
       "domains": "Domenlar",
       "access": "Kirish",
@@ -117,8 +115,6 @@
     "titles": {
       "traffic": "Trafik",
       "pages": "Sahifalar",
-      "locations": "Joylashuv",
-      "events": "Hodisalar diagrammasi",
       "logs": "So'rov loglari",
       "domains": "Mening domenlarim",
       "access": "Kirish va takliflar",
@@ -144,6 +140,20 @@
       "exit": "Chiqish sahifalari"
     },
     "details": "Batafsil",
+    "pagesTable": {
+      "title": "Sahifalar",
+      "hint": "Tanlangan davrdagi yo'llar tashriflar bo'yicha.",
+      "search": "Yo'l qidirish…",
+      "path": "Yo'l",
+      "visitors": "Kiruvchilar",
+      "visits": "Kirishlar",
+      "sessions": "Seanslar",
+      "countries": "Mamlakatlar",
+      "share": "Ulush",
+      "loading": "Yuklanmoqda…",
+      "empty": "Hali sahifa ma'lumoti yo'q.",
+      "showing": "{count} ta yo'l"
+    },
     "logs": {
       "search": "Yo'l yoki IP qidirish…",
       "filter": "Filtr",

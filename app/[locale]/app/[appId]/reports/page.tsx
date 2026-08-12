@@ -64,7 +64,7 @@ export default function ReportsPage() {
   return (
     <>
       <AppHeader title={title("titles.reports")} />
-      <main className="mx-auto grid max-w-4xl flex-1 gap-6 p-4 sm:p-6 lg:grid-cols-2">
+      <main className="mx-auto grid max-w-4xl min-h-0 flex-1 gap-6 overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:grid-cols-2">
         <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
           <h2 className="text-lg font-semibold">{t("title")}</h2>
           <p className="mt-1 text-sm text-muted-foreground">{t("sub")}</p>

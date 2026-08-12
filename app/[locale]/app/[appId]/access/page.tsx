@@ -70,7 +70,7 @@ export default function AccessPage() {
   return (
     <>
       <AppHeader title={title("titles.access")} />
-      <main className="flex-1 space-y-4 p-4 sm:p-6">
+      <main className="min-h-0 flex-1 space-y-4 overflow-y-auto overflow-x-hidden p-4 sm:p-6">
         <form
           onSubmit={invite}
           className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4 shadow-sm sm:flex-row sm:items-end"

@@ -78,8 +78,6 @@
     "nav": {
       "traffic": "Traffic",
       "pages": "Pages",
-      "locations": "Locations",
-      "events": "Events",
       "logs": "Logs",
       "domains": "Domains",
       "access": "Access",
@@ -117,8 +115,6 @@
     "titles": {
       "traffic": "Traffic",
       "pages": "Pages",
-      "locations": "Locations",
-      "events": "Events chart",
       "logs": "Request logs",
       "domains": "My domains",
       "access": "Access & invitations",
@@ -144,6 +140,20 @@
       "exit": "Exit pages"
     },
     "details": "Details",
+    "pagesTable": {
+      "title": "Pages",
+      "hint": "Paths ranked by visits in the selected period.",
+      "search": "Search path…",
+      "path": "Path",
+      "visitors": "Visitors",
+      "visits": "Visits",
+      "sessions": "Sessions",
+      "countries": "Countries",
+      "share": "Share",
+      "loading": "Loading…",
+      "empty": "No page data yet.",
+      "showing": "{count} paths"
+    },
     "logs": {
       "search": "Search path or IP…",
       "filter": "Filter",

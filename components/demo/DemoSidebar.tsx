@@ -6,11 +6,9 @@ import { useDemoShell } from "./DemoShellContext";
 import { cn } from "@/lib/cn";
 import {
   Activity,
-  BarChart3,
   FileText,
   FolderKanban,
   LayoutDashboard,
-  MapPinned,
   PanelLeftClose,
   PanelLeftOpen,
   ScrollText,
@@ -21,8 +19,6 @@ import {
 const analytics = [
   { href: "/demo/traffic", key: "traffic", icon: LayoutDashboard },
   { href: "/demo/pages", key: "pages", icon: FileText },
-  { href: "/demo/locations", key: "locations", icon: MapPinned },
-  { href: "/demo/events", key: "events", icon: BarChart3 },
   { href: "/demo/logs", key: "logs", icon: ScrollText },
 ] as const;
 

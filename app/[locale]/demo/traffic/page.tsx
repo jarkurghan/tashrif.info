@@ -41,7 +41,6 @@ export default async function TrafficPage({
       <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
         <WorldMap className="min-h-[320px]" />
         <RankedList
-          detailsLabel={t("details")}
           tabs={[
             { id: "country", label: t("tabs.country") },
             { id: "region", label: t("tabs.region") },
@@ -56,7 +55,6 @@ export default async function TrafficPage({
       </div>
 
       <RankedList
-        detailsLabel={t("details")}
         tabs={[
           { id: "page", label: t("tabs.page") },
           { id: "entry", label: t("tabs.entry") },

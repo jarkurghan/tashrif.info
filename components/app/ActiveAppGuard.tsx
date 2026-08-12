@@ -41,7 +41,7 @@ export function ActiveAppGuard({ children }: { children: React.ReactNode }) {
     if (activeAppId) {
       router.replace(`/app/${activeAppId}${appSubPath(pathname)}`);
     } else {
-      router.replace("/app");
+      router.replace("/app/domains");
     }
   }, [
     loading,

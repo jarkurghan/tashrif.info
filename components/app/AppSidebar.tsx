@@ -8,10 +8,8 @@ import { SiteSelect } from "@/components/app/SiteSelect";
 import { cn } from "@/lib/cn";
 import {
   Activity,
-  BarChart3,
   FileText,
   LayoutDashboard,
-  MapPinned,
   PanelLeftClose,
   PanelLeftOpen,
   ScrollText,
@@ -110,8 +108,6 @@ export function AppSidebar() {
     ? ([
         { href: `${base}/traffic`, key: "traffic", icon: LayoutDashboard },
         { href: `${base}/pages`, key: "pages", icon: FileText },
-        { href: `${base}/locations`, key: "locations", icon: MapPinned },
-        { href: `${base}/events`, key: "events", icon: BarChart3 },
         { href: `${base}/logs`, key: "logs", icon: ScrollText },
       ] as const)
     : [];

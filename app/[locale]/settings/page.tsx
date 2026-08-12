@@ -112,7 +112,7 @@ export default function SettingsPage() {
   return (
     <>
       <AppHeader title={t("nav.settings")} />
-      <main className="relative flex-1">
+      <main className="relative min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
         <div
           className="pointer-events-none absolute inset-x-0 top-0 h-56 bg-[radial-gradient(ellipse_80%_70%_at_15%_0%,color-mix(in_oklab,var(--primary)_14%,transparent),transparent_70%)]"
           aria-hidden
@@ -168,7 +168,7 @@ export default function SettingsPage() {
                   {ts("domains")}
                 </p>
                 <Link
-                  href="/app"
+                  href="/app/domains"
                   className="mt-1 block text-3xl font-semibold tabular-nums tracking-tight text-foreground transition hover:text-primary"
                 >
                   {appsLoading ? "—" : apps.length}

@@ -76,7 +76,7 @@ export default function TrafficPage() {
   return (
     <>
       <AppHeader title={t("titles.traffic")} />
-      <main className="flex-1 space-y-6 p-4 sm:p-6">
+      <main className="min-h-0 flex-1 space-y-6 overflow-y-auto overflow-x-hidden p-4 sm:p-6">
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           <MetricCard
             label={t("metrics.users")}
@@ -130,14 +130,12 @@ export default function TrafficPage() {
         <div className="grid gap-4 lg:grid-cols-2">
           <WorldMap className="min-h-[280px]" />
           <RankedList
-            detailsLabel={t("details")}
             tabs={[{ id: "country", label: t("tabs.country") }]}
             datasets={{ country: locations }}
           />
         </div>
 
         <RankedList
-          detailsLabel={t("details")}
           tabs={[{ id: "page", label: t("tabs.page") }]}
           datasets={{ page: pages }}
         />

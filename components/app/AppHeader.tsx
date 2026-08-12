@@ -11,7 +11,7 @@ export function AppHeader({ title }: { title: string }) {
   const { collapsed, toggle } = useDemoShell();
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center gap-3 border-b border-border bg-background/85 px-4 backdrop-blur-md sm:px-6">
+    <header className="sticky top-0 z-10 flex h-16 min-h-16 shrink-0 items-center gap-3 border-b border-border bg-background/85 px-4 backdrop-blur-md sm:px-6">
       <button
         type="button"
         onClick={toggle}

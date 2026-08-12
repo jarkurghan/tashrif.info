@@ -10,8 +10,6 @@ const titleKeyByPath: Record<string, string> = {
   "/demo": "traffic",
   "/demo/traffic": "traffic",
   "/demo/pages": "pages",
-  "/demo/locations": "locations",
-  "/demo/events": "events",
   "/demo/logs": "logs",
   "/demo/domains": "domains",
   "/demo/access": "access",
@@ -25,7 +23,7 @@ export function DemoHeader() {
   const key = titleKeyByPath[pathname] ?? "traffic";
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center gap-3 border-b border-border bg-background/85 px-4 backdrop-blur-md sm:px-6">
+    <header className="sticky top-0 z-10 flex h-16 min-h-16 shrink-0 items-center gap-3 border-b border-border bg-background/85 px-4 backdrop-blur-md sm:px-6">
       <button
         type="button"
         onClick={toggle}

@@ -7,7 +7,7 @@ import { Select } from "@/components/ui/Select";
 import { Filter, Search } from "lucide-react";
 import { cn } from "@/lib/cn";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 20;
 
 export function LogsTable() {
   const t = useTranslations("demo.logs");

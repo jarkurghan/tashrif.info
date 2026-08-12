@@ -14,7 +14,6 @@ export default async function PagesPage({
   return (
     <div className="mx-auto max-w-3xl">
       <RankedList
-        detailsLabel={t("details")}
         tabs={[
           { id: "page", label: t("tabs.page") },
           { id: "entry", label: t("tabs.entry") },
