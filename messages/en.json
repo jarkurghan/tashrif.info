@@ -55,10 +55,9 @@
   },
   "login": {
     "title": "Welcome back",
-    "sub": "Sign in with a social account popular in Uzbekistan.",
+    "sub": "Sign in with Google to open your dashboard.",
     "comingSoon": "Authentication coming soon",
     "google": "Continue with Google",
-    "telegram": "Continue with Telegram",
     "github": "Continue with GitHub",
     "back": "Back to home"
   },

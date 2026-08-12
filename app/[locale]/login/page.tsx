@@ -5,24 +5,14 @@ import { useTranslations, useLocale } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import { Activity, ArrowLeft } from "lucide-react";
 import { LanguageSelect } from "@/components/LanguageSelect";
-import { useEffect, useRef, useState } from "react";
-
-declare global {
-  interface Window {
-    onTelegramAuth?: (user: Record<string, string>) => void;
-  }
-}
+import { useEffect, useState } from "react";
 
 export default function LoginPage() {
   const t = useTranslations("login");
   const locale = useLocale();
   const { data: session, status } = useSession();
   const router = useRouter();
-  const tgRef = useRef<HTMLDivElement>(null);
   const appCallback = `/${locale}/app`;
-  const [botName, setBotName] = useState(
-    () => process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME || "",
-  );
   const [syncError, setSyncError] = useState(false);
 
   useEffect(() => {
@@ -34,61 +24,16 @@ export default function LoginPage() {
   useEffect(() => {
     if (status !== "authenticated") return;
 
-    // Ready for dashboard
     if (session?.apiToken) {
       router.replace("/app");
       return;
     }
 
-    // Session without API token → break redirect loop
     if (session?.error === "SyncError" || !session?.apiToken) {
       setSyncError(true);
       void signOut({ redirect: false });
     }
   }, [status, session, router]);
-
-  useEffect(() => {
-    if (botName) return;
-    void fetch("/api/debug/social-env")
-      .then((r) => r.json())
-      .then(
-        (env: {
-          TELEGRAM_BOT_NAME?: string | null;
-          NEXT_PUBLIC_TELEGRAM_BOT_NAME?: string | null;
-        }) => {
-          const name =
-            env.NEXT_PUBLIC_TELEGRAM_BOT_NAME || env.TELEGRAM_BOT_NAME || "";
-          if (name) setBotName(name);
-        },
-      )
-      .catch(() => {});
-  }, [botName]);
-
-  useEffect(() => {
-    window.onTelegramAuth = (user) => {
-      void signIn("telegram", {
-        ...user,
-        redirect: true,
-        callbackUrl: appCallback,
-      });
-    };
-
-    if (!botName || !tgRef.current) return;
-    tgRef.current.innerHTML = "";
-    const script = document.createElement("script");
-    script.src = "https://telegram.org/js/telegram-widget.js?22";
-    script.async = true;
-    script.setAttribute("data-telegram-login", botName);
-    script.setAttribute("data-size", "large");
-    script.setAttribute("data-radius", "12");
-    script.setAttribute("data-onauth", "onTelegramAuth(user)");
-    script.setAttribute("data-request-access", "write");
-    tgRef.current.appendChild(script);
-
-    return () => {
-      delete window.onTelegramAuth;
-    };
-  }, [appCallback, botName]);
 
   return (
     <div className="relative flex min-h-dvh flex-col">
@@ -134,15 +79,6 @@ export default function LoginPage() {
               <span className="h-2.5 w-2.5 rounded-full bg-[#4285F4]" />
               {t("google")}
             </button>
-
-            <div className="flex justify-center py-2" ref={tgRef}>
-              {!botName && (
-                <p className="text-center text-xs text-muted-foreground">
-                  {t("telegram")} — set TELEGRAM_BOT_NAME /
-                  NEXT_PUBLIC_TELEGRAM_BOT_NAME
-                </p>
-              )}
-            </div>
           </div>
 
           <Link

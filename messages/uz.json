@@ -55,10 +55,9 @@
   },
   "login": {
     "title": "Xush kelibsiz",
-    "sub": "O'zbekistonda ommabop ijtimoiy akkaunt orqali kiring.",
+    "sub": "Dashboard ochish uchun Google orqali kiring.",
     "comingSoon": "Autentifikatsiya tez orada",
     "google": "Google orqali davom etish",
-    "telegram": "Telegram orqali davom etish",
     "github": "GitHub orqali davom etish",
     "back": "Bosh sahifaga"
   },

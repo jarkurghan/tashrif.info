@@ -48,8 +48,7 @@ export default function SettingsPage() {
         <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
           <h2 className="font-semibold">Linked accounts</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Google and Telegram can be linked to the same tashrif account (via
-            email match on Google, or /v1/auth/link).
+            Signed in with Google.
           </p>
           <ul className="mt-4 space-y-2">
             {(me?.accounts ?? []).map((a) => (
