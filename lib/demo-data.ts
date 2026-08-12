@@ -58,7 +58,7 @@ export type AccessRow = {
 export type ReportChat = {
   name: string;
   chatId: string;
-  schedule: "daily" | "weekly" | "monthly";
+  reports: Array<"daily" | "weekly" | "monthly">;
 };
 
 export const metrics: Metric[] = [
@@ -319,12 +319,17 @@ export const reportChats: ReportChat[] = [
   {
     name: "Acme Analytics",
     chatId: "-1002145987632",
-    schedule: "daily",
+    reports: ["daily", "weekly"],
   },
   {
     name: "Product Weekly",
     chatId: "-1001987654321",
-    schedule: "weekly",
+    reports: ["weekly"],
+  },
+  {
+    name: "Ops channel",
+    chatId: "-1001876543210",
+    reports: [],
   },
 ];
 
