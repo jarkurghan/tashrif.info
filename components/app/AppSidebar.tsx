@@ -3,6 +3,8 @@
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useDemoShell } from "@/components/demo/DemoShellContext";
+import { useActiveApp } from "@/components/app/ActiveAppProvider";
+import { SiteSelect } from "@/components/app/SiteSelect";
 import { cn } from "@/lib/cn";
 import {
   Activity,
@@ -19,14 +21,15 @@ import {
   Users,
 } from "lucide-react";
 
-export function AppSidebar({ appId }: { appId?: string }) {
+export function AppSidebar() {
   const t = useTranslations("demo");
   const pathname = usePathname();
   const { collapsed, toggle } = useDemoShell();
+  const { activeAppId } = useActiveApp();
 
-  const base = appId ? `/app/${appId}` : "/app";
+  const base = activeAppId ? `/app/${activeAppId}` : null;
 
-  const analytics = appId
+  const analytics = base
     ? ([
         { href: `${base}/traffic`, key: "traffic", icon: LayoutDashboard },
         { href: `${base}/pages`, key: "pages", icon: FileText },
@@ -36,7 +39,7 @@ export function AppSidebar({ appId }: { appId?: string }) {
       ] as const)
     : [];
 
-  const manage = appId
+  const manage = base
     ? ([
         { href: `${base}/access`, key: "access", icon: Users },
         { href: `${base}/reports`, key: "reports", icon: Send },
@@ -70,7 +73,9 @@ export function AppSidebar({ appId }: { appId?: string }) {
         )}
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-2 py-4">
+      <SiteSelect />
+
+      <nav className="flex-1 overflow-y-auto px-2 py-2">
         <Link
           href="/app"
           className={cn(

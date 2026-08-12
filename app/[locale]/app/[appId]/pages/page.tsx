@@ -2,14 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { useParams } from "next/navigation";
+import { useActiveApp } from "@/components/app/ActiveAppProvider";
 import { useTranslations } from "next-intl";
 import { apiFetch } from "@/lib/api";
 import { AppHeader } from "@/components/app/AppHeader";
 import { RankedList } from "@/components/demo/RankedList";
 
 export default function PagesAnalyticsPage() {
-  const { appId } = useParams<{ appId: string }>();
+  const { activeAppId: appId } = useActiveApp();
   const { data } = useSession();
   const t = useTranslations("demo");
   const [items, setItems] = useState<
@@ -27,7 +27,7 @@ export default function PagesAnalyticsPage() {
 
   return (
     <>
-      <AppHeader title={t("titles.pages")} appId={appId} />
+      <AppHeader title={t("titles.pages")} />
       <main className="flex-1 p-4 sm:p-6">
         <div className="mx-auto max-w-3xl">
           <RankedList

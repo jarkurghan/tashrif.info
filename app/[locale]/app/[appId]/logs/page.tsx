@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { useParams } from "next/navigation";
+import { useActiveApp } from "@/components/app/ActiveAppProvider";
 import { useTranslations } from "next-intl";
 import { apiFetch } from "@/lib/api";
 import { AppHeader } from "@/components/app/AppHeader";
@@ -21,7 +21,7 @@ type LogItem = {
 };
 
 export default function LogsAnalyticsPage() {
-  const { appId } = useParams<{ appId: string }>();
+  const { activeAppId: appId } = useActiveApp();
   const { data } = useSession();
   const t = useTranslations("demo.logs");
   const title = useTranslations("demo");
@@ -56,7 +56,7 @@ export default function LogsAnalyticsPage() {
 
   return (
     <>
-      <AppHeader title={title("titles.logs")} appId={appId} />
+      <AppHeader title={title("titles.logs")} />
       <main className="flex-1 p-4 sm:p-6">
         <div className="rounded-xl border border-border bg-card shadow-sm">
           <div className="flex flex-col gap-3 border-b border-border p-4 sm:flex-row">

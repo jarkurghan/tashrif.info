@@ -70,6 +70,11 @@
       "analytics": "Web analytics",
       "manage": "Manage"
     },
+    "siteSelect": {
+      "label": "Active site",
+      "empty": "Add a domain to get started",
+      "placeholder": "Select site…"
+    },
     "nav": {
       "traffic": "Traffic",
       "pages": "Pages",

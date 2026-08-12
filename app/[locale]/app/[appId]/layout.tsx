@@ -1,4 +1,5 @@
 import { setRequestLocale } from "next-intl/server";
+import { ActiveAppGuard } from "@/components/app/ActiveAppGuard";
 
 export default async function AppIdLayout({
   children,
@@ -9,5 +10,5 @@ export default async function AppIdLayout({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  return children;
+  return <ActiveAppGuard>{children}</ActiveAppGuard>;
 }

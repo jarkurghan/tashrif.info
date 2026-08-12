@@ -1,23 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { apiFetch } from "@/lib/api";
 import { AppHeader } from "@/components/app/AppHeader";
+import { useActiveApp } from "@/components/app/ActiveAppProvider";
 import { Check, Copy, Plus } from "lucide-react";
 
-type AppRow = {
-  id: string;
-  clientId?: string;
-  domain: string;
-  name: string;
-  role: string;
-};
-
 type CreatedCreds = {
-  app: AppRow;
+  app: { id: string; domain: string; name: string; role: string };
   clientId: string;
   clientSecret: string;
 };
@@ -65,32 +58,12 @@ function CopyButton({
 
 export default function AppsPage() {
   const { data } = useSession();
+  const router = useRouter();
   const t = useTranslations("demo.domains");
-  const [apps, setApps] = useState<AppRow[]>([]);
+  const { apps, loading, setActiveAppId, refreshApps } = useActiveApp();
   const [domain, setDomain] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
   const [created, setCreated] = useState<CreatedCreds | null>(null);
-
-  async function load() {
-    if (!data?.apiToken) return;
-    setLoading(true);
-    try {
-      const res = await apiFetch<{ apps: AppRow[] }>("/v1/apps", {
-        token: data.apiToken,
-      });
-      setApps(res.apps);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to load");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    void load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data?.apiToken]);
 
   async function onCreate(e: React.FormEvent) {
     e.preventDefault();
@@ -104,7 +77,8 @@ export default function AppsPage() {
       });
       setCreated(res);
       setDomain("");
-      await load();
+      setActiveAppId(res.app.id);
+      await refreshApps();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Create failed");
     }
@@ -129,6 +103,11 @@ export default function AppsPage() {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Rotate failed");
     }
+  }
+
+  function openApp(appId: string) {
+    setActiveAppId(appId);
+    router.push(`/app/${appId}/traffic`);
   }
 
   const envSnippet = created
@@ -214,12 +193,13 @@ void track(payload);`
                 {envSnippet}
               </pre>
             </div>
-            <Link
-              href={`/app/${created.app.id}/traffic`}
+            <button
+              type="button"
+              onClick={() => openApp(created.app.id)}
               className="mt-3 inline-flex text-primary underline"
             >
               Open dashboard →
-            </Link>
+            </button>
           </div>
         )}
 
@@ -256,12 +236,13 @@ void track(payload);`
                           Rotate secret
                         </button>
                       )}
-                      <Link
-                        href={`/app/${a.id}/traffic`}
+                      <button
+                        type="button"
+                        onClick={() => openApp(a.id)}
                         className="text-primary hover:underline"
                       >
                         Open
-                      </Link>
+                      </button>
                     </td>
                   </tr>
                 ))}

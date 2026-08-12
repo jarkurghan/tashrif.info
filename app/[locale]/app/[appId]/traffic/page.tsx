@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { useParams } from "next/navigation";
+import { useActiveApp } from "@/components/app/ActiveAppProvider";
 import { useTranslations } from "next-intl";
 import {
   Line,
@@ -21,7 +21,7 @@ import { RankedList } from "@/components/demo/RankedList";
 import { WorldMap } from "@/components/demo/WorldMap";
 
 export default function TrafficPage() {
-  const { appId } = useParams<{ appId: string }>();
+  const { activeAppId: appId } = useActiveApp();
   const { data } = useSession();
   const t = useTranslations("demo");
   const [overview, setOverview] = useState<{
@@ -77,7 +77,7 @@ export default function TrafficPage() {
 
   return (
     <>
-      <AppHeader title={t("titles.traffic")} appId={appId} />
+      <AppHeader title={t("titles.traffic")} />
       <main className="flex-1 space-y-6 p-4 sm:p-6">
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <MetricCard

@@ -70,6 +70,11 @@
       "analytics": "Veb analitika",
       "manage": "Boshqaruv"
     },
+    "siteSelect": {
+      "label": "Faol sayt",
+      "empty": "Boshlash uchun domen qo'shing",
+      "placeholder": "Saytni tanlang…"
+    },
     "nav": {
       "traffic": "Trafik",
       "pages": "Sahifalar",

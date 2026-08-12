@@ -4,20 +4,16 @@ import { useSession, signOut } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { LanguageSelect } from "@/components/LanguageSelect";
 import { useDemoShell } from "@/components/demo/DemoShellContext";
+import { useActiveApp } from "@/components/app/ActiveAppProvider";
 import { useLiveVisitors } from "@/lib/use-live";
 import { CalendarDays, PanelLeft } from "lucide-react";
 
-export function AppHeader({
-  title,
-  appId,
-}: {
-  title: string;
-  appId?: string;
-}) {
+export function AppHeader({ title }: { title: string }) {
   const t = useTranslations("demo");
   const { toggle } = useDemoShell();
   const { data } = useSession();
-  const live = useLiveVisitors(appId, data?.apiToken);
+  const { activeAppId } = useActiveApp();
+  const live = useLiveVisitors(activeAppId ?? undefined, data?.apiToken);
 
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center gap-3 border-b border-border bg-background/85 px-4 backdrop-blur-md sm:px-6">
@@ -34,7 +30,7 @@ export function AppHeader({
         {title}
       </h1>
 
-      {appId && (
+      {activeAppId && (
         <div className="hidden items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-sm sm:flex">
           <span className="live-dot inline-block h-2 w-2 rounded-full bg-success" />
           <span className="text-muted-foreground">

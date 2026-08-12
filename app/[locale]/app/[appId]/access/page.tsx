@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { useParams } from "next/navigation";
+import { useActiveApp } from "@/components/app/ActiveAppProvider";
 import { useTranslations } from "next-intl";
 import { apiFetch } from "@/lib/api";
 import { AppHeader } from "@/components/app/AppHeader";
@@ -10,7 +10,7 @@ import { UserPlus } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 export default function AccessPage() {
-  const { appId } = useParams<{ appId: string }>();
+  const { activeAppId: appId } = useActiveApp();
   const { data } = useSession();
   const t = useTranslations("demo.access");
   const title = useTranslations("demo");
@@ -68,7 +68,7 @@ export default function AccessPage() {
 
   return (
     <>
-      <AppHeader title={title("titles.access")} appId={appId} />
+      <AppHeader title={title("titles.access")} />
       <main className="flex-1 space-y-4 p-4 sm:p-6">
         <form
           onSubmit={invite}

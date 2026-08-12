@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { useParams } from "next/navigation";
+import { useActiveApp } from "@/components/app/ActiveAppProvider";
 import { useTranslations } from "next-intl";
 import { apiFetch } from "@/lib/api";
 import { AppHeader } from "@/components/app/AppHeader";
@@ -19,7 +19,7 @@ type Integration = {
 };
 
 export default function ReportsPage() {
-  const { appId } = useParams<{ appId: string }>();
+  const { activeAppId: appId } = useActiveApp();
   const { data } = useSession();
   const t = useTranslations("demo.reports");
   const title = useTranslations("demo");
@@ -63,7 +63,7 @@ export default function ReportsPage() {
 
   return (
     <>
-      <AppHeader title={title("titles.reports")} appId={appId} />
+      <AppHeader title={title("titles.reports")} />
       <main className="mx-auto grid max-w-4xl flex-1 gap-6 p-4 sm:p-6 lg:grid-cols-2">
         <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
           <h2 className="text-lg font-semibold">{t("title")}</h2>
