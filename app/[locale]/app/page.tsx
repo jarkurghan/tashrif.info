@@ -1,26 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
 import { apiFetch } from "@/lib/api";
 import { AppHeader } from "@/components/app/AppHeader";
-import { useActiveApp } from "@/components/app/ActiveAppProvider";
-import { Check, Copy, Plus } from "lucide-react";
+import { useActiveApp, type AppRow } from "@/components/app/ActiveAppProvider";
+import { Sheet } from "@/components/ui/Sheet";
+import { cn } from "@/lib/cn";
+import { Check, Copy, Eye, Plus, Trash2 } from "lucide-react";
 
-type CreatedCreds = {
-  app: { id: string; domain: string; name: string; role: string };
+type Creds = {
+  app: { id: string; domain: string; name: string; role?: string };
   clientId: string;
   clientSecret: string;
 };
 
+type DeleteStep = "idle" | "confirm" | "type";
+
 function CopyButton({
   value,
-  label = "Copy",
+  label,
+  copiedLabel,
 }: {
   value: string;
-  label?: string;
+  label: string;
+  copiedLabel: string;
 }) {
   const [copied, setCopied] = useState(false);
 
@@ -30,7 +35,7 @@ function CopyButton({
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1600);
     } catch {
-      // ignore
+      /* ignore */
     }
   }
 
@@ -44,170 +49,230 @@ function CopyButton({
       {copied ? (
         <>
           <Check className="h-3 w-3 text-primary" />
-          Copied
+          {copiedLabel}
         </>
       ) : (
         <>
           <Copy className="h-3 w-3" />
-          Copy
+          {label}
         </>
       )}
     </button>
   );
 }
 
-export default function AppsPage() {
-  const { data } = useSession();
-  const router = useRouter();
-  const t = useTranslations("demo.domains");
-  const { apps, loading, setActiveAppId, refreshApps } = useActiveApp();
-  const [domain, setDomain] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [created, setCreated] = useState<CreatedCreds | null>(null);
-
-  async function onCreate(e: React.FormEvent) {
-    e.preventDefault();
-    if (!data?.apiToken || !domain.trim()) return;
-    setError(null);
-    try {
-      const res = await apiFetch<CreatedCreds>("/v1/apps", {
-        method: "POST",
-        token: data.apiToken,
-        body: JSON.stringify({ domain: domain.trim() }),
-      });
-      setCreated(res);
-      setDomain("");
-      setActiveAppId(res.app.id);
-      await refreshApps();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Create failed");
-    }
-  }
-
-  async function onRotate(appId: string) {
-    if (!data?.apiToken) return;
-    if (
-      !window.confirm(
-        "Rotate client secret? The old secret stops working immediately.",
-      )
-    ) {
-      return;
-    }
-    setError(null);
-    try {
-      const res = await apiFetch<CreatedCreds>(
-        `/v1/apps/${appId}/rotate-secret`,
-        { method: "POST", token: data.apiToken },
-      );
-      setCreated(res);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Rotate failed");
-    }
-  }
-
-  function openApp(appId: string) {
-    setActiveAppId(appId);
-    router.push(`/app/${appId}/traffic`);
-  }
-
-  const envSnippet = created
-    ? `# .env
-TASHRIF_CLIENT_ID=${created.clientId}
-TASHRIF_CLIENT_SECRET=${created.clientSecret}
+function CredsBlock({
+  creds,
+  t,
+}: {
+  creds: Creds;
+  t: (key: string) => string;
+}) {
+  const envSnippet = `# .env
+TASHRIF_CLIENT_ID=${creds.clientId}
+TASHRIF_CLIENT_SECRET=${creds.clientSecret}
 
 # middleware.ts
 import { track, buildPayload } from "tashrif";
 const { payload, setCookies } = buildPayload(req);
 for (const c of setCookies ?? []) res.cookies.set(c.name, c.value, c.options);
-void track(payload);`
-    : "";
+void track(payload);`;
+
+  return (
+    <div className="space-y-4 rounded-xl border border-primary/25 bg-primary-soft/30 p-4">
+      <div>
+        <p className="text-sm font-semibold">{t("secretOnceTitle")}</p>
+        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+          {t("secretOnceHint")}
+        </p>
+      </div>
+      <dl className="space-y-3 font-mono text-xs">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <dt className="text-muted-foreground">client_id</dt>
+            <dd className="mt-0.5 break-all text-foreground">{creds.clientId}</dd>
+          </div>
+          <CopyButton
+            value={creds.clientId}
+            label={t("copy")}
+            copiedLabel={t("copied")}
+          />
+        </div>
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <dt className="text-muted-foreground">client_secret</dt>
+            <dd className="mt-0.5 break-all text-foreground">
+              {creds.clientSecret}
+            </dd>
+          </div>
+          <CopyButton
+            value={creds.clientSecret}
+            label={t("copy")}
+            copiedLabel={t("copied")}
+          />
+        </div>
+      </dl>
+      <div>
+        <div className="mb-1.5 flex items-center justify-between gap-2">
+          <span className="text-xs text-muted-foreground">{t("envSnippet")}</span>
+          <CopyButton
+            value={envSnippet}
+            label={t("copy")}
+            copiedLabel={t("copied")}
+          />
+        </div>
+        <pre className="overflow-x-auto rounded-lg border border-border bg-card p-3 text-[11px] leading-relaxed">
+          {envSnippet}
+        </pre>
+      </div>
+    </div>
+  );
+}
+
+export default function AppsPage() {
+  const { data } = useSession();
+  const t = useTranslations("demo.domains");
+  const title = useTranslations("demo");
+  const { apps, loading, activeAppId, setActiveAppId, refreshApps } =
+    useActiveApp();
+
+  const [addOpen, setAddOpen] = useState(false);
+  const [domainInput, setDomainInput] = useState("");
+  const [creating, setCreating] = useState(false);
+
+  const [detailApp, setDetailApp] = useState<AppRow | null>(null);
+  const [creds, setCreds] = useState<Creds | null>(null);
+  const [deleteStep, setDeleteStep] = useState<DeleteStep>("idle");
+  const [confirmDomain, setConfirmDomain] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const closeDetail = useCallback(() => {
+    setDetailApp(null);
+    setCreds(null);
+    setDeleteStep("idle");
+    setConfirmDomain("");
+    setError(null);
+  }, []);
+
+  const openDetail = useCallback((app: AppRow) => {
+    setDetailApp(app);
+    setCreds(null);
+    setDeleteStep("idle");
+    setConfirmDomain("");
+    setError(null);
+  }, []);
+
+  async function onCreate(e: React.FormEvent) {
+    e.preventDefault();
+    if (!data?.apiToken || !domainInput.trim()) return;
+    setCreating(true);
+    setError(null);
+    try {
+      const res = await apiFetch<Creds>("/v1/apps", {
+        method: "POST",
+        token: data.apiToken,
+        body: JSON.stringify({ domain: domainInput.trim() }),
+      });
+      setActiveAppId(res.app.id);
+      await refreshApps();
+      setAddOpen(false);
+      setDomainInput("");
+      setDetailApp({
+        id: res.app.id,
+        domain: res.app.domain,
+        name: res.app.name,
+        role: res.app.role ?? "owner",
+        clientId: res.clientId,
+      });
+      setCreds(res);
+      setDeleteStep("idle");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("createFailed"));
+    } finally {
+      setCreating(false);
+    }
+  }
+
+  async function onRotate() {
+    if (!data?.apiToken || !detailApp) return;
+    if (detailApp.role !== "owner") return;
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await apiFetch<Creds>(
+        `/v1/apps/${detailApp.id}/rotate-secret`,
+        { method: "POST", token: data.apiToken },
+      );
+      setCreds(res);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("rotateFailed"));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function onDelete() {
+    if (!data?.apiToken || !detailApp) return;
+    setBusy(true);
+    setError(null);
+    try {
+      await apiFetch(`/v1/apps/${detailApp.id}`, {
+        method: "DELETE",
+        token: data.apiToken,
+        body: JSON.stringify({ domain: confirmDomain.trim() }),
+      });
+      const deletedId = detailApp.id;
+      closeDetail();
+      if (activeAppId === deletedId) setActiveAppId(null);
+      await refreshApps();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("deleteFailed"));
+    } finally {
+      setBusy(false);
+    }
+  }
 
   return (
     <>
-      <AppHeader title={t("name")} />
+      <AppHeader title={title("titles.domains")} />
       <main className="flex-1 space-y-6 p-4 sm:p-6">
-        <form
-          onSubmit={onCreate}
-          className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4 shadow-sm sm:flex-row sm:items-end"
-        >
-          <label className="flex-1 text-sm">
-            <span className="mb-1.5 block text-muted-foreground">{t("name")}</span>
-            <input
-              value={domain}
-              onChange={(e) => setDomain(e.target.value)}
-              placeholder="example.uz"
-              className="w-full rounded-lg border border-border bg-background px-3 py-2 outline-none focus:ring-2 focus:ring-ring/40"
-              required
-            />
-          </label>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h2 className="text-lg font-semibold tracking-tight">
+              {title("titles.domains")}
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">{t("pageHint")}</p>
+          </div>
           <button
-            type="submit"
+            type="button"
+            onClick={() => {
+              setError(null);
+              setDomainInput("");
+              setAddOpen(true);
+            }}
             className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-3.5 py-2 text-sm font-semibold text-primary-foreground"
           >
             <Plus className="h-4 w-4" />
             {t("add")}
           </button>
-        </form>
-
-        {error && (
-          <p className="rounded-lg bg-accent-soft px-3 py-2 text-sm text-accent">
-            {error}
-          </p>
-        )}
-
-        {created && (
-          <div className="rounded-xl border border-primary/30 bg-primary-soft/40 p-4 text-sm">
-            <p className="font-semibold">Save these credentials now</p>
-            <p className="mt-1 text-muted-foreground">
-              The client secret is shown only once. Store it in server env — never
-              in the browser.
-            </p>
-            <p className="mt-3">
-              Domain: <b>{created.app.domain}</b>
-            </p>
-            <dl className="mt-3 space-y-2 font-mono text-xs">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <dt className="text-muted-foreground">client_id</dt>
-                  <dd className="break-all">{created.clientId}</dd>
-                </div>
-                <CopyButton value={created.clientId} label="Copy client_id" />
-              </div>
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <dt className="text-muted-foreground">client_secret</dt>
-                  <dd className="break-all">{created.clientSecret}</dd>
-                </div>
-                <CopyButton
-                  value={created.clientSecret}
-                  label="Copy client_secret"
-                />
-              </div>
-            </dl>
-            <div className="mt-3">
-              <div className="mb-1.5 flex items-center justify-between gap-2">
-                <span className="text-xs text-muted-foreground">.env snippet</span>
-                <CopyButton value={envSnippet} label="Copy env snippet" />
-              </div>
-              <pre className="overflow-x-auto rounded-lg bg-card p-3 text-xs">
-                {envSnippet}
-              </pre>
-            </div>
-            <button
-              type="button"
-              onClick={() => openApp(created.app.id)}
-              className="mt-3 inline-flex text-primary underline"
-            >
-              Open dashboard →
-            </button>
-          </div>
-        )}
+        </div>
 
         <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
           {loading ? (
-            <p className="p-4 text-sm text-muted-foreground">Loading…</p>
+            <p className="p-4 text-sm text-muted-foreground">{t("loading")}</p>
           ) : apps.length === 0 ? (
-            <p className="p-4 text-sm text-muted-foreground">No domains yet.</p>
+            <div className="px-4 py-12 text-center">
+              <p className="text-sm text-muted-foreground">{t("empty")}</p>
+              <button
+                type="button"
+                onClick={() => setAddOpen(true)}
+                className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+              >
+                <Plus className="h-4 w-4" />
+                {t("add")}
+              </button>
+            </div>
           ) : (
             <table className="w-full min-w-[560px] text-left text-sm">
               <thead className="bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
@@ -215,7 +280,9 @@ void track(payload);`
                   <th className="px-4 py-3 font-medium">{t("name")}</th>
                   <th className="px-4 py-3 font-medium">client_id</th>
                   <th className="px-4 py-3 font-medium">{t("role")}</th>
-                  <th className="px-4 py-3 font-medium" />
+                  <th className="px-4 py-3 font-medium text-right">
+                    {t("actions")}
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -226,22 +293,14 @@ void track(payload);`
                       {a.clientId ?? a.id}
                     </td>
                     <td className="px-4 py-3 capitalize">{a.role}</td>
-                    <td className="space-x-3 px-4 py-3 text-right">
-                      {a.role === "owner" && (
-                        <button
-                          type="button"
-                          onClick={() => void onRotate(a.id)}
-                          className="text-muted-foreground hover:text-foreground hover:underline"
-                        >
-                          Rotate secret
-                        </button>
-                      )}
+                    <td className="px-4 py-3 text-right">
                       <button
                         type="button"
-                        onClick={() => openApp(a.id)}
-                        className="text-primary hover:underline"
+                        onClick={() => openDetail(a)}
+                        className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
                       >
-                        Open
+                        <Eye className="h-3.5 w-3.5" />
+                        {t("details")}
                       </button>
                     </td>
                   </tr>
@@ -251,6 +310,201 @@ void track(payload);`
           )}
         </div>
       </main>
+
+      {/* Add domain sheet */}
+      <Sheet
+        open={addOpen}
+        onClose={() => setAddOpen(false)}
+        title={t("add")}
+        description={t("addHint")}
+      >
+        <form onSubmit={onCreate} className="flex h-full flex-col gap-5">
+          <label className="block text-sm">
+            <span className="mb-1.5 block text-muted-foreground">{t("name")}</span>
+            <input
+              value={domainInput}
+              onChange={(e) => setDomainInput(e.target.value)}
+              placeholder="example.uz"
+              autoFocus
+              required
+              className="w-full rounded-lg border border-border bg-background px-3 py-2.5 outline-none focus:ring-2 focus:ring-ring/40"
+            />
+          </label>
+          {error && addOpen && (
+            <p className="rounded-lg bg-accent-soft px-3 py-2 text-sm text-accent">
+              {error}
+            </p>
+          )}
+          <div className="mt-auto flex gap-2 border-t border-border pt-4">
+            <button
+              type="button"
+              onClick={() => setAddOpen(false)}
+              className="flex-1 rounded-lg border border-border px-3 py-2.5 text-sm font-medium hover:bg-muted"
+            >
+              {t("cancel")}
+            </button>
+            <button
+              type="submit"
+              disabled={creating}
+              className="flex-1 rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-primary-foreground disabled:opacity-60"
+            >
+              {creating ? t("creating") : t("add")}
+            </button>
+          </div>
+        </form>
+      </Sheet>
+
+      {/* Detail / secret / delete sheet */}
+      <Sheet
+        open={Boolean(detailApp)}
+        onClose={closeDetail}
+        title={detailApp?.domain ?? t("details")}
+        description={t("detailsHint")}
+        wide
+      >
+        {detailApp && (
+          <div className="space-y-6">
+            <dl className="divide-y divide-border rounded-xl border border-border">
+              <div className="flex justify-between gap-3 px-4 py-3 text-sm">
+                <dt className="text-muted-foreground">{t("name")}</dt>
+                <dd className="font-medium">{detailApp.domain}</dd>
+              </div>
+              <div className="flex justify-between gap-3 px-4 py-3 text-sm">
+                <dt className="text-muted-foreground">client_id</dt>
+                <dd className="flex min-w-0 items-center gap-2 font-mono text-xs">
+                  <span className="truncate">{detailApp.clientId ?? detailApp.id}</span>
+                  <CopyButton
+                    value={detailApp.clientId ?? detailApp.id}
+                    label={t("copy")}
+                    copiedLabel={t("copied")}
+                  />
+                </dd>
+              </div>
+              <div className="flex justify-between gap-3 px-4 py-3 text-sm">
+                <dt className="text-muted-foreground">{t("role")}</dt>
+                <dd className="capitalize font-medium">{detailApp.role}</dd>
+              </div>
+            </dl>
+
+            {creds && <CredsBlock creds={creds} t={t} />}
+
+            {!creds && (
+              <p className="text-sm text-muted-foreground">{t("secretHidden")}</p>
+            )}
+
+            {detailApp.role === "owner" && (
+              <div className="space-y-3">
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => void onRotate()}
+                  className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm font-medium transition hover:bg-muted disabled:opacity-60"
+                >
+                  {t("rotate")}
+                </button>
+                <p className="text-xs text-muted-foreground">{t("rotateHint")}</p>
+              </div>
+            )}
+
+            {error && detailApp && (
+              <p className="rounded-lg bg-accent-soft px-3 py-2 text-sm text-accent">
+                {error}
+              </p>
+            )}
+
+            {detailApp.role === "owner" && (
+              <div className="border-t border-border pt-6">
+                <h3 className="text-sm font-semibold text-danger">{t("dangerZone")}</h3>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {t("deleteHint")}
+                </p>
+
+                {deleteStep === "idle" && (
+                  <button
+                    type="button"
+                    onClick={() => setDeleteStep("confirm")}
+                    className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-danger/30 bg-danger/5 px-3 py-2.5 text-sm font-medium text-danger transition hover:bg-danger/10"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    {t("delete")}
+                  </button>
+                )}
+
+                {deleteStep === "confirm" && (
+                  <div className="mt-4 space-y-3 rounded-xl border border-danger/25 bg-danger/5 p-4">
+                    <p className="text-sm font-medium text-foreground">
+                      {t("deleteConfirmAsk")}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {t("deleteConfirmWarn")}
+                    </p>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setDeleteStep("idle")}
+                        className="flex-1 rounded-lg border border-border px-3 py-2 text-sm font-medium hover:bg-muted"
+                      >
+                        {t("cancel")}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setConfirmDomain("");
+                          setDeleteStep("type");
+                        }}
+                        className="flex-1 rounded-lg bg-danger px-3 py-2 text-sm font-semibold text-white"
+                      >
+                        {t("deleteContinue")}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {deleteStep === "type" && (
+                  <div className="mt-4 space-y-3 rounded-xl border border-danger/25 bg-danger/5 p-4">
+                    <p className="text-sm font-medium">
+                      {t("deleteTypeAsk", { domain: detailApp.domain })}
+                    </p>
+                    <input
+                      value={confirmDomain}
+                      onChange={(e) => setConfirmDomain(e.target.value)}
+                      placeholder={detailApp.domain}
+                      autoFocus
+                      className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-danger/30"
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setDeleteStep("confirm");
+                          setConfirmDomain("");
+                        }}
+                        className="flex-1 rounded-lg border border-border px-3 py-2 text-sm font-medium hover:bg-muted"
+                      >
+                        {t("back")}
+                      </button>
+                      <button
+                        type="button"
+                        disabled={
+                          busy ||
+                          confirmDomain.trim().toLowerCase() !==
+                            detailApp.domain.toLowerCase()
+                        }
+                        onClick={() => void onDelete()}
+                        className={cn(
+                          "flex-1 rounded-lg bg-danger px-3 py-2 text-sm font-semibold text-white disabled:opacity-40",
+                        )}
+                      >
+                        {busy ? t("deleting") : t("deleteForever")}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+      </Sheet>
     </>
   );
 }
