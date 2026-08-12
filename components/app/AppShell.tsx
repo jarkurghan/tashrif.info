@@ -8,9 +8,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <DemoShellProvider>
       <ActiveAppProvider>
-        <div className="flex min-h-dvh bg-background">
+        <div className="flex h-dvh overflow-hidden bg-background">
           <AppSidebar />
-          <div className="flex min-w-0 flex-1 flex-col">{children}</div>
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto overflow-x-hidden">
+            {children}
+          </div>
         </div>
       </ActiveAppProvider>
     </DemoShellProvider>

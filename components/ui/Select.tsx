@@ -8,7 +8,7 @@ import {
   useRef,
   useState,
   type CSSProperties,
-  type KeyboardEvent,
+  type KeyboardEvent as ReactKeyboardEvent,
 } from "react";
 import { createPortal } from "react-dom";
 import { Check, ChevronDown } from "lucide-react";
@@ -161,7 +161,7 @@ export function Select({
     triggerRef.current?.focus();
   }
 
-  function onTriggerKeyDown(e: KeyboardEvent<HTMLButtonElement>) {
+  function onTriggerKeyDown(e: ReactKeyboardEvent<HTMLButtonElement>) {
     if (disabled) return;
     if (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ") {
       e.preventDefault();
@@ -169,7 +169,7 @@ export function Select({
     }
   }
 
-  function onListKeyDown(e: KeyboardEvent<HTMLDivElement>) {
+  function onListKeyDown(e: ReactKeyboardEvent<HTMLDivElement>) {
     if (e.key === "ArrowDown") {
       e.preventDefault();
       setActiveIndex((i) => Math.min(enabledOptions.length - 1, i + 1));

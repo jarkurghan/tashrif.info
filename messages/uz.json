@@ -89,6 +89,31 @@
     "account": {
       "logout": "Chiqish"
     },
+    "settings": {
+      "title": "Sozlamalar",
+      "profile": "Profil",
+      "profileHint": "tashrif.info hisobingiz ma'lumotlari",
+      "linked": "Bog'langan hisoblar",
+      "linkedHint": "Bu akkauntga ulangan kirish provayderlari",
+      "preferences": "Sozlamalar",
+      "language": "Til",
+      "session": "Sessiya",
+      "sessionHint": "Ushbu brauzerdan chiqish",
+      "userId": "Foydalanuvchi ID",
+      "email": "Email",
+      "name": "Ism",
+      "locale": "Hisob tili",
+      "memberSince": "A'zo bo'lgan sana",
+      "domains": "Domenlar",
+      "provider": "Provayder",
+      "providerId": "Provayder ID",
+      "copy": "Nusxa",
+      "copied": "Nusxalandi",
+      "noEmail": "Email yo'q",
+      "noName": "Ism ko'rsatilmagan",
+      "noAccounts": "Hali bog'langan provayder yo'q",
+      "loading": "Profil yuklanmoqda…"
+    },
     "titles": {
       "traffic": "Trafik",
       "pages": "Sahifalar",

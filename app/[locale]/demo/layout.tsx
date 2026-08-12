@@ -15,11 +15,11 @@ export default async function DemoLayout({
 
   return (
     <DemoShellProvider>
-      <div className="flex min-h-dvh bg-background">
+      <div className="flex h-dvh overflow-hidden bg-background">
         <DemoSidebar />
-        <div className="flex min-w-0 flex-1 flex-col">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto overflow-x-hidden">
           <DemoHeader />
-          <main className="flex-1 overflow-x-hidden p-4 sm:p-6">{children}</main>
+          <main className="flex-1 p-4 sm:p-6">{children}</main>
         </div>
       </div>
     </DemoShellProvider>

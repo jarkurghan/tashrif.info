@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import { useRouter, usePathname } from "@/i18n/navigation";
 import {
@@ -8,50 +8,53 @@ import {
   appSubPath,
 } from "@/components/app/ActiveAppProvider";
 
-const STORAGE_KEY = "tashrif_active_app_id";
-
+/**
+ * URL is source of truth for /app/[appId]/...
+ * Sync active site to the URL app when allowed.
+ * Redirect only after apps finished loading and the URL app is inaccessible.
+ */
 export function ActiveAppGuard({ children }: { children: React.ReactNode }) {
   const params = useParams<{ appId: string }>();
   const urlAppId = params.appId;
   const pathname = usePathname();
   const router = useRouter();
-  const { activeAppId, loading, adoptAppIdFromUrl } = useActiveApp();
+  const { apps, activeAppId, loading, setActiveAppId } = useActiveApp();
+  const redirected = useRef(false);
+
+  const urlAllowed =
+    Boolean(urlAppId) && apps.some((a) => a.id === urlAppId);
 
   useEffect(() => {
-    if (loading || !urlAppId) return;
+    redirected.current = false;
+  }, [urlAppId]);
 
-    const stored =
-      typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null;
+  useEffect(() => {
+    if (loading || !urlAppId || redirected.current) return;
 
-    if (!stored) {
-      adoptAppIdFromUrl(urlAppId);
+    if (urlAllowed) {
+      if (urlAppId !== activeAppId) setActiveAppId(urlAppId);
       return;
     }
 
-    if (!activeAppId) {
-      router.replace("/app");
-      return;
-    }
-
-    if (urlAppId !== activeAppId) {
+    // Apps loaded; this appId is not in the list → leave this route once.
+    redirected.current = true;
+    if (activeAppId) {
       router.replace(`/app/${activeAppId}${appSubPath(pathname)}`);
+    } else {
+      router.replace("/app");
     }
   }, [
     loading,
     urlAppId,
+    urlAllowed,
     activeAppId,
     pathname,
     router,
-    adoptAppIdFromUrl,
+    setActiveAppId,
   ]);
 
   if (loading) return null;
-
-  const stored =
-    typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null;
-  if (!stored && urlAppId) return null;
-
-  if (!activeAppId || urlAppId !== activeAppId) return null;
+  if (!urlAllowed) return null;
 
   return children;
 }

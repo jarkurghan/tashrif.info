@@ -28,7 +28,7 @@ type ActiveAppContextValue = {
   loading: boolean;
   setActiveAppId: (id: string | null) => void;
   adoptAppIdFromUrl: (urlAppId: string) => void;
-  refreshApps: () => Promise<void>;
+  refreshApps: (preferredId?: string | null) => Promise<void>;
 };
 
 const ActiveAppContext = createContext<ActiveAppContextValue | null>(null);
@@ -38,21 +38,35 @@ function readStoredId(): string | null {
   return localStorage.getItem(STORAGE_KEY);
 }
 
+/** Prefer /app/[appId] from the current URL when resolving after refresh. */
+function readUrlAppId(): string | null {
+  if (typeof window === "undefined") return null;
+  const match = window.location.pathname.match(/\/(?:uz|en)\/app\/([^/]+)/);
+  if (match?.[1]) return match[1];
+  const bare = window.location.pathname.match(/\/app\/([^/]+)/);
+  return bare?.[1] ?? null;
+}
+
 function writeStoredId(id: string | null) {
   if (typeof window === "undefined") return;
   if (id) localStorage.setItem(STORAGE_KEY, id);
   else localStorage.removeItem(STORAGE_KEY);
 }
 
-function resolveActiveId(apps: AppRow[], preferred: string | null): string | null {
+function resolveActiveId(
+  apps: AppRow[],
+  ...preferred: Array<string | null | undefined>
+): string | null {
   if (apps.length === 0) return null;
-  if (preferred && apps.some((a) => a.id === preferred)) return preferred;
+  for (const id of preferred) {
+    if (id && apps.some((a) => a.id === id)) return id;
+  }
   if (apps.length === 1) return apps[0]!.id;
   return null;
 }
 
 export function ActiveAppProvider({ children }: { children: React.ReactNode }) {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const apiToken = session?.apiToken;
   const [apps, setApps] = useState<AppRow[]>([]);
   const [activeAppId, setActiveAppIdState] = useState<string | null>(null);
@@ -64,30 +78,47 @@ export function ActiveAppProvider({ children }: { children: React.ReactNode }) {
     writeStoredId(id);
   }, []);
 
-  const refreshApps = useCallback(async () => {
-    if (!apiToken) {
-      setApps([]);
-      setActiveAppIdState(null);
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
-    try {
-      const res = await apiFetch<{ apps: AppRow[] }>("/v1/apps", {
-        token: apiToken,
-      });
-      setApps(res.apps);
-      const stored = readStoredId();
-      const resolved = resolveActiveId(res.apps, stored);
-      if (stored && resolved !== stored) writeStoredId(resolved);
-      setActiveAppIdState(resolved);
-    } catch {
-      setApps([]);
-      setActiveAppIdState(null);
-    } finally {
-      setLoading(false);
-    }
-  }, [apiToken]);
+  const refreshApps = useCallback(
+    async (preferredId?: string | null) => {
+      // Wait for NextAuth — do not treat "no token yet" as empty apps (causes /app redirect).
+      if (status === "loading") {
+        setLoading(true);
+        return;
+      }
+
+      if (!apiToken) {
+        setApps([]);
+        setActiveAppIdState(null);
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const res = await apiFetch<{ apps: AppRow[] }>("/v1/apps", {
+          token: apiToken,
+        });
+        setApps(res.apps);
+        const stored = readStoredId();
+        const resolved = resolveActiveId(
+          res.apps,
+          preferredId,
+          readUrlAppId(),
+          stored,
+          activeAppId,
+        );
+        if (resolved) writeStoredId(resolved);
+        else if (stored) writeStoredId(null);
+        setActiveAppIdState(resolved);
+      } catch {
+        setApps([]);
+        setActiveAppIdState(null);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [apiToken, status, activeAppId],
+  );
 
   useEffect(() => {
     setHydrated(true);
@@ -95,16 +126,17 @@ export function ActiveAppProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     void refreshApps();
-  }, [refreshApps]);
+    // Intentionally only when auth readiness / token changes — not on every activeAppId tweak.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [apiToken, status]);
 
-  /** First visit: localStorage empty + user opened /app/[id]/... */
+  /** Sync active site from a valid /app/[appId] URL (URL wins over stale storage). */
   const adoptAppIdFromUrl = useCallback(
     (urlAppId: string) => {
       if (!apps.some((a) => a.id === urlAppId)) return;
-      const stored = readStoredId();
-      if (!stored) setActiveAppId(urlAppId);
+      if (activeAppId !== urlAppId) setActiveAppId(urlAppId);
     },
-    [apps, setActiveAppId],
+    [apps, activeAppId, setActiveAppId],
   );
 
   const activeApp = useMemo(
@@ -112,12 +144,14 @@ export function ActiveAppProvider({ children }: { children: React.ReactNode }) {
     [apps, activeAppId],
   );
 
+  const sessionPending = status === "loading";
+
   const value = useMemo(
     () => ({
       apps,
       activeAppId: hydrated ? activeAppId : null,
       activeApp,
-      loading: !hydrated || loading,
+      loading: !hydrated || loading || sessionPending,
       setActiveAppId,
       adoptAppIdFromUrl,
       refreshApps,
@@ -128,6 +162,7 @@ export function ActiveAppProvider({ children }: { children: React.ReactNode }) {
       activeApp,
       hydrated,
       loading,
+      sessionPending,
       setActiveAppId,
       adoptAppIdFromUrl,
       refreshApps,

@@ -89,6 +89,31 @@
     "account": {
       "logout": "Log out"
     },
+    "settings": {
+      "title": "Settings",
+      "profile": "Profile",
+      "profileHint": "Your tashrif.info account details",
+      "linked": "Linked accounts",
+      "linkedHint": "Sign-in providers connected to this account",
+      "preferences": "Preferences",
+      "language": "Language",
+      "session": "Session",
+      "sessionHint": "Sign out of this browser",
+      "userId": "User ID",
+      "email": "Email",
+      "name": "Name",
+      "locale": "Account locale",
+      "memberSince": "Member since",
+      "domains": "Domains",
+      "provider": "Provider",
+      "providerId": "Provider ID",
+      "copy": "Copy",
+      "copied": "Copied",
+      "noEmail": "No email on file",
+      "noName": "No display name",
+      "noAccounts": "No linked providers yet",
+      "loading": "Loading profile…"
+    },
     "titles": {
       "traffic": "Traffic",
       "pages": "Pages",

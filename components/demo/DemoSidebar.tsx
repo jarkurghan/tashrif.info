@@ -40,7 +40,7 @@ export function DemoSidebar() {
   return (
     <aside
       className={cn(
-        "sticky top-0 flex h-dvh shrink-0 flex-col border-r border-border bg-sidebar transition-[width] duration-200",
+        "flex h-full shrink-0 flex-col border-r border-border bg-sidebar transition-[width] duration-200",
         collapsed ? "w-[72px]" : "w-64",
       )}
     >
