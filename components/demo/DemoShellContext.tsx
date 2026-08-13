@@ -10,6 +10,27 @@ import {
 } from "react";
 
 const STORAGE_KEY = "tashrif_sidebar_collapsed";
+const MOBILE_MQ = "(max-width: 767px)";
+
+function isMobileViewport() {
+  return window.matchMedia(MOBILE_MQ).matches;
+}
+
+function readStoredCollapsed() {
+  try {
+    return localStorage.getItem(STORAGE_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function writeStoredCollapsed(v: boolean) {
+  try {
+    localStorage.setItem(STORAGE_KEY, v ? "1" : "0");
+  } catch {
+    /* ignore */
+  }
+}
 
 type DemoShellContextValue = {
   collapsed: boolean;
@@ -20,35 +41,29 @@ type DemoShellContextValue = {
 const DemoShellContext = createContext<DemoShellContextValue | null>(null);
 
 export function DemoShellProvider({ children }: { children: ReactNode }) {
-  const [collapsed, setCollapsedState] = useState(false);
+  const [collapsed, setCollapsedState] = useState(true);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    try {
-      setCollapsedState(localStorage.getItem(STORAGE_KEY) === "1");
-    } catch {
-      /* ignore */
-    }
+    const mq = window.matchMedia(MOBILE_MQ);
+    const apply = () => {
+      setCollapsedState(mq.matches ? true : readStoredCollapsed());
+    };
+    apply();
     setReady(true);
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
   }, []);
 
   const setCollapsed = useCallback((v: boolean) => {
     setCollapsedState(v);
-    try {
-      localStorage.setItem(STORAGE_KEY, v ? "1" : "0");
-    } catch {
-      /* ignore */
-    }
+    if (!isMobileViewport()) writeStoredCollapsed(v);
   }, []);
 
   const toggle = useCallback(() => {
     setCollapsedState((c) => {
       const next = !c;
-      try {
-        localStorage.setItem(STORAGE_KEY, next ? "1" : "0");
-      } catch {
-        /* ignore */
-      }
+      if (!isMobileViewport()) writeStoredCollapsed(next);
       return next;
     });
   }, []);
@@ -56,7 +71,7 @@ export function DemoShellProvider({ children }: { children: ReactNode }) {
   return (
     <DemoShellContext.Provider
       value={{
-        collapsed: ready ? collapsed : false,
+        collapsed: ready ? collapsed : true,
         setCollapsed,
         toggle,
       }}

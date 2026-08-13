@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useEffect } from "react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useDemoShell } from "./DemoShellContext";
 import { cn } from "@/lib/cn";
@@ -31,13 +32,23 @@ const manage = [
 export function DemoSidebar() {
   const t = useTranslations("demo");
   const pathname = usePathname();
-  const { collapsed, toggle } = useDemoShell();
+  const { collapsed, toggle, setCollapsed } = useDemoShell();
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    if (mq.matches) setCollapsed(true);
+  }, [pathname, setCollapsed]);
 
   return (
+    <>
     <aside
       className={cn(
-        "flex h-full shrink-0 flex-col border-r border-border bg-sidebar transition-[width] duration-200",
-        collapsed ? "w-[72px]" : "w-64",
+        "flex h-full flex-col border-r border-border bg-sidebar",
+        "max-md:fixed max-md:inset-y-0 max-md:left-0 max-md:z-50 max-md:w-64 max-md:transition-transform max-md:duration-300",
+        collapsed
+          ? "max-md:-translate-x-full md:w-[72px]"
+          : "w-64 max-md:translate-x-0",
+        "md:relative md:shrink-0 md:transition-[width] md:duration-200",
       )}
     >
       <div
@@ -96,6 +107,15 @@ export function DemoSidebar() {
         )}
       </button>
     </aside>
+    {!collapsed && (
+      <button
+        type="button"
+        aria-label="Close menu"
+        className="fixed inset-0 z-40 bg-foreground/30 md:hidden"
+        onClick={() => setCollapsed(true)}
+      />
+    )}
+    </>
   );
 }
 

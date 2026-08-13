@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useEffect } from "react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useDemoShell } from "@/components/demo/DemoShellContext";
 import { useActiveApp } from "@/components/app/ActiveAppProvider";
@@ -112,7 +113,7 @@ function NavIconLink({
 export function AppSidebar() {
   const t = useTranslations("demo");
   const pathname = usePathname();
-  const { collapsed, toggle } = useDemoShell();
+  const { collapsed, toggle, setCollapsed } = useDemoShell();
   const { activeAppId, apps, loading } = useActiveApp();
   const { invites } = useInviteInbox();
 
@@ -136,12 +137,21 @@ export function AppSidebar() {
   const showEmptyHint = !loading && (apps.length === 0 || !activeAppId);
   const expandLabel = t.has("expand") ? t("expand") : "Expand";
 
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    if (mq.matches) setCollapsed(true);
+  }, [pathname, setCollapsed]);
+
   return (
     <aside
       className={cn(
-        "flex h-full shrink-0 flex-col overflow-hidden border-r border-border bg-sidebar will-change-[width] transition-[width]",
+        "flex h-full flex-col overflow-hidden border-r border-border bg-sidebar",
         EASE,
-        collapsed ? "w-[68px]" : "w-64",
+        "max-md:fixed max-md:inset-y-0 max-md:left-0 max-md:z-50 max-md:w-64 max-md:transition-transform",
+        collapsed
+          ? "max-md:-translate-x-full md:w-[68px]"
+          : "w-64 max-md:translate-x-0",
+        "md:relative md:shrink-0 md:transition-[width]",
       )}
     >
       <div className={cn("flex h-16 shrink-0 items-center gap-2 border-b border-border", RAIL)}>
