@@ -17,6 +17,7 @@ export type RankedItem = {
   percent: number;
   flag?: string;
   code?: string;
+  title?: string;
 };
 
 export type EventPoint = {
@@ -38,6 +39,7 @@ export type LogEntry = {
   flag: string;
   ip: string;
   visitorId: string;
+  userAgent: string;
 };
 
 export type DomainRow = {
@@ -119,6 +121,39 @@ export const pages: RankedItem[] = [
   { label: "/blog", value: 1800, percent: 7 },
   { label: "/dashboard", value: 1500, percent: 6 },
   { label: "/login", value: 980, percent: 4 },
+];
+
+export const userAgents: RankedItem[] = [
+  {
+    label:
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    value: 4200,
+    percent: 38,
+  },
+  {
+    label:
+      "Mozilla/5.0 (iPhone; CPU iPhone OS 18_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.2 Mobile/15E148 Safari/604.1",
+    value: 2100,
+    percent: 19,
+  },
+  {
+    label:
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    value: 1640,
+    percent: 15,
+  },
+  {
+    label:
+      "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.6778.135 Mobile Safari/537.36",
+    value: 1280,
+    percent: 12,
+  },
+  {
+    label:
+      "Mozilla/5.0 (X11; Linux x86_64; rv:133.0) Gecko/20100101 Firefox/133.0",
+    value: 890,
+    percent: 8,
+  },
 ];
 
 export const entryPages: RankedItem[] = [
@@ -243,6 +278,13 @@ function makeLogs(): LogEntry[] {
   ];
   const methods: LogEntry["method"][] = ["GET", "GET", "GET", "POST", "PUT"];
   const statuses = [200, 200, 200, 201, 304, 404];
+  const agents = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 18_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.2 Mobile/15E148 Safari/604.1",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.6778.135 Mobile Safari/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64; rv:133.0) Gecko/20100101 Firefox/133.0",
+  ];
 
   return Array.from({ length: 87 }, (_, i) => {
     const c = countries[i % countries.length];
@@ -258,6 +300,7 @@ function makeLogs(): LogEntry[] {
       flag: c.flag,
       ip: `185.${(i * 3) % 255}.${(i * 11) % 255}.${(i * 17) % 255}`,
       visitorId: `vis_${(1000 + ((i * 37) % 9000)).toString(16)}`,
+      userAgent: agents[i % agents.length],
     };
   });
 }

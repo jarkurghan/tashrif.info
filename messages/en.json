@@ -136,6 +136,7 @@
       "region": "Region",
       "city": "City",
       "page": "Page",
+      "userAgent": "User-Agent",
       "entry": "Entry pages",
       "exit": "Exit pages"
     },
@@ -155,12 +156,13 @@
       "showing": "{count} paths"
     },
     "logs": {
-      "search": "Search path or IP…",
+      "search": "Search path, IP, or User-Agent…",
       "filter": "Filter",
       "path": "Path",
       "country": "Country",
       "ip": "IP",
       "visitor": "Visitor",
+      "userAgent": "User-Agent",
       "time": "Time",
       "method": "Method",
       "status": "Status",

@@ -19,6 +19,7 @@ import { AppHeader } from "@/components/app/AppHeader";
 import { MetricCard } from "@/components/demo/MetricCard";
 import { RankedList } from "@/components/demo/RankedList";
 import { WorldMap } from "@/components/demo/WorldMap";
+import { groupByParsedUserAgent } from "@/lib/parse-user-agent";
 
 export default function TrafficPage() {
   const { activeAppId: appId } = useActiveApp();
@@ -38,12 +39,15 @@ export default function TrafficPage() {
   const [locations, setLocations] = useState<
     { label: string; value: number; percent: number; flag?: string }[]
   >([]);
+  const [userAgents, setUserAgents] = useState<
+    { label: string; value: number; percent: number }[]
+  >([]);
 
   useEffect(() => {
     if (!data?.apiToken || !appId) return;
     const token = data.apiToken;
     void (async () => {
-      const [ov, ts, pg, loc] = await Promise.all([
+      const [ov, ts, pg, loc, ua] = await Promise.all([
         apiFetch<{
           users: number;
           sessions: number;
@@ -60,6 +64,10 @@ export default function TrafficPage() {
         apiFetch<{
           items: { label: string; value: number; percent: number }[];
         }>(`/v1/apps/${appId}/locations`, { token }),
+        apiFetch<{ items: { label: string; value: number; percent: number }[] }>(
+          `/v1/apps/${appId}/user-agents`,
+          { token },
+        ),
       ]);
       setOverview(ov);
       setSeries(ts.series);
@@ -70,6 +78,7 @@ export default function TrafficPage() {
           flag: i.label.length === 2 ? undefined : undefined,
         })),
       );
+      setUserAgents(groupByParsedUserAgent(ua.items));
     })().catch(console.error);
   }, [data?.apiToken, appId]);
 
@@ -130,6 +139,7 @@ export default function TrafficPage() {
         <div className="grid gap-4 lg:grid-cols-2">
           <WorldMap className="min-h-[280px]" />
           <RankedList
+            className="h-full min-h-[280px]"
             tabs={[{ id: "country", label: t("tabs.country") }]}
             datasets={{ country: locations }}
           />
@@ -138,6 +148,11 @@ export default function TrafficPage() {
         <RankedList
           tabs={[{ id: "page", label: t("tabs.page") }]}
           datasets={{ page: pages }}
+        />
+
+        <RankedList
+          tabs={[{ id: "userAgent", label: t("tabs.userAgent") }]}
+          datasets={{ userAgent: userAgents }}
         />
       </main>
     </>

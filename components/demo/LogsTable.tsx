@@ -6,6 +6,7 @@ import { logs } from "@/lib/demo-data";
 import { Select } from "@/components/ui/Select";
 import { Filter, Search } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { formatUserAgent } from "@/lib/parse-user-agent";
 
 const PAGE_SIZE = 20;
 
@@ -22,7 +23,8 @@ export function LogsTable() {
         !q ||
         row.path.toLowerCase().includes(q) ||
         row.ip.includes(q) ||
-        row.visitorId.toLowerCase().includes(q);
+        row.visitorId.toLowerCase().includes(q) ||
+        row.userAgent.toLowerCase().includes(q);
       const matchesM = method === "ALL" || row.method === method;
       return matchesQ && matchesM;
     });
@@ -70,7 +72,7 @@ export function LogsTable() {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[720px] text-left text-sm">
+        <table className="w-full min-w-[960px] text-left text-sm">
           <thead className="bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
               <th className="px-4 py-3 font-medium">{t("time")}</th>
@@ -80,6 +82,7 @@ export function LogsTable() {
               <th className="px-4 py-3 font-medium">{t("country")}</th>
               <th className="px-4 py-3 font-medium">{t("ip")}</th>
               <th className="px-4 py-3 font-medium">{t("visitor")}</th>
+              <th className="px-4 py-3 font-medium">{t("userAgent")}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -117,6 +120,12 @@ export function LogsTable() {
                 </td>
                 <td className="px-4 py-2.5 font-mono text-xs text-muted-foreground">
                   {row.visitorId}
+                </td>
+                <td
+                  className="max-w-[280px] truncate px-4 py-2.5 text-sm"
+                  title={row.userAgent}
+                >
+                  {formatUserAgent(row.userAgent)}
                 </td>
               </tr>
             ))}

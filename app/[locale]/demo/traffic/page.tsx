@@ -11,7 +11,9 @@ import {
   metrics,
   pages,
   regions,
+  userAgents,
 } from "@/lib/demo-data";
+import { groupByParsedUserAgent } from "@/lib/parse-user-agent";
 
 export default async function TrafficPage({
   params,
@@ -41,6 +43,7 @@ export default async function TrafficPage({
       <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
         <WorldMap className="min-h-[320px]" />
         <RankedList
+          className="h-full min-h-[320px]"
           tabs={[
             { id: "country", label: t("tabs.country") },
             { id: "region", label: t("tabs.region") },
@@ -65,6 +68,11 @@ export default async function TrafficPage({
           entry: entryPages,
           exit: exitPages,
         }}
+      />
+
+      <RankedList
+        tabs={[{ id: "userAgent", label: t("tabs.userAgent") }]}
+        datasets={{ userAgent: groupByParsedUserAgent(userAgents) }}
       />
     </div>
   );

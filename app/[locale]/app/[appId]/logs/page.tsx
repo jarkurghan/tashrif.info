@@ -9,6 +9,7 @@ import { AppHeader } from "@/components/app/AppHeader";
 import { Select } from "@/components/ui/Select";
 import { Filter, Search } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { formatUserAgent } from "@/lib/parse-user-agent";
 
 type LogItem = {
   id: string;
@@ -19,6 +20,7 @@ type LogItem = {
   country: string | null;
   ip: string | null;
   visitorId: string;
+  userAgent: string | null;
 };
 
 export default function LogsAnalyticsPage() {
@@ -93,7 +95,7 @@ export default function LogsAnalyticsPage() {
             </div>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[720px] text-left text-sm">
+            <table className="w-full min-w-[960px] text-left text-sm">
               <thead className="bg-muted/40 text-xs uppercase text-muted-foreground">
                 <tr>
                   <th className="px-4 py-3">{t("time")}</th>
@@ -103,6 +105,7 @@ export default function LogsAnalyticsPage() {
                   <th className="px-4 py-3">{t("country")}</th>
                   <th className="px-4 py-3">{t("ip")}</th>
                   <th className="px-4 py-3">{t("visitor")}</th>
+                  <th className="px-4 py-3">{t("userAgent")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -132,6 +135,12 @@ export default function LogsAnalyticsPage() {
                     <td className="px-4 py-2.5">{row.country ?? "—"}</td>
                     <td className="px-4 py-2.5 font-mono text-xs">{row.ip}</td>
                     <td className="px-4 py-2.5 font-mono text-xs">{row.visitorId}</td>
+                    <td
+                      className="max-w-[280px] truncate px-4 py-2.5 text-sm"
+                      title={row.userAgent ?? undefined}
+                    >
+                      {formatUserAgent(row.userAgent)}
+                    </td>
                   </tr>
                 ))}
               </tbody>

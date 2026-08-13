@@ -136,6 +136,7 @@
       "region": "Viloyat",
       "city": "Shahar",
       "page": "Sahifa",
+      "userAgent": "User-Agent",
       "entry": "Kirish sahifalari",
       "exit": "Chiqish sahifalari"
     },
@@ -155,12 +156,13 @@
       "showing": "{count} ta yo'l"
     },
     "logs": {
-      "search": "Yo'l yoki IP qidirish…",
+      "search": "Yo'l, IP yoki User-Agent qidirish…",
       "filter": "Filtr",
       "path": "Yo'l",
       "country": "Mamlakat",
       "ip": "IP",
       "visitor": "Tashrifchi",
+      "userAgent": "User-Agent",
       "time": "Vaqt",
       "method": "Metod",
       "status": "Holat",
