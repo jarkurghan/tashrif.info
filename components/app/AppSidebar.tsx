@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useDemoShell } from "@/components/demo/DemoShellContext";
 import { useActiveApp } from "@/components/app/ActiveAppProvider";
+import { useInviteInbox } from "@/components/app/InviteInboxProvider";
 import { SiteSelect } from "@/components/app/SiteSelect";
 import { cn } from "@/lib/cn";
 import {
@@ -71,12 +72,14 @@ function NavIconLink({
   collapsed,
   label,
   icon: Icon,
+  badge,
 }: {
   href: string;
   active: boolean;
   collapsed: boolean;
   label: string;
   icon: LucideIcon;
+  badge?: number;
 }) {
   return (
     <Link
@@ -90,8 +93,18 @@ function NavIconLink({
           : "text-muted-foreground hover:bg-muted hover:text-foreground",
       )}
     >
-      <Icon className="h-4 w-4 shrink-0" />
+      <span className="relative shrink-0">
+        <Icon className="h-4 w-4" />
+        {collapsed && badge ? (
+          <span className="absolute -right-1 -top-1 h-1.5 w-1.5 rounded-full bg-accent" />
+        ) : null}
+      </span>
       <FadeLabel collapsed={collapsed}>{label}</FadeLabel>
+      {!collapsed && badge ? (
+        <span className="ml-auto rounded-full bg-accent-soft px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-accent">
+          {badge}
+        </span>
+      ) : null}
     </Link>
   );
 }
@@ -101,6 +114,7 @@ export function AppSidebar() {
   const pathname = usePathname();
   const { collapsed, toggle } = useDemoShell();
   const { activeAppId, apps, loading } = useActiveApp();
+  const { invites } = useInviteInbox();
 
   const base = activeAppId ? `/app/${activeAppId}` : null;
 
@@ -191,6 +205,7 @@ export function AppSidebar() {
                       collapsed={collapsed}
                       label={t(`nav.${item.key}`)}
                       icon={item.icon}
+                      badge={item.key === "access" ? invites.length : undefined}
                     />
                   </li>
                 ))}

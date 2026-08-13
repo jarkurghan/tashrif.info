@@ -80,7 +80,7 @@
       "pages": "Sahifalar",
       "logs": "Loglar",
       "domains": "Domenlar",
-      "access": "Ruhsatlar",
+      "access": "Ruxsatlar",
       "reports": "Hisobotlar",
       "settings": "Sozlamalar"
     },
@@ -117,7 +117,7 @@
       "pages": "Sahifalar",
       "logs": "So'rov loglari",
       "domains": "Mening domenlarim",
-      "access": "Ruhsatlar va takliflar",
+      "access": "Ruxsatlar va takliflar",
       "reports": "Telegram hisobotlari"
     },
     "metrics": {
@@ -227,7 +227,18 @@
       "viewer": "Kuzatuvchi",
       "pending": "Kutilmoqda",
       "accepted": "Qabul qilingan",
-      "revoke": "Bekor qilish"
+      "revoke": "Bekor qilish",
+      "incomingTitle": "Sizga takliflar",
+      "accept": "Qabul qilish",
+      "decline": "Rad etish",
+      "pendingWarning": "Sizga {count} ta taklif bor",
+      "invitedBy": "Yuboruvchi",
+      "notRegistered": "Bu email tashrif.info da login qilmagan. Taklif faqat allaqachon ro'yxatdan o'tgan foydalanuvchilarga yuboriladi — avval ular Google orqali kirishi kerak.",
+      "alreadyMember": "Bu foydalanuvchi allaqachon ushbu sayt a'zosi.",
+      "selfInvite": "O'zingizni taklif qilib bo'lmaydi.",
+      "inviteCreated": "Taklif yuborildi",
+      "inviteCancelled": "Taklif bekor qilindi",
+      "inviteFailed": "Taklif yuborilmadi"
     },
     "reports": {
       "title": "Telegram hisobotlari",

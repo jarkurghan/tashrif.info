@@ -227,7 +227,18 @@
       "viewer": "Viewer",
       "pending": "Pending",
       "accepted": "Accepted",
-      "revoke": "Revoke"
+      "revoke": "Revoke",
+      "incomingTitle": "Invitations for you",
+      "accept": "Accept",
+      "decline": "Decline",
+      "pendingWarning": "You have {count} pending invitation(s)",
+      "invitedBy": "Invited by",
+      "notRegistered": "This email has not signed in to tashrif.info. Invites can only be sent to people who already have an account — they need to log in with Google first.",
+      "alreadyMember": "This user is already a member of this site.",
+      "selfInvite": "You cannot invite yourself.",
+      "inviteCreated": "Invitation sent",
+      "inviteCancelled": "Invitation cancelled",
+      "inviteFailed": "Could not send invitation"
     },
     "reports": {
       "title": "Telegram reports",
