@@ -97,23 +97,33 @@ export default function PagesAnalyticsPage() {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[720px] text-left text-sm">
-              <thead className="bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
+            <table className="w-full text-left text-xs md:text-sm">
+              <thead className="bg-muted/40 text-[11px] uppercase tracking-wide text-muted-foreground md:text-xs">
                 <tr>
-                  <th className="px-4 py-3 font-medium">{tp("path")}</th>
-                  <th className="px-4 py-3 font-medium text-right">
-                    {tp("visitors")}
+                  <th className="px-3 py-2.5 font-medium md:px-4 md:py-3">
+                    {tp("path")}
                   </th>
-                  <th className="px-4 py-3 font-medium text-right">
-                    {tp("visits")}
+                  <th
+                    className="w-px whitespace-nowrap px-1.5 py-2.5 text-right font-medium tracking-normal md:px-4 md:py-3 md:tracking-wide"
+                    title={tp("visitors")}
+                  >
+                    <span className="md:hidden">{tp("visitorsShort")}</span>
+                    <span className="hidden md:inline">{tp("visitors")}</span>
                   </th>
-                  <th className="px-4 py-3 font-medium text-right">
+                  <th
+                    className="w-px whitespace-nowrap px-1.5 py-2.5 text-right font-medium tracking-normal md:px-4 md:py-3 md:tracking-wide"
+                    title={tp("visits")}
+                  >
+                    <span className="md:hidden">{tp("visitsShort")}</span>
+                    <span className="hidden md:inline">{tp("visits")}</span>
+                  </th>
+                  <th className="hidden px-3 py-2.5 text-right font-medium lg:table-cell lg:px-4 lg:py-3">
                     {tp("sessions")}
                   </th>
-                  <th className="px-4 py-3 font-medium text-right">
+                  <th className="hidden px-3 py-2.5 text-right font-medium lg:table-cell lg:px-4 lg:py-3">
                     {tp("countries")}
                   </th>
-                  <th className="px-4 py-3 font-medium text-right">
+                  <th className="px-3 py-2.5 text-right font-medium md:px-4 md:py-3">
                     {tp("share")}
                   </th>
                 </tr>
@@ -123,7 +133,7 @@ export default function PagesAnalyticsPage() {
                   <tr>
                     <td
                       colSpan={6}
-                      className="px-4 py-8 text-center text-muted-foreground"
+                      className="px-3 py-8 text-center text-muted-foreground md:px-4"
                     >
                       {tp("loading")}
                     </td>
@@ -132,7 +142,7 @@ export default function PagesAnalyticsPage() {
                   <tr>
                     <td
                       colSpan={6}
-                      className="px-4 py-8 text-center text-muted-foreground"
+                      className="px-3 py-8 text-center text-muted-foreground md:px-4"
                     >
                       {tp("empty")}
                     </td>
@@ -140,24 +150,24 @@ export default function PagesAnalyticsPage() {
                 ) : (
                   filtered.map((row) => (
                     <tr key={row.path} className="hover:bg-muted/30">
-                      <td className="max-w-[28rem] truncate px-4 py-2.5 font-medium">
+                      <td className="max-w-[11rem] truncate px-3 py-2 font-medium sm:max-w-[28rem] md:px-4 md:py-2.5">
                         {row.path}
                       </td>
-                      <td className="px-4 py-2.5 text-right tabular-nums">
+                      <td className="w-px whitespace-nowrap px-1.5 py-2 text-right tabular-nums md:px-4 md:py-2.5">
                         {formatCount(row.visitors, locale)}
                       </td>
-                      <td className="px-4 py-2.5 text-right tabular-nums font-medium">
+                      <td className="w-px whitespace-nowrap px-1.5 py-2 text-right tabular-nums font-medium md:px-4 md:py-2.5">
                         {formatCount(row.visits, locale)}
                       </td>
-                      <td className="px-4 py-2.5 text-right tabular-nums text-muted-foreground">
+                      <td className="hidden px-3 py-2 text-right tabular-nums text-muted-foreground lg:table-cell lg:px-4 lg:py-2.5">
                         {formatCount(row.sessions, locale)}
                       </td>
-                      <td className="px-4 py-2.5 text-right tabular-nums text-muted-foreground">
+                      <td className="hidden px-3 py-2 text-right tabular-nums text-muted-foreground lg:table-cell lg:px-4 lg:py-2.5">
                         {formatCount(row.countries, locale)}
                       </td>
-                      <td className="px-4 py-2.5 text-right">
-                        <div className="ml-auto flex w-28 items-center gap-2">
-                          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
+                      <td className="px-3 py-2 text-right md:px-4 md:py-2.5">
+                        <div className="ml-auto flex items-center justify-end gap-2 md:w-28">
+                          <div className="hidden h-1.5 flex-1 overflow-hidden rounded-full bg-muted md:block">
                             <div
                               className="h-full rounded-full bg-primary"
                               style={{
@@ -165,7 +175,7 @@ export default function PagesAnalyticsPage() {
                               }}
                             />
                           </div>
-                          <span className="w-8 text-right tabular-nums text-xs text-muted-foreground">
+                          <span className="tabular-nums text-[11px] text-muted-foreground md:w-8 md:text-right md:text-xs">
                             {row.percent}%
                           </span>
                         </div>
@@ -175,18 +185,22 @@ export default function PagesAnalyticsPage() {
                 )}
               </tbody>
               {!loading && filtered.length > 0 && (
-                <tfoot className="border-t border-border bg-muted/20 text-xs text-muted-foreground">
+                <tfoot className="border-t border-border bg-muted/20 text-[11px] text-muted-foreground md:text-xs">
                   <tr>
-                    <td className="px-4 py-3 font-medium text-foreground">
+                    <td className="px-3 py-2 font-medium text-foreground md:px-4 md:py-3">
                       {tp("showing", { count: filtered.length })}
                     </td>
-                    <td className="px-4 py-3 text-right">—</td>
-                    <td className="px-4 py-3 text-right tabular-nums font-medium text-foreground">
+                    <td className="w-px whitespace-nowrap px-1.5 py-2 text-right md:px-4 md:py-3">
+                      —
+                    </td>
+                    <td className="w-px whitespace-nowrap px-1.5 py-2 text-right tabular-nums font-medium text-foreground md:px-4 md:py-3">
                       {formatCount(totals.visits, locale)}
                     </td>
-                    <td className="px-4 py-3 text-right">—</td>
-                    <td className="px-4 py-3" />
-                    <td className="px-4 py-3" />
+                    <td className="hidden px-3 py-2 text-right lg:table-cell lg:px-4 lg:py-3">
+                      —
+                    </td>
+                    <td className="hidden px-3 py-2 lg:table-cell lg:px-4 lg:py-3" />
+                    <td className="px-3 py-2 md:px-4 md:py-3" />
                   </tr>
                 </tfoot>
               )}

@@ -147,7 +147,8 @@
       "referrer": "Manbalar",
       "browser": "Brauzerlar",
       "os": "OS",
-      "direct": "To'g'ridan-to'g'ri"
+      "direct": "To'g'ridan-to'g'ri",
+      "unknown": "Noma'lum"
     },
     "details": "Batafsil",
     "pagesTable": {
@@ -156,7 +157,9 @@
       "search": "Yo'l qidirish…",
       "path": "Yo'l",
       "visitors": "Kiruvchilar",
+      "visitorsShort": "Kishi",
       "visits": "Kirishlar",
+      "visitsShort": "Kirish",
       "sessions": "Seanslar",
       "countries": "Mamlakatlar",
       "share": "Ulush",
@@ -220,6 +223,10 @@
     },
     "access": {
       "invite": "A'zo taklif qilish",
+      "inviteHint": "Ro'yxatdan o'tgan foydalanuvchini email orqali taklif qiling.",
+      "pageHint": "Bu saytga a'zolarni taklif qiling va rollarni boshqaring.",
+      "cancel": "Bekor qilish",
+      "sending": "Yuborilmoqda…",
       "email": "Email",
       "role": "Rol",
       "owner": "Egasi",
@@ -228,6 +235,17 @@
       "pending": "Kutilmoqda",
       "accepted": "Qabul qilingan",
       "revoke": "Bekor qilish",
+      "changeRole": "Rolni o'zgartirish",
+      "changeRoleHint": "{email} uchun yangi rolni tanlang.",
+      "save": "Saqlash",
+      "saving": "Saqlanmoqda…",
+      "revokeMemberTitle": "A'zolikni bekor qilish",
+      "revokeMemberHint": "{email} ushbu saytdan olib tashlanadi va boshqaruvga kira olmaydi.",
+      "revokeMemberConfirm": "Haqiqatan ham bu a'zoni olib tashlamoqchimisiz?",
+      "revokeInviteTitle": "Taklifni bekor qilish",
+      "revokeInviteHint": "{email} ga yuborilgan taklif o'chiriladi.",
+      "revokeInviteConfirm": "Bu taklifni bekor qilasizmi?",
+      "revoking": "Bekor qilinmoqda…",
       "incomingTitle": "Sizga takliflar",
       "accept": "Qabul qilish",
       "decline": "Rad etish",
@@ -240,7 +258,8 @@
       "inviteCancelled": "Taklif bekor qilindi",
       "inviteFailed": "Taklif yuborilmadi",
       "roleUpdated": "Rol yangilandi",
-      "roleUpdateFailed": "Rolni o'zgartirib bo'lmadi"
+      "roleUpdateFailed": "Rolni o'zgartirib bo'lmadi",
+      "revokeFailed": "Bekor qilib bo'lmadi"
     },
     "reports": {
       "title": "Telegram hisobotlari",

@@ -10,6 +10,10 @@ import { formatUserAgent } from "@/lib/parse-user-agent";
 
 const PAGE_SIZE = 20;
 
+function uaShort(raw: string | null | undefined) {
+  return formatUserAgent(raw).slice(0, 10);
+}
+
 export function LogsTable() {
   const t = useTranslations("demo.logs");
   const [query, setQuery] = useState("");
@@ -72,35 +76,60 @@ export function LogsTable() {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[960px] text-left text-sm">
-          <thead className="bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
+        <table className="w-full text-left text-xs md:text-sm">
+          <thead className="bg-muted/40 text-[11px] uppercase tracking-wide text-muted-foreground md:text-xs">
             <tr>
-              <th className="px-4 py-3 font-medium">{t("time")}</th>
-              <th className="px-4 py-3 font-medium">{t("method")}</th>
-              <th className="px-4 py-3 font-medium">{t("path")}</th>
-              <th className="px-4 py-3 font-medium">{t("status")}</th>
-              <th className="px-4 py-3 font-medium">{t("country")}</th>
-              <th className="px-4 py-3 font-medium">{t("ip")}</th>
-              <th className="px-4 py-3 font-medium">{t("visitor")}</th>
-              <th className="px-4 py-3 font-medium">{t("userAgent")}</th>
+              <th className="hidden px-3 py-2.5 font-medium md:table-cell md:px-4 md:py-3">
+                {t("time")}
+              </th>
+              <th className="hidden px-3 py-2.5 font-medium md:table-cell md:px-4 md:py-3">
+                {t("method")}
+              </th>
+              <th className="px-3 py-2.5 font-medium md:px-4 md:py-3">
+                {t("path")}
+              </th>
+              <th className="hidden px-3 py-2.5 font-medium md:table-cell md:px-4 md:py-3">
+                {t("status")}
+              </th>
+              <th className="hidden px-3 py-2.5 font-medium md:table-cell md:px-4 md:py-3">
+                {t("country")}
+              </th>
+              <th className="px-3 py-2.5 font-medium md:hidden">{t("ip")}</th>
+              <th className="hidden px-3 py-2.5 font-medium lg:table-cell lg:px-4 lg:py-3">
+                {t("ip")}
+              </th>
+              <th className="hidden px-3 py-2.5 font-medium lg:table-cell lg:px-4 lg:py-3">
+                {t("visitor")}
+              </th>
+              <th className="px-3 py-2.5 font-medium md:hidden">
+                {t("userAgent")}
+              </th>
+              <th className="hidden px-3 py-2.5 font-medium lg:table-cell lg:px-4 lg:py-3">
+                {t("userAgent")}
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {slice.map((row) => (
               <tr key={row.id} className="transition hover:bg-muted/30">
-                <td className="whitespace-nowrap px-4 py-2.5 tabular-nums text-muted-foreground">
+                <td className="hidden whitespace-nowrap px-3 py-2 tabular-nums text-muted-foreground md:table-cell md:px-4 md:py-2.5">
                   {row.time}
                 </td>
-                <td className="px-4 py-2.5">
-                  <span className="rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs">
+                <td className="hidden px-3 py-2 md:table-cell md:px-4 md:py-2.5">
+                  <span className="rounded-md bg-muted px-1.5 py-0.5 font-mono text-[11px] md:text-xs">
                     {row.method}
                   </span>
                 </td>
-                <td className="px-4 py-2.5 font-medium">{row.path}</td>
-                <td className="px-4 py-2.5">
+                <td className="max-w-[10rem] truncate px-3 py-2 font-medium sm:max-w-none md:px-4 md:py-2.5">
+                  {row.path}
+                  <span className="mt-0.5 block font-mono text-[11px] font-normal text-muted-foreground md:hidden">
+                    {row.method}
+                  </span>
+                </td>
+                <td className="hidden px-3 py-2 md:table-cell md:px-4 md:py-2.5">
                   <span
                     className={cn(
-                      "rounded-full px-2 py-0.5 text-xs font-medium",
+                      "rounded-full px-2 py-0.5 text-[11px] font-medium md:text-xs",
                       row.status < 300
                         ? "bg-success-soft text-success"
                         : row.status < 400
@@ -111,18 +140,31 @@ export function LogsTable() {
                     {row.status}
                   </span>
                 </td>
-                <td className="px-4 py-2.5">
+                <td className="hidden px-3 py-2 md:table-cell md:px-4 md:py-2.5">
                   <span className="mr-1">{row.flag}</span>
                   {row.country}
                 </td>
-                <td className="px-4 py-2.5 font-mono text-xs text-muted-foreground">
+                <td className="px-3 py-2 md:hidden">
+                  <span className="block font-mono text-[11px]">{row.ip}</span>
+                  <span className="mt-0.5 block text-muted-foreground">
+                    <span className="mr-1">{row.flag}</span>
+                    {row.country}
+                  </span>
+                </td>
+                <td className="hidden px-3 py-2 font-mono text-[11px] text-muted-foreground lg:table-cell lg:px-4 lg:py-2.5 lg:text-xs">
                   {row.ip}
                 </td>
-                <td className="px-4 py-2.5 font-mono text-xs text-muted-foreground">
+                <td className="hidden px-3 py-2 font-mono text-[11px] text-muted-foreground lg:table-cell lg:px-4 lg:py-2.5 lg:text-xs">
                   {row.visitorId}
                 </td>
                 <td
-                  className="max-w-[280px] truncate px-4 py-2.5 text-sm"
+                  className="px-3 py-2 font-mono text-[11px] md:hidden"
+                  title={row.userAgent}
+                >
+                  {uaShort(row.userAgent)}
+                </td>
+                <td
+                  className="hidden max-w-[280px] truncate px-3 py-2 lg:table-cell lg:px-4 lg:py-2.5"
                   title={row.userAgent}
                 >
                   {formatUserAgent(row.userAgent)}

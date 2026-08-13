@@ -26,24 +26,47 @@ export default async function DomainsPage({
       </div>
 
       <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-        <table className="w-full min-w-[640px] text-left text-sm">
-          <thead className="bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
+        <div className="overflow-x-auto">
+        <table className="w-full text-left text-xs md:text-sm">
+          <thead className="bg-muted/40 text-[11px] uppercase tracking-wide text-muted-foreground md:text-xs">
             <tr>
-              <th className="px-4 py-3 font-medium">{t("name")}</th>
-              <th className="px-4 py-3 font-medium">{t("appId")}</th>
-              <th className="px-4 py-3 font-medium">{t("status")}</th>
-              <th className="px-4 py-3 font-medium">{t("role")}</th>
-              <th className="px-4 py-3 font-medium text-right">Visitors</th>
+              <th className="px-3 py-2.5 font-medium md:px-4 md:py-3">
+                {t("name")}
+              </th>
+              <th className="hidden px-3 py-2.5 font-medium md:table-cell md:px-4 md:py-3">
+                {t("appId")}
+              </th>
+              <th className="hidden px-3 py-2.5 font-medium md:table-cell md:px-4 md:py-3">
+                {t("status")}
+              </th>
+              <th className="hidden px-3 py-2.5 font-medium md:table-cell md:px-4 md:py-3">
+                {t("role")}
+              </th>
+              <th className="px-3 py-2.5 text-right font-medium md:px-4 md:py-3">
+                Visitors
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {domains.map((d) => (
               <tr key={d.appId} className="hover:bg-muted/30">
-                <td className="px-4 py-3 font-medium">{d.domain}</td>
-                <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
+                <td className="px-3 py-2 font-medium md:px-4 md:py-3">
+                  {d.domain}
+                  <span
+                    className={cn(
+                      "mt-0.5 block w-fit rounded-full px-2 py-0.5 text-[11px] font-medium md:hidden",
+                      d.status === "active"
+                        ? "bg-success-soft text-success"
+                        : "bg-accent-soft text-accent",
+                    )}
+                  >
+                    {t(d.status)}
+                  </span>
+                </td>
+                <td className="hidden px-3 py-2 font-mono text-[11px] text-muted-foreground md:table-cell md:px-4 md:py-3 md:text-xs">
                   {d.appId}
                 </td>
-                <td className="px-4 py-3">
+                <td className="hidden px-3 py-2 md:table-cell md:px-4 md:py-3">
                   <span
                     className={cn(
                       "rounded-full px-2 py-0.5 text-xs font-medium",
@@ -55,12 +78,17 @@ export default async function DomainsPage({
                     {t(d.status)}
                   </span>
                 </td>
-                <td className="px-4 py-3 capitalize">{roles(d.role)}</td>
-                <td className="px-4 py-3 text-right tabular-nums">{d.visitors}</td>
+                <td className="hidden px-3 py-2 capitalize md:table-cell md:px-4 md:py-3">
+                  {roles(d.role)}
+                </td>
+                <td className="px-3 py-2 text-right tabular-nums md:px-4 md:py-3">
+                  {d.visitors}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );

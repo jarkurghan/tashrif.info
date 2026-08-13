@@ -274,13 +274,20 @@ export default function AppsPage() {
               </button>
             </div>
           ) : (
-            <table className="w-full min-w-[560px] text-left text-sm">
-              <thead className="bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
+            <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs md:text-sm">
+              <thead className="bg-muted/40 text-[11px] uppercase tracking-wide text-muted-foreground md:text-xs">
                 <tr>
-                  <th className="px-4 py-3 font-medium">{t("name")}</th>
-                  <th className="px-4 py-3 font-medium">client_id</th>
-                  <th className="px-4 py-3 font-medium">{t("role")}</th>
-                  <th className="px-4 py-3 font-medium text-right">
+                  <th className="px-3 py-2.5 font-medium md:px-4 md:py-3">
+                    {t("name")}
+                  </th>
+                  <th className="hidden px-3 py-2.5 font-medium md:table-cell md:px-4 md:py-3">
+                    client_id
+                  </th>
+                  <th className="px-3 py-2.5 font-medium md:px-4 md:py-3">
+                    {t("role")}
+                  </th>
+                  <th className="px-3 py-2.5 text-right font-medium md:px-4 md:py-3">
                     {t("actions")}
                   </th>
                 </tr>
@@ -288,16 +295,20 @@ export default function AppsPage() {
               <tbody className="divide-y divide-border">
                 {apps.map((a) => (
                   <tr key={a.id} className="hover:bg-muted/30">
-                    <td className="px-4 py-3 font-medium">{a.domain}</td>
-                    <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
+                    <td className="px-3 py-2 font-medium md:px-4 md:py-3">
+                      {a.domain}
+                    </td>
+                    <td className="hidden px-3 py-2 font-mono text-[11px] text-muted-foreground md:table-cell md:px-4 md:py-3 md:text-xs">
                       {a.clientId ?? a.id}
                     </td>
-                    <td className="px-4 py-3 capitalize">{a.role}</td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-3 py-2 capitalize md:px-4 md:py-3">
+                      {a.role}
+                    </td>
+                    <td className="px-3 py-2 text-right md:px-4 md:py-3">
                       <button
                         type="button"
                         onClick={() => openDetail(a)}
-                        className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+                        className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline md:text-sm"
                       >
                         <Eye className="h-3.5 w-3.5" />
                         {t("details")}
@@ -307,6 +318,7 @@ export default function AppsPage() {
                 ))}
               </tbody>
             </table>
+            </div>
           )}
         </div>
       </main>
@@ -392,7 +404,7 @@ export default function AppsPage() {
               <p className="text-sm text-muted-foreground">{t("secretHidden")}</p>
             )}
 
-            {detailApp.role === "owner" && (
+            {(detailApp.role === "owner" || detailApp.role === "admin") && (
               <div className="space-y-3">
                 <button
                   type="button"

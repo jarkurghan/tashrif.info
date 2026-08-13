@@ -124,7 +124,10 @@ export default function TrafficPage() {
           return {
             ...i,
             code,
-            label: code ? countryLabel(code, locale) : i.label,
+            label:
+              code && code !== "??"
+                ? countryLabel(code, locale)
+                : t("tabs.unknown"),
             flag: flagEmoji(code),
           };
         }),
@@ -164,7 +167,7 @@ export default function TrafficPage() {
     <>
       <AppHeader title={t("titles.traffic")} />
       <main className="min-h-0 flex-1 space-y-5 overflow-y-auto overflow-x-hidden p-4 sm:p-6">
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-2 sm:gap-3 xl:grid-cols-5">
           <MetricCard
             label={t("metrics.users")}
             value={overview ? formatCount(overview.users) : "—"}
@@ -197,6 +200,7 @@ export default function TrafficPage() {
                 : "—"
             }
             trend=""
+            className="col-span-2 xl:col-span-1"
           />
         </div>
 

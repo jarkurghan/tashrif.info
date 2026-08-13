@@ -147,7 +147,8 @@
       "referrer": "Referrers",
       "browser": "Browsers",
       "os": "OS",
-      "direct": "Direct"
+      "direct": "Direct",
+      "unknown": "Unknown"
     },
     "details": "Details",
     "pagesTable": {
@@ -156,7 +157,9 @@
       "search": "Search path…",
       "path": "Path",
       "visitors": "Visitors",
+      "visitorsShort": "Users",
       "visits": "Visits",
+      "visitsShort": "Views",
       "sessions": "Sessions",
       "countries": "Countries",
       "share": "Share",
@@ -220,6 +223,10 @@
     },
     "access": {
       "invite": "Invite member",
+      "inviteHint": "Invite a registered user by email.",
+      "pageHint": "Invite members to this site and manage their roles.",
+      "cancel": "Cancel",
+      "sending": "Sending…",
       "email": "Email",
       "role": "Role",
       "owner": "Owner",
@@ -228,6 +235,17 @@
       "pending": "Pending",
       "accepted": "Accepted",
       "revoke": "Revoke",
+      "changeRole": "Change role",
+      "changeRoleHint": "Choose a new role for {email}.",
+      "save": "Save",
+      "saving": "Saving…",
+      "revokeMemberTitle": "Revoke access",
+      "revokeMemberHint": "{email} will be removed from this site and lose access.",
+      "revokeMemberConfirm": "Are you sure you want to remove this member?",
+      "revokeInviteTitle": "Cancel invitation",
+      "revokeInviteHint": "The invitation sent to {email} will be deleted.",
+      "revokeInviteConfirm": "Cancel this invitation?",
+      "revoking": "Revoking…",
       "incomingTitle": "Invitations for you",
       "accept": "Accept",
       "decline": "Decline",
@@ -240,7 +258,8 @@
       "inviteCancelled": "Invitation cancelled",
       "inviteFailed": "Could not send invitation",
       "roleUpdated": "Role updated",
-      "roleUpdateFailed": "Could not update role"
+      "roleUpdateFailed": "Could not update role",
+      "revokeFailed": "Could not revoke"
     },
     "reports": {
       "title": "Telegram reports",

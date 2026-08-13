@@ -26,6 +26,36 @@ type LogItem = {
 
 const PAGE_SIZE = 20;
 
+function formatLogTime(iso: string, locale: string) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  const opts: Intl.DateTimeFormatOptions = {
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23",
+  };
+  if (d.getFullYear() !== new Date().getFullYear()) opts.year = "numeric";
+  const tags = locale.startsWith("uz")
+    ? ["uz-Latn-UZ", "en-GB"]
+    : [locale, "en-GB"];
+  for (const tag of tags) {
+    try {
+      const formatted = new Intl.DateTimeFormat(tag, opts).format(d);
+      if (!/[\u0400-\u04FF]/.test(formatted)) return formatted;
+    } catch {
+      /* try next */
+    }
+  }
+  return new Intl.DateTimeFormat("en-GB", opts).format(d);
+}
+
+function uaShort(raw: string | null | undefined) {
+  return formatUserAgent(raw).slice(0, 10);
+}
+
 function CountryCell({ code, locale }: { code: string | null; locale: string }) {
   if (!code) return "—";
   const flag = flagEmoji(code);
@@ -110,35 +140,61 @@ export default function LogsAnalyticsPage() {
             </div>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[960px] text-left text-sm">
-              <thead className="bg-muted/40 text-xs uppercase text-muted-foreground">
+            <table className="w-full text-left text-xs md:text-sm">
+              <thead className="bg-muted/40 text-[11px] uppercase text-muted-foreground md:text-xs">
                 <tr>
-                  <th className="px-4 py-3">{t("time")}</th>
-                  <th className="px-4 py-3">{t("method")}</th>
-                  <th className="px-4 py-3">{t("path")}</th>
-                  <th className="px-4 py-3">{t("status")}</th>
-                  <th className="px-4 py-3">{t("country")}</th>
-                  <th className="px-4 py-3">{t("ip")}</th>
-                  <th className="px-4 py-3">{t("visitor")}</th>
-                  <th className="px-4 py-3">{t("userAgent")}</th>
+                  <th className="hidden px-3 py-2.5 md:table-cell md:px-4 md:py-3">
+                    {t("time")}
+                  </th>
+                  <th className="hidden px-3 py-2.5 md:table-cell md:px-4 md:py-3">
+                    {t("method")}
+                  </th>
+                  <th className="px-3 py-2.5 md:px-4 md:py-3">{t("path")}</th>
+                  <th className="hidden px-3 py-2.5 md:table-cell md:px-4 md:py-3">
+                    {t("status")}
+                  </th>
+                  <th className="hidden px-3 py-2.5 md:table-cell md:px-4 md:py-3">
+                    {t("country")}
+                  </th>
+                  <th className="px-3 py-2.5 md:hidden">{t("ip")}</th>
+                  <th className="hidden px-3 py-2.5 lg:table-cell lg:px-4 lg:py-3">
+                    {t("ip")}
+                  </th>
+                  <th className="hidden px-3 py-2.5 lg:table-cell lg:px-4 lg:py-3">
+                    {t("visitor")}
+                  </th>
+                  <th className="px-3 py-2.5 md:hidden">{t("userAgent")}</th>
+                  <th className="hidden px-3 py-2.5 lg:table-cell lg:px-4 lg:py-3">
+                    {t("userAgent")}
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {items.map((row) => (
                   <tr key={row.id} className="hover:bg-muted/30">
-                    <td className="whitespace-nowrap px-4 py-2.5 text-muted-foreground">
-                      {row.time}
+                    <td
+                      className="hidden whitespace-nowrap px-3 py-2 tabular-nums text-muted-foreground md:table-cell md:px-4 md:py-2.5"
+                      title={row.time}
+                    >
+                      {formatLogTime(row.time, locale)}
                     </td>
-                    <td className="px-4 py-2.5">
-                      <span className="rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs">
+                    <td className="hidden px-3 py-2 md:table-cell md:px-4 md:py-2.5">
+                      <span className="rounded-md bg-muted px-1.5 py-0.5 font-mono text-[11px] md:text-xs">
                         {row.method}
                       </span>
                     </td>
-                    <td className="px-4 py-2.5 font-medium">{row.path}</td>
-                    <td className="px-4 py-2.5">
+                    <td className="max-w-[10rem] truncate px-3 py-2 font-medium sm:max-w-none md:px-4 md:py-2.5">
+                      {row.path}
+                      {row.method ? (
+                        <span className="mt-0.5 block font-mono text-[11px] font-normal text-muted-foreground md:hidden">
+                          {row.method}
+                        </span>
+                      ) : null}
+                    </td>
+                    <td className="hidden px-3 py-2 md:table-cell md:px-4 md:py-2.5">
                       <span
                         className={cn(
-                          "rounded-full px-2 py-0.5 text-xs font-medium",
+                          "rounded-full px-2 py-0.5 text-[11px] font-medium md:text-xs",
                           (row.status ?? 200) < 400
                             ? "bg-success-soft text-success"
                             : "bg-accent-soft text-accent",
@@ -147,13 +203,31 @@ export default function LogsAnalyticsPage() {
                         {row.status ?? "—"}
                       </span>
                     </td>
-                    <td className="px-4 py-2.5">
+                    <td className="hidden px-3 py-2 md:table-cell md:px-4 md:py-2.5">
                       <CountryCell code={row.country} locale={locale} />
                     </td>
-                    <td className="px-4 py-2.5 font-mono text-xs">{row.ip}</td>
-                    <td className="px-4 py-2.5 font-mono text-xs">{row.visitorId}</td>
+                    <td className="px-3 py-2 md:hidden">
+                      <span className="block font-mono text-[11px]">
+                        {row.ip ?? "—"}
+                      </span>
+                      <span className="mt-0.5 block text-muted-foreground">
+                        <CountryCell code={row.country} locale={locale} />
+                      </span>
+                    </td>
+                    <td className="hidden px-3 py-2 font-mono text-[11px] lg:table-cell lg:px-4 lg:py-2.5 lg:text-xs">
+                      {row.ip}
+                    </td>
+                    <td className="hidden px-3 py-2 font-mono text-[11px] lg:table-cell lg:px-4 lg:py-2.5 lg:text-xs">
+                      {row.visitorId}
+                    </td>
                     <td
-                      className="max-w-[280px] truncate px-4 py-2.5 text-sm"
+                      className="px-3 py-2 font-mono text-[11px] md:hidden"
+                      title={row.userAgent ?? undefined}
+                    >
+                      {uaShort(row.userAgent)}
+                    </td>
+                    <td
+                      className="hidden max-w-[280px] truncate px-3 py-2 lg:table-cell lg:px-4 lg:py-2.5"
                       title={row.userAgent ?? undefined}
                     >
                       {formatUserAgent(row.userAgent)}
