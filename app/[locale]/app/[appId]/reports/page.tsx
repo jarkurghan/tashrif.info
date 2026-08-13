@@ -305,16 +305,21 @@ export default function ReportsPage() {
                         {chat.reports.length === 0 ? (
                           <span className="text-muted-foreground">—</span>
                         ) : (
-                          <div className="flex flex-wrap gap-1.5">
-                            {chat.reports.map((r) => (
-                              <span
-                                key={r.id}
-                                className="rounded-full bg-primary-soft px-2 py-0.5 text-[11px] text-primary md:text-xs"
-                              >
-                                {t(r.schedule)} · {t(r.kind ?? "stats")}
-                              </span>
-                            ))}
-                          </div>
+                          <>
+                            <span className="tabular-nums md:hidden">
+                              {chat.reports.length}
+                            </span>
+                            <div className="hidden flex-wrap gap-1.5 md:flex">
+                              {chat.reports.map((r) => (
+                                <span
+                                  key={r.id}
+                                  className="rounded-full bg-primary-soft px-2 py-0.5 text-[11px] text-primary md:text-xs"
+                                >
+                                  {t(r.schedule)} · {t(r.kind ?? "stats")}
+                                </span>
+                              ))}
+                            </div>
+                          </>
                         )}
                       </td>
                       <td className="px-3 py-2 text-right md:px-4 md:py-3">
