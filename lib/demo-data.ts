@@ -8,6 +8,7 @@ export type Metric = {
 export type SeriesPoint = {
   date: string;
   sessions: number;
+  pageviews: number;
   durationMin: number;
 };
 
@@ -20,13 +21,13 @@ export type RankedItem = {
   title?: string;
 };
 
-export type EventPoint = {
-  time: string;
-  "login-button-header": number;
-  "get-started-button": number;
-  "community-GitHub": number;
-  "pricing-cta": number;
-  "docs-search": number;
+export type PageRow = {
+  path: string;
+  visits: number;
+  visitors: number;
+  sessions: number;
+  countries: number;
+  percent: number;
 };
 
 export type LogEntry = {
@@ -36,7 +37,6 @@ export type LogEntry = {
   path: string;
   status: number;
   country: string;
-  flag: string;
   ip: string;
   visitorId: string;
   userAgent: string;
@@ -44,10 +44,8 @@ export type LogEntry = {
 
 export type DomainRow = {
   domain: string;
-  appId: string;
-  status: "active" | "pending";
+  clientId: string;
   role: "owner" | "admin" | "viewer";
-  visitors: string;
 };
 
 export type AccessRow = {
@@ -57,218 +55,113 @@ export type AccessRow = {
   invitedAt: string;
 };
 
-export type ReportChat = {
-  name: string;
-  chatId: string;
-  reports: Array<"daily" | "weekly" | "monthly">;
+export type ReportKind = "stats" | "log" | "traffic";
+export type ReportSchedule = "daily" | "weekly" | "monthly";
+
+export type ReportItem = {
+  id: string;
+  schedule: ReportSchedule;
+  kind: ReportKind;
 };
 
-export const metrics: Metric[] = [
-  { key: "users", value: "10.6k", trend: "+1.2k" },
-  { key: "pageviews", value: "26.8k", trend: "+3.4k" },
-  { key: "newUsers", value: "4.1k", trend: "+520" },
-  { key: "viewsPerUser", value: "2.5", trend: "+0.2" },
-  { key: "lastVisit", value: "09:41", trend: "" },
-];
+export type ReportChat = {
+  id: string;
+  name: string;
+  chatId: string;
+  reports: ReportItem[];
+};
 
+const CHROME_WIN =
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36";
+const SAFARI_IOS =
+  "Mozilla/5.0 (iPhone; CPU iPhone OS 18_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.2 Mobile/15E148 Safari/604.1";
+const CHROME_MAC =
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36";
+const CHROME_ANDROID =
+  "Mozilla/5.0 (Linux; Android 14; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.6778.135 Mobile Safari/537.36";
+const FIREFOX_LINUX =
+  "Mozilla/5.0 (X11; Linux x86_64; rv:133.0) Gecko/20100101 Firefox/133.0";
+
+export const demoOverview = {
+  users: 8420,
+  pageviews: 19680,
+  newUsers: 2140,
+  lastVisit: new Date(Date.now() - 14 * 60 * 1000).toISOString(),
+  previous: {
+    users: 7180,
+    pageviews: 16240,
+    newUsers: 1680,
+  },
+};
+
+/** Last 24 hours, Tashkent-shaped curve (quiet night, evening peak). */
 export const trafficSeries: SeriesPoint[] = [
-  { date: "27 Dec", sessions: 420, durationMin: 3.2 },
-  { date: "03 Jan", sessions: 510, durationMin: 3.8 },
-  { date: "10 Jan", sessions: 480, durationMin: 4.1 },
-  { date: "17 Jan", sessions: 640, durationMin: 3.6 },
-  { date: "24 Jan", sessions: 720, durationMin: 4.5 },
-  { date: "31 Jan", sessions: 690, durationMin: 5.1 },
-  { date: "07 Feb", sessions: 810, durationMin: 4.8 },
-  { date: "14 Feb", sessions: 760, durationMin: 5.4 },
-  { date: "21 Feb", sessions: 920, durationMin: 4.9 },
-  { date: "28 Feb", sessions: 880, durationMin: 5.8 },
-  { date: "07 Mar", sessions: 970, durationMin: 5.2 },
-  { date: "14 Mar", sessions: 1040, durationMin: 6.1 },
-];
+  52, 41, 38, 36, 44, 78, 210, 420, 580, 640, 610, 720, 780, 740, 690, 810, 960,
+  1120, 1280, 1180, 920, 640, 310, 120,
+].map((sessions, hour) => ({
+  date: `2026-08-12 ${String(hour).padStart(2, "0")}:00`,
+  sessions,
+  pageviews: Math.round(sessions * 2.15),
+  durationMin: 3.2 + (hour % 5) * 0.4,
+}));
 
 export const countries: RankedItem[] = [
-  { label: "United States", value: 3400, percent: 32, flag: "🇺🇸", code: "US" },
-  { label: "Uzbekistan", value: 1820, percent: 17, flag: "🇺🇿", code: "UZ" },
-  { label: "Germany", value: 794, percent: 7, flag: "🇩🇪", code: "DE" },
-  { label: "United Kingdom", value: 776, percent: 7, flag: "🇬🇧", code: "GB" },
-  { label: "Russia", value: 612, percent: 6, flag: "🇷🇺", code: "RU" },
-  { label: "Turkey", value: 540, percent: 5, flag: "🇹🇷", code: "TR" },
-  { label: "France", value: 420, percent: 4, flag: "🇫🇷", code: "FR" },
-  { label: "Kazakhstan", value: 380, percent: 4, flag: "🇰🇿", code: "KZ" },
-];
-
-export const regions: RankedItem[] = [
-  { label: "California", value: 980, percent: 9 },
-  { label: "Tashkent", value: 1120, percent: 10 },
-  { label: "Bavaria", value: 310, percent: 3 },
-  { label: "England", value: 420, percent: 4 },
-  { label: "Moscow", value: 290, percent: 3 },
-];
-
-export const cities: RankedItem[] = [
-  { label: "Tashkent", value: 980, percent: 9 },
-  { label: "New York", value: 720, percent: 7 },
-  { label: "London", value: 510, percent: 5 },
-  { label: "Berlin", value: 340, percent: 3 },
-  { label: "Istanbul", value: 290, percent: 3 },
+  { label: "UZ", value: 4820, percent: 38, code: "UZ" },
+  { label: "KZ", value: 1240, percent: 10, code: "KZ" },
+  { label: "RU", value: 980, percent: 8, code: "RU" },
+  { label: "TR", value: 860, percent: 7, code: "TR" },
+  { label: "US", value: 720, percent: 6, code: "US" },
+  { label: "DE", value: 540, percent: 4, code: "DE" },
+  { label: "KR", value: 410, percent: 3, code: "KR" },
+  { label: "AE", value: 280, percent: 2, code: "AE" },
 ];
 
 export const pages: RankedItem[] = [
-  { label: "/", value: 6700, percent: 25 },
-  { label: "/pricing", value: 4200, percent: 16 },
-  { label: "/docs", value: 3100, percent: 12 },
-  { label: "/features", value: 2400, percent: 9 },
-  { label: "/blog", value: 1800, percent: 7 },
-  { label: "/dashboard", value: 1500, percent: 6 },
-  { label: "/login", value: 980, percent: 4 },
+  { label: "/", value: 6120, percent: 31 },
+  { label: "/mahsulotlar", value: 2940, percent: 15 },
+  { label: "/yangiliklar", value: 2180, percent: 11 },
+  { label: "/savat", value: 1760, percent: 9 },
+  { label: "/aloqa", value: 1180, percent: 6 },
+  { label: "/kirish", value: 980, percent: 5 },
+  { label: "/tolov", value: 740, percent: 4 },
+];
+
+export const pageRows: PageRow[] = [
+  { path: "/", visits: 6120, visitors: 2840, sessions: 3120, countries: 18, percent: 31 },
+  { path: "/mahsulotlar", visits: 2940, visitors: 1680, sessions: 1910, countries: 12, percent: 15 },
+  { path: "/yangiliklar", visits: 2180, visitors: 1420, sessions: 1510, countries: 9, percent: 11 },
+  { path: "/savat", visits: 1760, visitors: 890, sessions: 940, countries: 7, percent: 9 },
+  { path: "/aloqa", visits: 1180, visitors: 760, sessions: 810, countries: 6, percent: 6 },
+  { path: "/kirish", visits: 980, visitors: 720, sessions: 740, countries: 8, percent: 5 },
+  { path: "/tolov", visits: 740, visitors: 410, sessions: 430, countries: 5, percent: 4 },
+  { path: "/blog/yetkazib-berish", visits: 520, visitors: 380, sessions: 390, countries: 4, percent: 3 },
 ];
 
 export const referrers: RankedItem[] = [
-  { label: "(direct)", value: 4100, percent: 38 },
-  { label: "google.com", value: 2800, percent: 26 },
-  { label: "github.com", value: 1200, percent: 11 },
-  { label: "t.me", value: 890, percent: 8 },
-  { label: "reddit.com", value: 540, percent: 5 },
+  { label: "(direct)", value: 5200, percent: 36 },
+  { label: "google.com", value: 3400, percent: 24 },
+  { label: "t.me", value: 1800, percent: 13 },
+  { label: "instagram.com", value: 980, percent: 7 },
+  { label: "yandex.ru", value: 720, percent: 5 },
+  { label: "facebook.com", value: 410, percent: 3 },
 ];
 
 export const userAgents: RankedItem[] = [
-  {
-    label:
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-    value: 4200,
-    percent: 38,
-  },
-  {
-    label:
-      "Mozilla/5.0 (iPhone; CPU iPhone OS 18_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.2 Mobile/15E148 Safari/604.1",
-    value: 2100,
-    percent: 19,
-  },
-  {
-    label:
-      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-    value: 1640,
-    percent: 15,
-  },
-  {
-    label:
-      "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.6778.135 Mobile Safari/537.36",
-    value: 1280,
-    percent: 12,
-  },
-  {
-    label:
-      "Mozilla/5.0 (X11; Linux x86_64; rv:133.0) Gecko/20100101 Firefox/133.0",
-    value: 890,
-    percent: 8,
-  },
+  { label: CHROME_WIN, value: 4200, percent: 38 },
+  { label: SAFARI_IOS, value: 2480, percent: 22 },
+  { label: CHROME_ANDROID, value: 1640, percent: 15 },
+  { label: CHROME_MAC, value: 1280, percent: 12 },
+  { label: FIREFOX_LINUX, value: 620, percent: 6 },
 ];
-
-export const entryPages: RankedItem[] = [
-  { label: "/", value: 5200, percent: 41 },
-  { label: "/pricing", value: 2100, percent: 17 },
-  { label: "/blog/analytics-101", value: 890, percent: 7 },
-  { label: "/features", value: 720, percent: 6 },
-];
-
-export const exitPages: RankedItem[] = [
-  { label: "/pricing", value: 1800, percent: 19 },
-  { label: "/", value: 1400, percent: 15 },
-  { label: "/docs/sdk", value: 920, percent: 10 },
-  { label: "/login", value: 610, percent: 6 },
-];
-
-export const eventSeries: EventPoint[] = [
-  {
-    time: "11:00 AM",
-    "login-button-header": 18,
-    "get-started-button": 32,
-    "community-GitHub": 12,
-    "pricing-cta": 22,
-    "docs-search": 8,
-  },
-  {
-    time: "2:00 PM",
-    "login-button-header": 28,
-    "get-started-button": 44,
-    "community-GitHub": 18,
-    "pricing-cta": 30,
-    "docs-search": 14,
-  },
-  {
-    time: "5:00 PM",
-    "login-button-header": 36,
-    "get-started-button": 52,
-    "community-GitHub": 24,
-    "pricing-cta": 41,
-    "docs-search": 19,
-  },
-  {
-    time: "8:00 PM",
-    "login-button-header": 22,
-    "get-started-button": 38,
-    "community-GitHub": 16,
-    "pricing-cta": 27,
-    "docs-search": 11,
-  },
-  {
-    time: "11:00 PM",
-    "login-button-header": 14,
-    "get-started-button": 21,
-    "community-GitHub": 9,
-    "pricing-cta": 15,
-    "docs-search": 6,
-  },
-  {
-    time: "2:00 AM",
-    "login-button-header": 8,
-    "get-started-button": 12,
-    "community-GitHub": 4,
-    "pricing-cta": 7,
-    "docs-search": 3,
-  },
-  {
-    time: "5:00 AM",
-    "login-button-header": 6,
-    "get-started-button": 9,
-    "community-GitHub": 3,
-    "pricing-cta": 5,
-    "docs-search": 2,
-  },
-  {
-    time: "8:00 AM",
-    "login-button-header": 20,
-    "get-started-button": 35,
-    "community-GitHub": 14,
-    "pricing-cta": 24,
-    "docs-search": 10,
-  },
-];
-
-export const eventKeys = [
-  "login-button-header",
-  "get-started-button",
-  "community-GitHub",
-  "pricing-cta",
-  "docs-search",
-] as const;
-
-export const eventColors: Record<(typeof eventKeys)[number], string> = {
-  "login-button-header": "var(--chart-1)",
-  "get-started-button": "var(--chart-2)",
-  "community-GitHub": "var(--chart-3)",
-  "pricing-cta": "var(--chart-4)",
-  "docs-search": "var(--chart-5)",
-};
 
 export const landingSparkline = [
-  { t: "Mon", v: 420 },
-  { t: "Tue", v: 510 },
-  { t: "Wed", v: 480 },
-  { t: "Thu", v: 640 },
-  { t: "Fri", v: 720 },
-  { t: "Sat", v: 580 },
-  { t: "Sun", v: 690 },
+  { t: "Mon", v: 620 },
+  { t: "Tue", v: 710 },
+  { t: "Wed", v: 680 },
+  { t: "Thu", v: 840 },
+  { t: "Fri", v: 960 },
+  { t: "Sat", v: 780 },
+  { t: "Sun", v: 890 },
 ];
 
 function pad(n: number) {
@@ -276,38 +169,40 @@ function pad(n: number) {
 }
 
 function makeLogs(): LogEntry[] {
-  const paths = ["/", "/pricing", "/docs", "/features", "/blog", "/login", "/api/track"];
-  const countries = [
-    { name: "United States", flag: "🇺🇸" },
-    { name: "Uzbekistan", flag: "🇺🇿" },
-    { name: "Germany", flag: "🇩🇪" },
-    { name: "United Kingdom", flag: "🇬🇧" },
-    { name: "Turkey", flag: "🇹🇷" },
+  const paths = [
+    "/",
+    "/mahsulotlar",
+    "/yangiliklar",
+    "/savat",
+    "/aloqa",
+    "/kirish",
+    "/tolov",
   ];
-  const methods: LogEntry["method"][] = ["GET", "GET", "GET", "POST", "PUT"];
-  const statuses = [200, 200, 200, 201, 304, 404];
-  const agents = [
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (iPhone; CPU iPhone OS 18_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.2 Mobile/15E148 Safari/604.1",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.6778.135 Mobile Safari/537.36",
-    "Mozilla/5.0 (X11; Linux x86_64; rv:133.0) Gecko/20100101 Firefox/133.0",
+  const countryCodes = ["UZ", "UZ", "KZ", "RU", "TR", "UZ", "DE", "US"];
+  const methods: LogEntry["method"][] = ["GET", "GET", "GET", "POST", "GET"];
+  const statuses = [200, 200, 200, 201, 304, 200, 404];
+  const agents = [CHROME_WIN, SAFARI_IOS, CHROME_ANDROID, CHROME_MAC, FIREFOX_LINUX];
+  const ipBases = [
+    [213, 230],
+    [195, 158],
+    [84, 54],
+    [185, 8],
   ];
 
-  return Array.from({ length: 87 }, (_, i) => {
-    const c = countries[i % countries.length];
-    const hour = (23 - Math.floor(i / 4)) % 24;
-    const min = (i * 7) % 60;
+  return Array.from({ length: 64 }, (_, i) => {
+    const hour = (21 - Math.floor(i / 3) + 24) % 24;
+    const min = (i * 11) % 60;
+    const sec = (i * 17) % 60;
+    const [a, b] = ipBases[i % ipBases.length];
     return {
       id: `log_${pad(i + 1)}`,
-      time: `2026-03-14 ${pad(hour)}:${pad(min)}`,
+      time: `2026-08-12T${pad(hour)}:${pad(min)}:${pad(sec)}+05:00`,
       method: methods[i % methods.length],
       path: paths[i % paths.length],
       status: statuses[i % statuses.length],
-      country: c.name,
-      flag: c.flag,
-      ip: `185.${(i * 3) % 255}.${(i * 11) % 255}.${(i * 17) % 255}`,
-      visitorId: `vis_${(1000 + ((i * 37) % 9000)).toString(16)}`,
+      country: countryCodes[i % countryCodes.length],
+      ip: `${a}.${b}.${(i * 3) % 220}.${(i * 13) % 250}`,
+      visitorId: `vis_${(2400 + ((i * 41) % 7000)).toString(16)}`,
       userAgent: agents[i % agents.length],
     };
   });
@@ -316,72 +211,63 @@ function makeLogs(): LogEntry[] {
 export const logs = makeLogs();
 
 export const domains: DomainRow[] = [
-  {
-    domain: "acme.uz",
-    appId: "app_8f2a1c",
-    status: "active",
-    role: "owner",
-    visitors: "12.4k",
-  },
-  {
-    domain: "shop.tashrif.dev",
-    appId: "app_3b91e0",
-    status: "active",
-    role: "admin",
-    visitors: "3.1k",
-  },
-  {
-    domain: "staging.acme.uz",
-    appId: "app_c4d771",
-    status: "pending",
-    role: "owner",
-    visitors: "—",
-  },
+  { domain: "bozor.uz", clientId: "app_8f2a1c", role: "owner" },
+  { domain: "maktab.uz", clientId: "app_3b91e0", role: "admin" },
+  { domain: "shop.bozor.uz", clientId: "app_c4d771", role: "viewer" },
 ];
 
 export const accessRows: AccessRow[] = [
   {
-    email: "you@tashrif.info",
+    email: "siz@tashrif.info",
     role: "owner",
     status: "accepted",
     invitedAt: "2025-11-02",
   },
   {
-    email: "dilshod@acme.uz",
+    email: "dilshod@bozor.uz",
     role: "admin",
     status: "accepted",
     invitedAt: "2026-01-18",
   },
   {
-    email: "madina@acme.uz",
+    email: "madina@bozor.uz",
     role: "viewer",
     status: "accepted",
     invitedAt: "2026-02-04",
   },
   {
-    email: "analyst@partner.uz",
+    email: "tahlil@hamkor.uz",
     role: "viewer",
     status: "pending",
-    invitedAt: "2026-03-10",
+    invitedAt: "2026-08-10",
   },
 ];
 
 export const reportChats: ReportChat[] = [
   {
-    name: "Acme Analytics",
+    id: "chat_1",
+    name: "Bozor statistikasi",
     chatId: "-1002145987632",
-    reports: ["daily", "weekly"],
+    reports: [
+      { id: "r1", schedule: "daily", kind: "stats" },
+      { id: "r2", schedule: "daily", kind: "traffic" },
+      { id: "r3", schedule: "weekly", kind: "log" },
+    ],
   },
   {
-    name: "Product Weekly",
+    id: "chat_2",
+    name: "Jamoa kanali",
     chatId: "-1001987654321",
-    reports: ["weekly"],
+    reports: [{ id: "r4", schedule: "weekly", kind: "stats" }],
   },
-  {
-    name: "Ops channel",
-    chatId: "-1001876543210",
-    reports: [],
-  },
+];
+
+export const metrics: Metric[] = [
+  { key: "users", value: "8.4k", trend: "+1.2k" },
+  { key: "pageviews", value: "19.7k", trend: "+3.4k" },
+  { key: "newUsers", value: "2.1k", trend: "+460" },
+  { key: "viewsPerUser", value: "2.3", trend: "+0.1" },
+  { key: "lastVisit", value: "14 daqiqa", trend: "" },
 ];
 
 export function formatCount(n: number) {

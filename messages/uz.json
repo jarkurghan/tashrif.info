@@ -8,7 +8,10 @@
     "demo": "Demo",
     "login": "Kirish",
     "addDomain": "Domen qo'shish",
-    "docs": "Hujjatlar"
+    "docs": "Hujjatlar",
+    "dashboard": "Boshqaruv",
+    "traffic": "Trafik",
+    "reports": "Hisobotlar"
   },
   "hero": {
     "brand": "tashrif.info",
@@ -19,7 +22,7 @@
   },
   "steps": {
     "title": "Qanday ishlaydi",
-    "sub": "SDK dan tahlilgacha uchta qadam.",
+    "sub": "O‘rnatishdan jonli boardgacha — uchta qadam.",
     "one": {
       "title": "SDK o'rnating",
       "desc": "npm paketini qo'shing va Next.js middleware dan chaqiring."
@@ -45,13 +48,40 @@
     "title": "Jonli ko'rinish",
     "sub": "Board qanday ko'rinishini ko'rsatuvchi snapshot."
   },
+  "intro": {
+    "badge": "Veb analitika",
+    "title": "Saytingiz oqimini bitta tiniq boardda ko‘ring",
+    "body": "tashrif.info — tashrifchilar, sahifalar va manbalarni yig‘adigan yengil veb analitika. Og‘ir reklama-trackerlar o‘rniga o‘zingizning ma’lumotingiz va o‘zingizning panelingiz.",
+    "boardTitle": "Trafik, sahifalar, loglar",
+    "boardDesc": "Xarita va grafik, qaysi sahifalar ishlaydi, har bir so‘rov: yo‘l, status, mamlakat, IP.",
+    "reportsTitle": "Telegram hisobotlar",
+    "reportsDesc": "Kunlik, haftalik yoki oylik statistika, log va trafik PDF chatga keladi.",
+    "teamTitle": "Jamoa",
+    "teamDesc": "Owner, admin va viewer — har kim o‘z ruxsati bilan ishlaydi."
+  },
+  "why": {
+    "title": "Nega tashrif.info",
+    "sub": "Kerakli narsa. Shovqinsiz.",
+    "sdkTitle": "Bir necha qator SDK",
+    "sdkDesc": "Paketni qo‘shasiz — tashriflar o‘zi yig‘ila boshlaydi.",
+    "telegramTitle": "Hisobotlar Telegramda",
+    "telegramDesc": "Ertalab 06:00 da kechagi rasm chatga tushadi. Boardni ochmasangiz ham.",
+    "localeTitle": "O‘zbek va ingliz",
+    "localeDesc": "Interfeys va hisobotlar UI tilingizda — jamoa qaysi tilda ishlasa, shu til.",
+    "teamTitle": "Rollar bilan jamoa",
+    "teamDesc": "Ko‘ruvchi faqat analitika. Admin hisobot va ruxsat. Owner — to‘liq boshqaruv."
+  },
+  "closing": {
+    "title": "Birinchi domenni bugun ulang",
+    "sub": "Demoni oching yoki o‘z saytingizni qo‘shing — bir necha daqiqa.",
+    "ctaDemo": "Demoni ko'rish",
+    "ctaAdd": "Domen qo'shish"
+  },
   "footer": {
     "product": "Mahsulot",
-    "company": "Kompaniya",
-    "legal": "Huquqiy",
-    "rights": "",
-    "privacy": "Maxfiylik",
-    "terms": "Shartlar"
+    "features": "Imkoniyatlar",
+    "tagline": "Sayt tashriflarini tiniq ko‘rsatadigan veb analitika.",
+    "rights": ""
   },
   "login": {
     "title": "Xush kelibsiz",

@@ -1,12 +1,13 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { logs } from "@/lib/demo-data";
 import { Select } from "@/components/ui/Select";
 import { Filter, Search } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { formatUserAgent } from "@/lib/parse-user-agent";
+import { countryLabel, flagEmoji } from "@/lib/geo-display";
 
 const PAGE_SIZE = 20;
 
@@ -14,8 +15,44 @@ function uaShort(raw: string | null | undefined) {
   return formatUserAgent(raw).slice(0, 10);
 }
 
+function formatLogTime(iso: string, locale: string) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  const opts: Intl.DateTimeFormatOptions = {
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23",
+  };
+  const tags = locale.startsWith("uz")
+    ? ["uz-Latn-UZ", "en-GB"]
+    : [locale, "en-GB"];
+  for (const tag of tags) {
+    try {
+      const formatted = new Intl.DateTimeFormat(tag, opts).format(d);
+      if (!/[\u0400-\u04FF]/.test(formatted)) return formatted;
+    } catch {
+      /* try next */
+    }
+  }
+  return new Intl.DateTimeFormat("en-GB", opts).format(d);
+}
+
+function CountryCell({ code, locale }: { code: string; locale: string }) {
+  const flag = flagEmoji(code);
+  return (
+    <span className="inline-flex items-center gap-2">
+      {flag && <span className="text-base leading-none">{flag}</span>}
+      {countryLabel(code, locale)}
+    </span>
+  );
+}
+
 export function LogsTable() {
   const t = useTranslations("demo.logs");
+  const locale = useLocale();
   const [query, setQuery] = useState("");
   const [method, setMethod] = useState("ALL");
   const [page, setPage] = useState(0);
@@ -113,7 +150,7 @@ export function LogsTable() {
             {slice.map((row) => (
               <tr key={row.id} className="transition hover:bg-muted/30">
                 <td className="hidden whitespace-nowrap px-3 py-2 tabular-nums text-muted-foreground md:table-cell md:px-4 md:py-2.5">
-                  {row.time}
+                  {formatLogTime(row.time, locale)}
                 </td>
                 <td className="hidden px-3 py-2 md:table-cell md:px-4 md:py-2.5">
                   <span className="rounded-md bg-muted px-1.5 py-0.5 font-mono text-[11px] md:text-xs">
@@ -130,25 +167,21 @@ export function LogsTable() {
                   <span
                     className={cn(
                       "rounded-full px-2 py-0.5 text-[11px] font-medium md:text-xs",
-                      row.status < 300
+                      row.status < 400
                         ? "bg-success-soft text-success"
-                        : row.status < 400
-                          ? "bg-primary-soft text-primary"
-                          : "bg-accent-soft text-accent",
+                        : "bg-accent-soft text-accent",
                     )}
                   >
                     {row.status}
                   </span>
                 </td>
                 <td className="hidden px-3 py-2 md:table-cell md:px-4 md:py-2.5">
-                  <span className="mr-1">{row.flag}</span>
-                  {row.country}
+                  <CountryCell code={row.country} locale={locale} />
                 </td>
                 <td className="px-3 py-2 md:hidden">
                   <span className="block font-mono text-[11px]">{row.ip}</span>
                   <span className="mt-0.5 block text-muted-foreground">
-                    <span className="mr-1">{row.flag}</span>
-                    {row.country}
+                    <CountryCell code={row.country} locale={locale} />
                   </span>
                 </td>
                 <td className="hidden px-3 py-2 font-mono text-[11px] text-muted-foreground lg:table-cell lg:px-4 lg:py-2.5 lg:text-xs">

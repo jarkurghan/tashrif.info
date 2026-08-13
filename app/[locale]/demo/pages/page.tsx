@@ -1,30 +1,150 @@
-import { getTranslations, setRequestLocale } from "next-intl/server";
-import { RankedList } from "@/components/demo/RankedList";
-import { entryPages, exitPages, pages } from "@/lib/demo-data";
+"use client";
 
-export default async function PagesPage({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-  const t = await getTranslations("demo");
+import { useMemo, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { pageRows } from "@/lib/demo-data";
+import { Search } from "lucide-react";
+
+function formatCount(n: number, locale: string) {
+  const tag = locale === "uz" ? "uz-UZ" : "en-US";
+  return new Intl.NumberFormat(tag).format(n);
+}
+
+export default function PagesPage() {
+  const locale = useLocale();
+  const tp = useTranslations("demo.pagesTable");
+  const [query, setQuery] = useState("");
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return pageRows;
+    return pageRows.filter((row) => row.path.toLowerCase().includes(q));
+  }, [query]);
+
+  const totals = useMemo(
+    () => filtered.reduce((acc, row) => acc + row.visits, 0),
+    [filtered],
+  );
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <RankedList
-        tabs={[
-          { id: "page", label: t("tabs.page") },
-          { id: "entry", label: t("tabs.entry") },
-          { id: "exit", label: t("tabs.exit") },
-        ]}
-        datasets={{
-          page: pages,
-          entry: entryPages,
-          exit: exitPages,
-        }}
-      />
+    <div className="rounded-xl border border-border bg-card shadow-sm">
+      <div className="flex flex-col gap-3 border-b border-border p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="text-sm font-semibold">{tp("title")}</h2>
+          <p className="mt-0.5 text-xs text-muted-foreground">{tp("hint")}</p>
+        </div>
+        <div className="relative w-full sm:max-w-xs">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={tp("search")}
+            className="w-full rounded-lg border border-border bg-background py-2 pl-9 pr-3 text-sm outline-none focus:ring-2 focus:ring-ring/40"
+          />
+        </div>
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="w-full text-left text-xs md:text-sm">
+          <thead className="bg-muted/40 text-[11px] uppercase tracking-wide text-muted-foreground md:text-xs">
+            <tr>
+              <th className="px-3 py-2.5 font-medium md:px-4 md:py-3">
+                {tp("path")}
+              </th>
+              <th
+                className="w-px whitespace-nowrap px-1.5 py-2.5 text-right font-medium tracking-normal md:px-4 md:py-3 md:tracking-wide"
+                title={tp("visitors")}
+              >
+                <span className="md:hidden">{tp("visitorsShort")}</span>
+                <span className="hidden md:inline">{tp("visitors")}</span>
+              </th>
+              <th
+                className="w-px whitespace-nowrap px-1.5 py-2.5 text-right font-medium tracking-normal md:px-4 md:py-3 md:tracking-wide"
+                title={tp("visits")}
+              >
+                <span className="md:hidden">{tp("visitsShort")}</span>
+                <span className="hidden md:inline">{tp("visits")}</span>
+              </th>
+              <th className="hidden px-3 py-2.5 text-right font-medium lg:table-cell lg:px-4 lg:py-3">
+                {tp("sessions")}
+              </th>
+              <th className="hidden px-3 py-2.5 text-right font-medium lg:table-cell lg:px-4 lg:py-3">
+                {tp("countries")}
+              </th>
+              <th className="px-3 py-2.5 text-right font-medium md:px-4 md:py-3">
+                {tp("share")}
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {filtered.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={6}
+                  className="px-3 py-8 text-center text-muted-foreground md:px-4"
+                >
+                  {tp("empty")}
+                </td>
+              </tr>
+            ) : (
+              filtered.map((row) => (
+                <tr key={row.path} className="hover:bg-muted/30">
+                  <td className="max-w-[11rem] truncate px-3 py-2 font-medium sm:max-w-[28rem] md:px-4 md:py-2.5">
+                    {row.path}
+                  </td>
+                  <td className="w-px whitespace-nowrap px-1.5 py-2 text-right tabular-nums md:px-4 md:py-2.5">
+                    {formatCount(row.visitors, locale)}
+                  </td>
+                  <td className="w-px whitespace-nowrap px-1.5 py-2 text-right tabular-nums font-medium md:px-4 md:py-2.5">
+                    {formatCount(row.visits, locale)}
+                  </td>
+                  <td className="hidden px-3 py-2 text-right tabular-nums text-muted-foreground lg:table-cell lg:px-4 lg:py-2.5">
+                    {formatCount(row.sessions, locale)}
+                  </td>
+                  <td className="hidden px-3 py-2 text-right tabular-nums text-muted-foreground lg:table-cell lg:px-4 lg:py-2.5">
+                    {formatCount(row.countries, locale)}
+                  </td>
+                  <td className="px-3 py-2 text-right md:px-4 md:py-2.5">
+                    <div className="ml-auto flex items-center justify-end gap-2 md:w-28">
+                      <div className="hidden h-1.5 flex-1 overflow-hidden rounded-full bg-muted md:block">
+                        <div
+                          className="h-full rounded-full bg-primary"
+                          style={{
+                            width: `${Math.min(100, Math.max(0, row.percent))}%`,
+                          }}
+                        />
+                      </div>
+                      <span className="tabular-nums text-[11px] text-muted-foreground md:w-8 md:text-right md:text-xs">
+                        {row.percent}%
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+          {filtered.length > 0 && (
+            <tfoot className="border-t border-border bg-muted/20 text-[11px] text-muted-foreground md:text-xs">
+              <tr>
+                <td className="px-3 py-2 font-medium text-foreground md:px-4 md:py-3">
+                  {tp("showing", { count: filtered.length })}
+                </td>
+                <td className="w-px whitespace-nowrap px-1.5 py-2 text-right md:px-4 md:py-3">
+                  —
+                </td>
+                <td className="w-px whitespace-nowrap px-1.5 py-2 text-right tabular-nums font-medium text-foreground md:px-4 md:py-3">
+                  {formatCount(totals, locale)}
+                </td>
+                <td className="hidden px-3 py-2 text-right lg:table-cell lg:px-4 lg:py-3">
+                  —
+                </td>
+                <td className="hidden px-3 py-2 lg:table-cell lg:px-4 lg:py-3" />
+                <td className="px-3 py-2 md:px-4 md:py-3" />
+              </tr>
+            </tfoot>
+          )}
+        </table>
+      </div>
     </div>
   );
 }

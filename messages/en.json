@@ -8,7 +8,10 @@
     "demo": "Demo",
     "login": "Log in",
     "addDomain": "Add domain",
-    "docs": "Docs"
+    "docs": "Docs",
+    "dashboard": "Dashboard",
+    "traffic": "Traffic",
+    "reports": "Reports"
   },
   "hero": {
     "brand": "tashrif.info",
@@ -19,7 +22,7 @@
   },
   "steps": {
     "title": "How it works",
-    "sub": "From SDK to insights in three steps.",
+    "sub": "From install to a live board in three steps.",
     "one": {
       "title": "Install the SDK",
       "desc": "Add the npm package and call it from Next.js middleware."
@@ -45,13 +48,40 @@
     "title": "Live preview",
     "sub": "A snapshot of what your board looks like."
   },
+  "intro": {
+    "badge": "Web analytics",
+    "title": "See your site’s traffic on one clear board",
+    "body": "tashrif.info is lightweight web analytics for visitors, pages, and sources. Your data, your panel — not a heavy ad tracker.",
+    "boardTitle": "Traffic, pages, and logs",
+    "boardDesc": "Map and chart, which pages hold people, every request: path, status, country, IP.",
+    "reportsTitle": "Telegram reports",
+    "reportsDesc": "Daily, weekly, or monthly stats, logs, and traffic PDFs in chat.",
+    "teamTitle": "Team",
+    "teamDesc": "Owner, admin, and viewer — each person gets the right access."
+  },
+  "why": {
+    "title": "Why tashrif.info",
+    "sub": "What you need. Nothing extra.",
+    "sdkTitle": "A few lines of SDK",
+    "sdkDesc": "Add the package — visits start landing on your board.",
+    "telegramTitle": "Reports in Telegram",
+    "telegramDesc": "Yesterday’s picture arrives at 06:00. No need to open the dashboard.",
+    "localeTitle": "Uzbek and English",
+    "localeDesc": "UI and reports follow your language — the one your team actually uses.",
+    "teamTitle": "Roles for the team",
+    "teamDesc": "Viewers see analytics. Admins manage reports and access. Owners run everything."
+  },
+  "closing": {
+    "title": "Connect your first domain today",
+    "sub": "Open the demo or add your site — it takes a few minutes.",
+    "ctaDemo": "Explore demo",
+    "ctaAdd": "Add domain"
+  },
   "footer": {
     "product": "Product",
-    "company": "Company",
-    "legal": "Legal",
-    "rights": "",
-    "privacy": "Privacy",
-    "terms": "Terms"
+    "features": "Features",
+    "tagline": "Web analytics that makes site visits easy to see.",
+    "rights": ""
   },
   "login": {
     "title": "Welcome back",

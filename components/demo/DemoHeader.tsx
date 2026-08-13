@@ -4,22 +4,24 @@ import { useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
 import { LanguageSelect } from "@/components/LanguageSelect";
 import { useDemoShell } from "./DemoShellContext";
-import { CalendarDays, PanelLeft } from "lucide-react";
+import { DemoUserMenu } from "./DemoUserMenu";
+import { CalendarDays, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 
-const titleKeyByPath: Record<string, string> = {
-  "/demo": "traffic",
-  "/demo/traffic": "traffic",
-  "/demo/pages": "pages",
-  "/demo/logs": "logs",
-  "/demo/domains": "domains",
-  "/demo/access": "access",
-  "/demo/reports": "reports",
-};
+const titleKeyByPath: Record<string, "traffic" | "pages" | "logs" | "domains" | "access" | "reports"> =
+  {
+    "/demo": "traffic",
+    "/demo/traffic": "traffic",
+    "/demo/pages": "pages",
+    "/demo/logs": "logs",
+    "/demo/domains": "domains",
+    "/demo/access": "access",
+    "/demo/reports": "reports",
+  };
 
 export function DemoHeader() {
   const t = useTranslations("demo");
   const pathname = usePathname();
-  const { toggle } = useDemoShell();
+  const { collapsed, toggle } = useDemoShell();
   const key = titleKeyByPath[pathname] ?? "traffic";
 
   return (
@@ -28,13 +30,18 @@ export function DemoHeader() {
         type="button"
         onClick={toggle}
         className="rounded-lg border border-border bg-card p-2 text-muted-foreground transition hover:text-foreground"
-        aria-label="Toggle sidebar"
+        aria-label={collapsed ? (t.has("expand") ? t("expand") : "Expand") : t("collapse")}
+        title={collapsed ? (t.has("expand") ? t("expand") : "Expand") : t("collapse")}
       >
-        <PanelLeft className="h-4 w-4" />
+        {collapsed ? (
+          <PanelLeftOpen className="h-4 w-4" />
+        ) : (
+          <PanelLeftClose className="h-4 w-4" />
+        )}
       </button>
 
       <h1 className="min-w-0 flex-1 truncate text-lg font-semibold tracking-tight">
-        {t(`titles.${key}` as "titles.traffic")}
+        {t(`titles.${key}`)}
       </h1>
 
       <div className="hidden items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-sm text-muted-foreground md:flex">
@@ -43,13 +50,7 @@ export function DemoHeader() {
       </div>
 
       <LanguageSelect />
-
-      <div
-        className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-soft text-sm font-semibold text-primary"
-        title="Demo User"
-      >
-        DU
-      </div>
+      <DemoUserMenu />
     </header>
   );
 }

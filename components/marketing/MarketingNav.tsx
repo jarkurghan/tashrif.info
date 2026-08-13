@@ -27,7 +27,7 @@ export function MarketingNav() {
               href="/app"
               className="inline-flex rounded-lg bg-primary px-3.5 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition hover:brightness-110"
             >
-              Dashboard
+              {t("dashboard")}
             </Link>
           ) : (
             <Link
