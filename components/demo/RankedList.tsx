@@ -20,6 +20,7 @@ export function RankedList({
   const [active, setActive] = useState(tabs[0]?.id ?? "");
   const items = datasets[active] ?? [];
   const showTabs = tabs.length > 1;
+  const showKeyCol = items.some((i) => i.code || i.flag);
 
   return (
     <div
@@ -71,7 +72,11 @@ export function RankedList({
                 aria-hidden
               />
               <div className="relative flex items-center gap-3 px-3 py-2 text-sm">
-                {item.flag && <span className="text-base leading-none">{item.flag}</span>}
+                {showKeyCol && (
+                  <span className="inline-flex w-8 shrink-0 items-center font-mono text-xs font-semibold uppercase leading-none tracking-wide text-muted-foreground">
+                    {item.code ? item.code.toUpperCase() : (item.flag ?? "")}
+                  </span>
+                )}
                 <span
                   className="min-w-0 flex-1 truncate font-medium"
                   title={item.title ?? item.label}
