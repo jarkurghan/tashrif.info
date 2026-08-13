@@ -125,20 +125,29 @@
       "sessions": "Sessions",
       "pageviews": "Pageviews",
       "bounce": "Bounce rate",
-      "duration": "Session duration"
+      "duration": "Session duration",
+      "lastVisit": "Last visit",
+      "newUsers": "New visitors",
+      "viewsPerUser": "Views / visitor"
     },
     "charts": {
       "sessions": "Sessions",
-      "duration": "Session duration"
+      "duration": "Session duration",
+      "pageviews": "Pageviews"
     },
+    "empty": "No data yet",
     "tabs": {
       "country": "Country",
       "region": "Region",
       "city": "City",
-      "page": "Page",
+      "page": "Pages",
       "userAgent": "User-Agent",
       "entry": "Entry pages",
-      "exit": "Exit pages"
+      "exit": "Exit pages",
+      "referrer": "Referrers",
+      "browser": "Browsers",
+      "os": "OS",
+      "direct": "Direct"
     },
     "details": "Details",
     "pagesTable": {
@@ -168,7 +177,7 @@
       "status": "Status",
       "prev": "Previous",
       "next": "Next",
-      "showing": "Showing {from}–{to} of {total}"
+      "showing": "{from}–{to} of {total}"
     },
     "domains": {
       "add": "Add domain",

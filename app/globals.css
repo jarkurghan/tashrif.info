@@ -28,6 +28,9 @@
   --hero-glow-2: rgba(217, 119, 6, 0.12);
   --map-land: #c5ddd8;
   --map-active: #0d9488;
+  --map-dot: #8a7674;
+  --map-dot-halo: 0.2;
+  --map-dot-core: 0.48;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -59,6 +62,9 @@
     --hero-glow-2: rgba(251, 191, 36, 0.1);
     --map-land: #1e3330;
     --map-active: #2dd4bf;
+    --map-dot: #c4a09c;
+    --map-dot-halo: 0.32;
+    --map-dot-core: 0.78;
   }
 }
 
@@ -94,6 +100,32 @@
 
 * {
   border-color: var(--border);
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--muted-foreground) 42%, transparent) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  background-color: color-mix(in oklab, var(--muted-foreground) 38%, transparent);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(in oklab, var(--primary) 70%, var(--muted-foreground));
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 html {
@@ -154,4 +186,18 @@ body {
     linear-gradient(to bottom, color-mix(in oklab, var(--border) 55%, transparent) 1px, transparent 1px);
   background-size: 48px 48px;
   mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 75%);
+}
+
+.map-bubble circle:first-of-type {
+  fill: var(--map-dot);
+  fill-opacity: var(--map-dot-halo);
+}
+
+.map-bubble circle:last-of-type {
+  fill: var(--map-dot);
+  fill-opacity: var(--map-dot-core);
+}
+
+.map-bubble:hover circle:first-of-type {
+  fill-opacity: calc(var(--map-dot-halo) + 0.12);
 }

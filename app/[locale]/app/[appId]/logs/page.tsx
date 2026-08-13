@@ -3,13 +3,14 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useActiveApp } from "@/components/app/ActiveAppProvider";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { apiFetch } from "@/lib/api";
 import { AppHeader } from "@/components/app/AppHeader";
 import { Select } from "@/components/ui/Select";
 import { Filter, Search } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { formatUserAgent } from "@/lib/parse-user-agent";
+import { countryLabel, flagEmoji } from "@/lib/geo-display";
 
 type LogItem = {
   id: string;
@@ -23,11 +24,25 @@ type LogItem = {
   userAgent: string | null;
 };
 
+const PAGE_SIZE = 20;
+
+function CountryCell({ code, locale }: { code: string | null; locale: string }) {
+  if (!code) return "—";
+  const flag = flagEmoji(code);
+  return (
+    <span className="inline-flex items-center gap-2">
+      {flag && <span className="text-base leading-none">{flag}</span>}
+      {countryLabel(code, locale)}
+    </span>
+  );
+}
+
 export default function LogsAnalyticsPage() {
   const { activeAppId: appId } = useActiveApp();
   const { data } = useSession();
   const t = useTranslations("demo.logs");
   const title = useTranslations("demo");
+  const locale = useLocale();
   const [query, setQuery] = useState("");
   const [method, setMethod] = useState("ALL");
   const [page, setPage] = useState(1);
@@ -38,7 +53,7 @@ export default function LogsAnalyticsPage() {
     if (!data?.apiToken || !appId) return;
     const params = new URLSearchParams({
       page: String(page),
-      pageSize: "20",
+      pageSize: String(PAGE_SIZE),
       q: query,
       method,
     });
@@ -53,9 +68,9 @@ export default function LogsAnalyticsPage() {
       .catch(console.error);
   }, [data?.apiToken, appId, page, query, method]);
 
-  const from = total === 0 ? 0 : (page - 1) * 10 + 1;
-  const to = Math.min(total, page * 10);
-  const totalPages = Math.max(1, Math.ceil(total / 10));
+  const from = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+  const to = Math.min(total, (page - 1) * PAGE_SIZE + items.length);
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
     <>
@@ -132,7 +147,9 @@ export default function LogsAnalyticsPage() {
                         {row.status ?? "—"}
                       </span>
                     </td>
-                    <td className="px-4 py-2.5">{row.country ?? "—"}</td>
+                    <td className="px-4 py-2.5">
+                      <CountryCell code={row.country} locale={locale} />
+                    </td>
                     <td className="px-4 py-2.5 font-mono text-xs">{row.ip}</td>
                     <td className="px-4 py-2.5 font-mono text-xs">{row.visitorId}</td>
                     <td

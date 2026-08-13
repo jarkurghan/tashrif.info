@@ -170,16 +170,9 @@ export function formatUserAgent(raw: string | null | undefined): string {
   return `${browser} · ${os}`;
 }
 
-export function groupByParsedUserAgent(
-  items: { label: string; value: number }[],
+function toRanked(
+  map: Map<string, { value: number; raw: string }>,
 ): Array<{ label: string; value: number; percent: number; title?: string }> {
-  const map = new Map<string, { value: number; raw: string }>();
-  for (const item of items) {
-    const label = formatUserAgent(item.label);
-    const cur = map.get(label);
-    if (cur) cur.value += item.value;
-    else map.set(label, { value: item.value, raw: item.label });
-  }
   const total = [...map.values()].reduce((s, x) => s + x.value, 0) || 1;
   return [...map.entries()]
     .sort((a, b) => b[1].value - a[1].value)
@@ -189,4 +182,36 @@ export function groupByParsedUserAgent(
       percent: Math.round((x.value / total) * 100),
       title: x.raw,
     }));
+}
+
+function accumulate(
+  items: { label: string; value: number }[],
+  keyFn: (ua: string) => string,
+) {
+  const map = new Map<string, { value: number; raw: string }>();
+  for (const item of items) {
+    const key = keyFn(item.label);
+    const cur = map.get(key);
+    if (cur) cur.value += item.value;
+    else map.set(key, { value: item.value, raw: item.label });
+  }
+  return toRanked(map);
+}
+
+export function groupByParsedUserAgent(
+  items: { label: string; value: number }[],
+) {
+  return accumulate(items, formatUserAgent);
+}
+
+export function groupByBrowser(items: { label: string; value: number }[]) {
+  return accumulate(items, (ua) => parseUserAgent(ua)?.browser ?? ua);
+}
+
+export function groupByOs(items: { label: string; value: number }[]) {
+  return accumulate(items, (ua) => {
+    const p = parseUserAgent(ua);
+    if (!p?.os) return ua;
+    return p.osVersion ? `${p.os} ${p.osVersion}` : p.os;
+  });
 }

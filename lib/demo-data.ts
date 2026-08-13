@@ -1,5 +1,5 @@
 export type Metric = {
-  key: "users" | "sessions" | "pageviews" | "bounce" | "duration";
+  key: "users" | "pageviews" | "lastVisit" | "newUsers" | "viewsPerUser";
   value: string;
   trend: string;
   positive?: boolean;
@@ -65,10 +65,10 @@ export type ReportChat = {
 
 export const metrics: Metric[] = [
   { key: "users", value: "10.6k", trend: "+1.2k" },
-  { key: "sessions", value: "11.4k", trend: "+890" },
   { key: "pageviews", value: "26.8k", trend: "+3.4k" },
-  { key: "bounce", value: "42.4%", trend: "-2.1%", positive: true },
-  { key: "duration", value: "4m 27s", trend: "+38s" },
+  { key: "newUsers", value: "4.1k", trend: "+520" },
+  { key: "viewsPerUser", value: "2.5", trend: "+0.2" },
+  { key: "lastVisit", value: "09:41", trend: "" },
 ];
 
 export const trafficSeries: SeriesPoint[] = [
@@ -121,6 +121,14 @@ export const pages: RankedItem[] = [
   { label: "/blog", value: 1800, percent: 7 },
   { label: "/dashboard", value: 1500, percent: 6 },
   { label: "/login", value: 980, percent: 4 },
+];
+
+export const referrers: RankedItem[] = [
+  { label: "(direct)", value: 4100, percent: 38 },
+  { label: "google.com", value: 2800, percent: 26 },
+  { label: "github.com", value: 1200, percent: 11 },
+  { label: "t.me", value: 890, percent: 8 },
+  { label: "reddit.com", value: 540, percent: 5 },
 ];
 
 export const userAgents: RankedItem[] = [

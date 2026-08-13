@@ -18,7 +18,9 @@ export function MetricCard({
         <p className="text-2xl font-semibold tracking-tight tabular-nums">
           {value}
         </p>
-        <TrendBadge value={trend} positive={positive} />
+        {trend && trend !== "—" ? (
+          <TrendBadge value={trend} positive={positive} />
+        ) : null}
       </div>
     </div>
   );

@@ -125,20 +125,29 @@
       "sessions": "Seanslar",
       "pageviews": "Sahifa ko'rishlar",
       "bounce": "Qaytish darajasi",
-      "duration": "Seans davomiyligi"
+      "duration": "Seans davomiyligi",
+      "lastVisit": "So'nggi kirish",
+      "newUsers": "Yangi tashrifchilar",
+      "viewsPerUser": "Sahifa / kishi"
     },
     "charts": {
       "sessions": "Seanslar",
-      "duration": "Seans davomiyligi"
+      "duration": "Seans davomiyligi",
+      "pageviews": "Sahifa ko'rishlar"
     },
+    "empty": "Hali ma'lumot yo'q",
     "tabs": {
       "country": "Mamlakat",
       "region": "Viloyat",
       "city": "Shahar",
-      "page": "Sahifa",
+      "page": "Sahifalar",
       "userAgent": "User-Agent",
       "entry": "Kirish sahifalari",
-      "exit": "Chiqish sahifalari"
+      "exit": "Chiqish sahifalari",
+      "referrer": "Manbalar",
+      "browser": "Brauzerlar",
+      "os": "OS",
+      "direct": "To'g'ridan-to'g'ri"
     },
     "details": "Batafsil",
     "pagesTable": {
@@ -168,7 +177,7 @@
       "status": "Holat",
       "prev": "Oldingi",
       "next": "Keyingi",
-      "showing": "{total} dan {from}–{to} ko'rsatilmoqda"
+      "showing": "{from}–{to} / {total}"
     },
     "domains": {
       "add": "Domen qo'shish",

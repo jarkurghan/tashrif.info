@@ -75,7 +75,16 @@ function formatMemberSince(iso: string | null | undefined, locale: string) {
   if (!iso) return null;
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return null;
-  return new Intl.DateTimeFormat(locale === "uz" ? "uz-UZ" : "en-GB", {
+  const tags = locale.startsWith("uz") ? ["uz-Latn-UZ", "en-GB"] : ["en-GB"];
+  for (const tag of tags) {
+    const formatted = new Intl.DateTimeFormat(tag, {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    }).format(d);
+    if (!/[\u0400-\u04FF]/.test(formatted)) return formatted;
+  }
+  return new Intl.DateTimeFormat("en-GB", {
     day: "numeric",
     month: "short",
     year: "numeric",
