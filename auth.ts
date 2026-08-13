@@ -37,6 +37,7 @@ async function syncToApi(input: {
       email?: string | null;
       name?: string | null;
       image?: string | null;
+      locale?: string | null;
     };
   };
 }
@@ -66,7 +67,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: "/login",
   },
   callbacks: {
-    async jwt({ token, account, user }) {
+    async jwt({ token, account, user, trigger, session }) {
+      if (trigger === "update" && session?.locale) {
+        token.locale = session.locale;
+      }
       if (account && user) {
         try {
           const synced = await syncToApi({
@@ -81,6 +85,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           token.email = synced.user.email;
           token.name = synced.user.name;
           token.picture = synced.user.image;
+          token.locale = synced.user.locale ?? "uz";
           token.error = undefined;
         } catch (e) {
           console.error("syncToApi failed", e);
@@ -93,6 +98,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async session({ session, token }) {
       session.apiToken = token.apiToken as string | undefined;
       session.error = token.error as string | undefined;
+      session.locale = token.locale;
       if (session.user) {
         session.user.id = (token.userId as string) || session.user.id;
       }

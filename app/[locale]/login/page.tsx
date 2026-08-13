@@ -6,6 +6,7 @@ import { Link, useRouter } from "@/i18n/navigation";
 import { Activity, ArrowLeft } from "lucide-react";
 import { LanguageSelect } from "@/components/LanguageSelect";
 import { useEffect, useState } from "react";
+import type { Locale } from "@/i18n/routing";
 
 export default function LoginPage() {
   const t = useTranslations("login");
@@ -25,7 +26,9 @@ export default function LoginPage() {
     if (status !== "authenticated") return;
 
     if (session?.apiToken) {
-      router.replace("/app");
+      router.replace("/app", {
+        locale: (session.locale as Locale) ?? locale,
+      });
       return;
     }
 
@@ -33,7 +36,7 @@ export default function LoginPage() {
       setSyncError(true);
       void signOut({ redirect: false });
     }
-  }, [status, session, router]);
+  }, [status, session, router, locale]);
 
   return (
     <div className="relative flex min-h-dvh flex-col">

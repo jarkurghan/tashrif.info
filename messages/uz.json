@@ -80,7 +80,7 @@
       "pages": "Sahifalar",
       "logs": "Loglar",
       "domains": "Domenlar",
-      "access": "Kirish",
+      "access": "Ruhsatlar",
       "reports": "Hisobotlar",
       "settings": "Sozlamalar"
     },
@@ -117,7 +117,7 @@
       "pages": "Sahifalar",
       "logs": "So'rov loglari",
       "domains": "Mening domenlarim",
-      "access": "Kirish va takliflar",
+      "access": "Ruhsatlar va takliflar",
       "reports": "Telegram hisobotlari"
     },
     "metrics": {

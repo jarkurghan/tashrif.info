@@ -1,15 +1,18 @@
 "use client";
 
 import { useLocale } from "next-intl";
+import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing, type Locale } from "@/i18n/routing";
 import { Select } from "@/components/ui/Select";
 import { cn } from "@/lib/cn";
+import { apiFetch } from "@/lib/api";
 
 export function LanguageSelect({ className }: { className?: string }) {
   const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
+  const { data: session, update } = useSession();
 
   return (
     <Select
@@ -20,7 +23,22 @@ export function LanguageSelect({ className }: { className?: string }) {
       triggerClassName="bg-card"
       value={locale}
       onChange={(next) => {
-        router.replace(pathname, { locale: next as Locale });
+        const nextLocale = next as Locale;
+        void (async () => {
+          try {
+            if (session?.apiToken) {
+              await apiFetch("/v1/auth/me", {
+                method: "PATCH",
+                token: session.apiToken,
+                body: JSON.stringify({ locale: nextLocale }),
+              });
+              await update({ locale: nextLocale });
+            }
+            router.replace(pathname, { locale: nextLocale });
+          } catch (e) {
+            console.error(e);
+          }
+        })();
       }}
       options={routing.locales.map((l) => ({
         value: l,

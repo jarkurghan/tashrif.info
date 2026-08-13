@@ -14,6 +14,6 @@ export default getRequestConfig(async ({ requestLocale }) => {
 
   return {
     locale,
-    messages: catalogs[locale as keyof typeof catalogs] ?? catalogs.en,
+    messages: catalogs[locale as keyof typeof catalogs] ?? catalogs.uz,
   };
 });

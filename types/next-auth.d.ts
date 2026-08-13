@@ -5,6 +5,7 @@ declare module "next-auth" {
   interface Session {
     apiToken?: string;
     error?: string;
+    locale?: string;
     user: {
       id: string;
       name?: string | null;
@@ -19,5 +20,6 @@ declare module "next-auth/jwt" {
     apiToken?: string;
     userId?: string;
     error?: string;
+    locale?: string;
   }
 }

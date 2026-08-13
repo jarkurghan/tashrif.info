@@ -5,7 +5,6 @@ import { signOut, useSession } from "next-auth/react";
 import { useLocale, useTranslations } from "next-intl";
 import { apiFetch } from "@/lib/api";
 import { AppHeader } from "@/components/app/AppHeader";
-import { LanguageSelect } from "@/components/LanguageSelect";
 import { useActiveApp } from "@/components/app/ActiveAppProvider";
 import { Link } from "@/i18n/navigation";
 import { Check, Copy, LogOut } from "lucide-react";
@@ -292,17 +291,6 @@ export default function SettingsPage() {
                   </li>
                 )}
               </ul>
-            </section>
-
-            {/* Language only — interaction control */}
-            <section className="border-t border-border pt-8">
-              <h2 className="text-sm font-semibold tracking-tight">
-                {ts("preferences")}
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground">{ts("language")}</p>
-              <div className="mt-4 max-w-[12rem]">
-                <LanguageSelect className="w-full" />
-              </div>
             </section>
           </div>
         </div>
