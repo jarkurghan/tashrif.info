@@ -114,10 +114,12 @@ export function AppSidebar() {
   const t = useTranslations("demo");
   const pathname = usePathname();
   const { collapsed, toggle, setCollapsed } = useDemoShell();
-  const { activeAppId, apps, loading } = useActiveApp();
+  const { activeAppId, apps, loading, activeApp } = useActiveApp();
   const { invites } = useInviteInbox();
 
   const base = activeAppId ? `/app/${activeAppId}` : null;
+  const canManage =
+    activeApp?.role === "admin" || activeApp?.role === "owner";
 
   const analytics = base
     ? ([
@@ -127,12 +129,13 @@ export function AppSidebar() {
       ] as const)
     : [];
 
-  const manage = base
-    ? ([
-        { href: `${base}/access`, key: "access", icon: Users },
-        { href: `${base}/reports`, key: "reports", icon: Send },
-      ] as const)
-    : [];
+  const manage =
+    base && canManage
+      ? ([
+          { href: `${base}/access`, key: "access", icon: Users },
+          { href: `${base}/reports`, key: "reports", icon: Send },
+        ] as const)
+      : [];
 
   const showEmptyHint = !loading && (apps.length === 0 || !activeAppId);
   const expandLabel = t.has("expand") ? t("expand") : "Expand";

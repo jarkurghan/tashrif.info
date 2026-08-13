@@ -28,7 +28,8 @@ type OutgoingInvite = {
 };
 
 export default function AccessPage() {
-  const { activeAppId: appId } = useActiveApp();
+  const { activeAppId: appId, activeApp } = useActiveApp();
+  const isOwner = activeApp?.role === "owner";
   const { invites } = useInviteInbox();
   const { data } = useSession();
   const t = useTranslations("demo.access");
@@ -106,6 +107,22 @@ export default function AccessPage() {
     await load();
   }
 
+  async function changeRole(userId: string, next: "admin" | "viewer") {
+    if (!data?.apiToken || !appId) return;
+    setMsg(null);
+    try {
+      await apiFetch(`/v1/apps/${appId}/members/${userId}`, {
+        method: "PATCH",
+        token: data.apiToken,
+        body: JSON.stringify({ role: next }),
+      });
+      setMsg({ kind: "ok", text: t("roleUpdated") });
+      await load();
+    } catch {
+      setMsg({ kind: "err", text: t("roleUpdateFailed") });
+    }
+  }
+
   return (
     <>
       <AppHeader title={title("titles.access")} />
@@ -181,7 +198,26 @@ export default function AccessPage() {
               {members.map((m) => (
                 <tr key={m.userId}>
                   <td className="px-4 py-3">{m.email ?? m.name}</td>
-                  <td className="px-4 py-3">{t(m.role as "owner")}</td>
+                  <td className="px-4 py-3">
+                    {isOwner && m.role !== "owner" ? (
+                      <Select
+                        size="sm"
+                        aria-label={t("role")}
+                        value={m.role}
+                        className="w-40"
+                        onChange={(v) => {
+                          if (v === m.role) return;
+                          void changeRole(m.userId, v as "admin" | "viewer");
+                        }}
+                        options={[
+                          { value: "admin", label: t("admin") },
+                          { value: "viewer", label: t("viewer") },
+                        ]}
+                      />
+                    ) : (
+                      t(m.role as "owner")
+                    )}
+                  </td>
                   <td className="px-4 py-3">
                     <span
                       className={cn(
@@ -195,7 +231,7 @@ export default function AccessPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right">
-                    {m.role !== "owner" && (
+                    {isOwner && m.role !== "owner" && (
                       <button
                         type="button"
                         className="text-muted-foreground hover:text-danger"
@@ -217,13 +253,15 @@ export default function AccessPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <button
-                      type="button"
-                      className="text-muted-foreground hover:text-danger"
-                      onClick={() => void cancelInvite(i.id)}
-                    >
-                      {t("revoke")}
-                    </button>
+                    {isOwner && (
+                      <button
+                        type="button"
+                        className="text-muted-foreground hover:text-danger"
+                        onClick={() => void cancelInvite(i.id)}
+                      >
+                        {t("revoke")}
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

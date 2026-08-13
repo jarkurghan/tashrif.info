@@ -238,7 +238,9 @@
       "selfInvite": "O'zingizni taklif qilib bo'lmaydi.",
       "inviteCreated": "Taklif yuborildi",
       "inviteCancelled": "Taklif bekor qilindi",
-      "inviteFailed": "Taklif yuborilmadi"
+      "inviteFailed": "Taklif yuborilmadi",
+      "roleUpdated": "Rol yangilandi",
+      "roleUpdateFailed": "Rolni o'zgartirib bo'lmadi"
     },
     "reports": {
       "title": "Telegram hisobotlari",

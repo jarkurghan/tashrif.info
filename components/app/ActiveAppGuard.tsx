@@ -23,6 +23,10 @@ export function ActiveAppGuard({ children }: { children: React.ReactNode }) {
 
   const urlAllowed =
     Boolean(urlAppId) && apps.some((a) => a.id === urlAppId);
+  const urlRole = apps.find((a) => a.id === urlAppId)?.role;
+  const sub = appSubPath(pathname);
+  const viewerBlocked =
+    urlRole === "viewer" && (sub === "/access" || sub === "/reports");
 
   useEffect(() => {
     redirected.current = false;
@@ -33,6 +37,9 @@ export function ActiveAppGuard({ children }: { children: React.ReactNode }) {
 
     if (urlAllowed) {
       if (urlAppId !== activeAppId) setActiveAppId(urlAppId);
+      if (viewerBlocked) {
+        router.replace(`/app/${urlAppId}/traffic`);
+      }
       return;
     }
 
@@ -47,6 +54,7 @@ export function ActiveAppGuard({ children }: { children: React.ReactNode }) {
     loading,
     urlAppId,
     urlAllowed,
+    viewerBlocked,
     activeAppId,
     pathname,
     router,
@@ -55,6 +63,7 @@ export function ActiveAppGuard({ children }: { children: React.ReactNode }) {
 
   if (loading) return null;
   if (!urlAllowed) return null;
+  if (viewerBlocked) return null;
 
   return children;
 }

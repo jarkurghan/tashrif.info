@@ -238,7 +238,9 @@
       "selfInvite": "You cannot invite yourself.",
       "inviteCreated": "Invitation sent",
       "inviteCancelled": "Invitation cancelled",
-      "inviteFailed": "Could not send invitation"
+      "inviteFailed": "Could not send invitation",
+      "roleUpdated": "Role updated",
+      "roleUpdateFailed": "Could not update role"
     },
     "reports": {
       "title": "Telegram reports",
