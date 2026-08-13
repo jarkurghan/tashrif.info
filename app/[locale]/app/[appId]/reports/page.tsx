@@ -12,10 +12,12 @@ import { cn } from "@/lib/cn";
 import { Eye, Plus, Trash2 } from "lucide-react";
 
 type Schedule = "daily" | "weekly" | "monthly";
+type Kind = "stats" | "log" | "traffic";
 
 type Report = {
   id: string;
   schedule: Schedule;
+  kind: Kind;
   active: boolean;
   lastSentAt: string | null;
   createdAt: string;
@@ -32,6 +34,11 @@ type Chat = {
 };
 
 const SCHEDULES: Schedule[] = ["daily", "weekly", "monthly"];
+const KINDS: Kind[] = ["stats", "log", "traffic"];
+
+function pairKey(schedule: Schedule, kind: Kind) {
+  return `${schedule}:${kind}`;
+}
 
 export default function ReportsPage() {
   const { activeAppId: appId } = useActiveApp();
@@ -50,6 +57,7 @@ export default function ReportsPage() {
 
   const [detailChat, setDetailChat] = useState<Chat | null>(null);
   const [schedule, setSchedule] = useState<Schedule>("daily");
+  const [kind, setKind] = useState<Kind>("stats");
   const [addingReport, setAddingReport] = useState(false);
   const [busy, setBusy] = useState(false);
 
@@ -79,7 +87,14 @@ export default function ReportsPage() {
 
   function openDetail(chat: Chat) {
     setDetailChat(chat);
-    setSchedule("daily");
+    const used = new Set(
+      chat.reports.map((r) => pairKey(r.schedule, r.kind ?? "stats")),
+    );
+    const first = SCHEDULES.flatMap((s) =>
+      KINDS.map((k) => ({ schedule: s, kind: k })),
+    ).find((p) => !used.has(pairKey(p.schedule, p.kind)));
+    setSchedule(first?.schedule ?? "daily");
+    setKind(first?.kind ?? "stats");
     setError(null);
   }
 
@@ -135,6 +150,13 @@ export default function ReportsPage() {
   async function addReport(e: React.FormEvent) {
     e.preventDefault();
     if (!data?.apiToken || !appId || !detailChat) return;
+    const submitSchedule = availableSchedules.includes(schedule)
+      ? schedule
+      : availableSchedules[0];
+    const submitKind = availableKinds.includes(kind)
+      ? kind
+      : availableKinds[0];
+    if (!submitSchedule || !submitKind) return;
     setAddingReport(true);
     setError(null);
     try {
@@ -143,10 +165,12 @@ export default function ReportsPage() {
         {
           method: "POST",
           token: data.apiToken,
-          body: JSON.stringify({ schedule }),
+          body: JSON.stringify({
+            schedule: submitSchedule,
+            kind: submitKind,
+          }),
         },
       );
-      setSchedule("daily");
       await load();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed");
@@ -172,9 +196,32 @@ export default function ReportsPage() {
     }
   }
 
-  const availableSchedules = SCHEDULES.filter(
-    (s) => !detailChat?.reports.some((r) => r.schedule === s),
+  const usedPairs = new Set(
+    (detailChat?.reports ?? []).map((r) =>
+      pairKey(r.schedule, r.kind ?? "stats"),
+    ),
   );
+  const availableSchedules = SCHEDULES.filter((s) =>
+    KINDS.some((k) => !usedPairs.has(pairKey(s, k))),
+  );
+  const availableKinds = KINDS.filter(
+    (k) => !usedPairs.has(pairKey(schedule, k)),
+  );
+  const hasAvailable = availableSchedules.length > 0;
+
+  useEffect(() => {
+    if (!detailChat) return;
+    if (
+      availableSchedules.length > 0 &&
+      !availableSchedules.includes(schedule)
+    ) {
+      setSchedule(availableSchedules[0]);
+      return;
+    }
+    if (availableKinds.length > 0 && !availableKinds.includes(kind)) {
+      setKind(availableKinds[0]);
+    }
+  }, [detailChat, availableSchedules, availableKinds, schedule, kind]);
 
   return (
     <>
@@ -264,7 +311,7 @@ export default function ReportsPage() {
                                 key={r.id}
                                 className="rounded-full bg-primary-soft px-2 py-0.5 text-[11px] text-primary md:text-xs"
                               >
-                                {t(r.schedule)}
+                                {t(r.schedule)} · {t(r.kind ?? "stats")}
                               </span>
                             ))}
                           </div>
@@ -387,6 +434,9 @@ export default function ReportsPage() {
                         <th className="px-4 py-2.5 font-medium">
                           {t("schedule")}
                         </th>
+                        <th className="px-4 py-2.5 font-medium">
+                          {t("kind")}
+                        </th>
                         <th className="px-4 py-2.5 font-medium text-right" />
                       </tr>
                     </thead>
@@ -396,6 +446,11 @@ export default function ReportsPage() {
                           <td className="px-4 py-3">
                             <span className="rounded-full bg-primary-soft px-2 py-0.5 text-xs text-primary">
                               {t(r.schedule)}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3">
+                            <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-foreground">
+                              {t(r.kind ?? "stats")}
                             </span>
                           </td>
                           <td className="px-4 py-3 text-right">
@@ -416,7 +471,7 @@ export default function ReportsPage() {
               </div>
             </div>
 
-            {availableSchedules.length > 0 && (
+            {hasAvailable && (
               <form
                 onSubmit={addReport}
                 className="flex flex-col gap-3 rounded-xl border border-border bg-muted/20 p-4 sm:flex-row sm:items-end"
@@ -432,10 +487,35 @@ export default function ReportsPage() {
                         ? schedule
                         : availableSchedules[0]
                     }
-                    onChange={(v) => setSchedule(v as Schedule)}
+                    onChange={(v) => {
+                      const next = v as Schedule;
+                      setSchedule(next);
+                      const kinds = KINDS.filter(
+                        (k) => !usedPairs.has(pairKey(next, k)),
+                      );
+                      if (!kinds.includes(kind)) setKind(kinds[0] ?? "stats");
+                    }}
                     options={availableSchedules.map((s) => ({
                       value: s,
                       label: t(s),
+                    }))}
+                  />
+                </label>
+                <label className="flex-1 text-sm">
+                  <span className="mb-1.5 block text-muted-foreground">
+                    {t("kind")}
+                  </span>
+                  <Select
+                    aria-label={t("kind")}
+                    value={
+                      availableKinds.includes(kind)
+                        ? kind
+                        : (availableKinds[0] ?? "stats")
+                    }
+                    onChange={(v) => setKind(v as Kind)}
+                    options={availableKinds.map((k) => ({
+                      value: k,
+                      label: t(k),
                     }))}
                   />
                 </label>
@@ -450,7 +530,7 @@ export default function ReportsPage() {
               </form>
             )}
 
-            {availableSchedules.length === 0 && (
+            {!hasAvailable && (
               <p className="text-sm text-muted-foreground">
                 {t("allSchedulesUsed")}
               </p>
