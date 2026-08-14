@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useId } from "react";
+import { useEffect, useId, useState } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { cn } from "@/lib/cn";
+
+const EXIT_MS = 300;
 
 type SheetProps = {
   open: boolean;
@@ -23,6 +25,25 @@ export function Sheet({
   wide,
 }: SheetProps) {
   const titleId = useId();
+  const [rendered, setRendered] = useState(false);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      setRendered(true);
+      let inner = 0;
+      const outer = requestAnimationFrame(() => {
+        inner = requestAnimationFrame(() => setVisible(true));
+      });
+      return () => {
+        cancelAnimationFrame(outer);
+        cancelAnimationFrame(inner);
+      };
+    }
+    setVisible(false);
+    const t = window.setTimeout(() => setRendered(false), EXIT_MS);
+    return () => window.clearTimeout(t);
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -39,14 +60,16 @@ export function Sheet({
   }, [open, onClose]);
 
   if (typeof document === "undefined") return null;
+  if (!open && !rendered) return null;
 
   return createPortal(
     <div
       className={cn(
         "fixed inset-0 z-[60] flex justify-end",
-        open ? "pointer-events-auto" : "pointer-events-none",
+        visible ? "pointer-events-auto" : "pointer-events-none",
       )}
       aria-hidden={!open}
+      inert={!open}
     >
       <button
         type="button"
@@ -55,7 +78,7 @@ export function Sheet({
         onClick={onClose}
         className={cn(
           "absolute inset-0 bg-foreground/25 transition-opacity duration-300",
-          open ? "opacity-100" : "opacity-0",
+          visible ? "opacity-100" : "opacity-0",
         )}
       />
       <aside
@@ -65,7 +88,7 @@ export function Sheet({
         className={cn(
           "relative flex h-full w-full flex-col border-l border-border bg-card shadow-2xl transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
           wide ? "max-w-lg" : "max-w-md",
-          open ? "translate-x-0" : "translate-x-full",
+          visible ? "translate-x-0" : "translate-x-full",
         )}
       >
         <header className="flex shrink-0 items-start justify-between gap-3 border-b border-border px-5 py-4">
@@ -80,6 +103,7 @@ export function Sheet({
           <button
             type="button"
             onClick={onClose}
+            tabIndex={open ? 0 : -1}
             className="rounded-lg p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
             aria-label="Close"
           >

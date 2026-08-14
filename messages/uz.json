@@ -94,6 +94,13 @@
   "demo": {
     "siteName": "Demo sayt",
     "dateRange": "So'nggi 24 soat",
+    "ranges": {
+      "label": "Davr",
+      "24h": "24 soat",
+      "7d": "1 hafta",
+      "30d": "1 oy",
+      "90d": "3 oy"
+    },
     "collapse": "Yig'ish",
     "expand": "Yoyish",
     "sections": {
@@ -207,7 +214,6 @@
       "userAgent": "User-Agent",
       "time": "Vaqt",
       "method": "Metod",
-      "status": "Holat",
       "prev": "Oldingi",
       "next": "Keyingi",
       "showing": "{from}–{to} / {total}"
@@ -226,7 +232,7 @@
       "empty": "Hali domen yo'q.",
       "actions": "Amallar",
       "details": "Batafsil",
-      "detailsHint": "Credentiallar, secretni almashtirish yoki domenni o'chirish.",
+      "detailsHint": "Credentiallar, secretni almashtirish, chiqish yoki domenni o'chirish.",
       "cancel": "Bekor qilish",
       "back": "Orqaga",
       "creating": "Yaratilmoqda…",
@@ -248,8 +254,17 @@
       "deleteForever": "Butunlay o'chirish",
       "deleting": "O'chirilmoqda…",
       "createFailed": "Yaratib bo'lmadi",
+      "domainInUse": "Bu domen allaqachon ulangan va unda trafik bor — olib bo'lmaydi.",
+      "domainAlreadyYours": "Bu domen allaqachon sizning ro'yxatingizda.",
       "rotateFailed": "Almashtirib bo'lmadi",
-      "deleteFailed": "O'chirib bo'lmadi"
+      "deleteFailed": "O'chirib bo'lmadi",
+      "leave": "Analitikadan chiqish",
+      "leaveHint": "Bu domen statistikasiga boshqa kira olmaysiz. Ma'lumotlar o'chmaydi.",
+      "leaveConfirmAsk": "Haqiqatan ham bu domen analitikasidan chiqmoqchimisiz?",
+      "leaveConfirmWarn": "Qayta kirish uchun egasi yoki admin sizni qayta taklif qilishi kerak.",
+      "leaveConfirm": "Ha, chiqish",
+      "leaving": "Chiqilmoqda…",
+      "leaveFailed": "Chiqib bo'lmadi"
     },
     "access": {
       "invite": "A'zo taklif qilish",

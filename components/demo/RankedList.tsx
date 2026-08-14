@@ -10,15 +10,17 @@ export function RankedList({
   datasets,
   empty,
   className,
+  limit,
 }: {
   title?: string;
   tabs: { id: string; label: string }[];
   datasets: Record<string, RankedItem[]>;
   empty?: string;
   className?: string;
+  limit?: number;
 }) {
   const [active, setActive] = useState(tabs[0]?.id ?? "");
-  const items = datasets[active] ?? [];
+  const items = (datasets[active] ?? []).slice(0, limit);
   const showTabs = tabs.length > 1;
   const showKeyCol = items.some((i) => i.code || i.flag);
 
@@ -63,7 +65,12 @@ export function RankedList({
           {empty ?? "—"}
         </p>
       ) : (
-        <ul className="max-h-[22rem] min-h-0 flex-1 overflow-y-auto px-2 py-2">
+        <ul
+          className={cn(
+            "min-h-0 flex-1 px-2 py-2",
+            limit ? "overflow-hidden" : "max-h-[22rem] overflow-y-auto",
+          )}
+        >
           {items.map((item) => (
             <li key={item.label} className="relative">
               <div

@@ -2,6 +2,7 @@ import { setRequestLocale } from "next-intl/server";
 import { DemoShellProvider } from "@/components/demo/DemoShellContext";
 import { DemoSidebar } from "@/components/demo/DemoSidebar";
 import { DemoHeader } from "@/components/demo/DemoHeader";
+import { DateRangeProvider } from "@/components/app/DateRangeProvider";
 
 export default async function DemoLayout({
   children,
@@ -15,6 +16,7 @@ export default async function DemoLayout({
 
   return (
     <DemoShellProvider>
+      <DateRangeProvider>
       <div className="flex h-dvh overflow-hidden bg-background">
         <DemoSidebar />
         <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
@@ -24,6 +26,7 @@ export default async function DemoLayout({
           </main>
         </div>
       </div>
+      </DateRangeProvider>
     </DemoShellProvider>
   );
 }

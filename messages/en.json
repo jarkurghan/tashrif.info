@@ -94,6 +94,13 @@
   "demo": {
     "siteName": "Demo Site",
     "dateRange": "Last 24 hours",
+    "ranges": {
+      "label": "Range",
+      "24h": "24 hours",
+      "7d": "1 week",
+      "30d": "1 month",
+      "90d": "3 months"
+    },
     "collapse": "Collapse",
     "expand": "Expand",
     "sections": {
@@ -207,7 +214,6 @@
       "userAgent": "User-Agent",
       "time": "Time",
       "method": "Method",
-      "status": "Status",
       "prev": "Previous",
       "next": "Next",
       "showing": "{from}–{to} of {total}"
@@ -226,7 +232,7 @@
       "empty": "No domains yet.",
       "actions": "Actions",
       "details": "Details",
-      "detailsHint": "Credentials, rotate secret, or delete this domain.",
+      "detailsHint": "Credentials, rotate secret, leave, or delete this domain.",
       "cancel": "Cancel",
       "back": "Back",
       "creating": "Creating…",
@@ -248,8 +254,17 @@
       "deleteForever": "Delete forever",
       "deleting": "Deleting…",
       "createFailed": "Create failed",
+      "domainInUse": "This domain is already connected and has traffic.",
+      "domainAlreadyYours": "This domain is already in your list.",
       "rotateFailed": "Rotate failed",
-      "deleteFailed": "Delete failed"
+      "deleteFailed": "Delete failed",
+      "leave": "Leave analytics",
+      "leaveHint": "You will lose access to this domain's stats. The data stays.",
+      "leaveConfirmAsk": "Leave analytics for this domain?",
+      "leaveConfirmWarn": "You'll need a new invite from the owner or an admin to return.",
+      "leaveConfirm": "Yes, leave",
+      "leaving": "Leaving…",
+      "leaveFailed": "Could not leave"
     },
     "access": {
       "invite": "Invite member",

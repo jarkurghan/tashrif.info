@@ -9,7 +9,7 @@ export function MarketingFooter() {
 
   return (
     <footer className="border-t border-border bg-card/50">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.6fr_1fr_1fr]">
+      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-8 sm:px-6 sm:py-14 md:grid-cols-[1.6fr_1fr_1fr] md:gap-10">
         <div>
           <div className="flex items-center gap-2 font-semibold">
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">

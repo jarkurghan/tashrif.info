@@ -6,6 +6,7 @@ import { InviteInboxProvider } from "@/components/app/InviteInboxProvider";
 import { InviteWarningBanner } from "@/components/app/IncomingInvites";
 import { AppSidebar } from "@/components/app/AppSidebar";
 import { LocaleSync } from "@/components/LocaleSync";
+import { DateRangeProvider } from "@/components/app/DateRangeProvider";
 import { useDemoShell } from "@/components/demo/DemoShellContext";
 
 function MobileSidebarBackdrop() {
@@ -26,6 +27,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <DemoShellProvider>
       <ActiveAppProvider>
         <InviteInboxProvider>
+          <DateRangeProvider>
           <LocaleSync />
           <div className="flex h-dvh overflow-hidden bg-background">
             <AppSidebar />
@@ -35,6 +37,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               {children}
             </div>
           </div>
+          </DateRangeProvider>
         </InviteInboxProvider>
       </ActiveAppProvider>
     </DemoShellProvider>

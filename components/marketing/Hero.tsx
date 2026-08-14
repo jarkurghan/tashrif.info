@@ -19,18 +19,18 @@ export function Hero() {
       />
       <div aria-hidden className="hero-grid pointer-events-none absolute inset-0 opacity-70" />
 
-      <div className="relative mx-auto grid max-w-6xl gap-10 px-4 pb-16 pt-16 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-end lg:pb-24 lg:pt-20">
+      <div className="relative mx-auto grid max-w-6xl gap-6 px-4 pb-10 pt-8 sm:gap-10 sm:px-6 sm:pb-16 sm:pt-16 lg:grid-cols-[1.05fr_0.95fr] lg:items-end lg:pb-24 lg:pt-20">
         <div>
-          <p className="animate-fade-up text-4xl font-bold tracking-tight text-primary sm:text-5xl lg:text-6xl">
+          <p className="animate-fade-up text-3xl font-bold tracking-tight text-primary sm:text-5xl lg:text-6xl">
             {t("brand")}
           </p>
-          <h1 className="animate-fade-up-delay mt-5 max-w-xl text-3xl font-semibold leading-tight tracking-tight text-foreground sm:text-4xl">
+          <h1 className="animate-fade-up-delay mt-3 max-w-xl text-2xl font-semibold leading-tight tracking-tight text-foreground sm:mt-5 sm:text-4xl">
             {t("headline")}
           </h1>
-          <p className="animate-fade-up-delay-2 mt-4 max-w-lg text-base leading-relaxed text-muted-foreground sm:text-lg">
+          <p className="animate-fade-up-delay-2 mt-3 max-w-lg text-base leading-relaxed text-muted-foreground sm:mt-4 sm:text-lg">
             {t("sub")}
           </p>
-          <div className="animate-fade-up-delay-2 mt-8 flex flex-wrap items-center gap-3">
+          <div className="animate-fade-up-delay-2 mt-5 flex flex-wrap items-center gap-3 sm:mt-8">
             <Link
               href="/demo"
               className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition hover:brightness-110"
@@ -47,7 +47,7 @@ export function Hero() {
           </div>
         </div>
 
-        <div className="animate-float relative min-h-[280px] lg:min-h-[340px]">
+        <div className="animate-float relative min-h-[220px] sm:min-h-[280px] lg:min-h-[340px]">
           <DashboardMock />
         </div>
       </div>

@@ -7,6 +7,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { apiFetch } from "@/lib/api";
 import { AppHeader } from "@/components/app/AppHeader";
 import { Search } from "lucide-react";
+import { useDateRange } from "@/components/app/DateRangeProvider";
 
 type PageRow = {
   path: string;
@@ -34,14 +35,15 @@ export default function PagesAnalyticsPage() {
   const locale = useLocale();
   const t = useTranslations("demo");
   const tp = useTranslations("demo.pagesTable");
+  const { queryString, ready } = useDateRange();
   const [items, setItems] = useState<PageRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
 
   useEffect(() => {
-    if (!data?.apiToken || !appId) return;
+    if (!data?.apiToken || !appId || !ready) return;
     setLoading(true);
-    apiFetch<{ items: PageRow[] }>(`/v1/apps/${appId}/pages`, {
+    apiFetch<{ items: PageRow[] }>(`/v1/apps/${appId}/pages?${queryString}`, {
       token: data.apiToken,
     })
       .then((r) =>
@@ -58,7 +60,7 @@ export default function PagesAnalyticsPage() {
       )
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [data?.apiToken, appId]);
+  }, [data?.apiToken, appId, queryString, ready]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();

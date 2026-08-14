@@ -3,12 +3,12 @@
 import { useCallback, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import { apiFetch } from "@/lib/api";
+import { apiFetch, ApiError } from "@/lib/api";
 import { AppHeader } from "@/components/app/AppHeader";
 import { useActiveApp, type AppRow } from "@/components/app/ActiveAppProvider";
 import { Sheet } from "@/components/ui/Sheet";
 import { cn } from "@/lib/cn";
-import { Check, Copy, Eye, Plus, Trash2 } from "lucide-react";
+import { Check, Copy, Eye, LogOut, Plus, Trash2 } from "lucide-react";
 
 type Creds = {
   app: { id: string; domain: string; name: string; role?: string };
@@ -17,6 +17,7 @@ type Creds = {
 };
 
 type DeleteStep = "idle" | "confirm" | "type";
+type LeaveStep = "idle" | "confirm";
 
 function CopyButton({
   value,
@@ -143,6 +144,7 @@ export default function AppsPage() {
   const [detailApp, setDetailApp] = useState<AppRow | null>(null);
   const [creds, setCreds] = useState<Creds | null>(null);
   const [deleteStep, setDeleteStep] = useState<DeleteStep>("idle");
+  const [leaveStep, setLeaveStep] = useState<LeaveStep>("idle");
   const [confirmDomain, setConfirmDomain] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -151,6 +153,7 @@ export default function AppsPage() {
     setDetailApp(null);
     setCreds(null);
     setDeleteStep("idle");
+    setLeaveStep("idle");
     setConfirmDomain("");
     setError(null);
   }, []);
@@ -159,6 +162,7 @@ export default function AppsPage() {
     setDetailApp(app);
     setCreds(null);
     setDeleteStep("idle");
+    setLeaveStep("idle");
     setConfirmDomain("");
     setError(null);
   }, []);
@@ -187,8 +191,20 @@ export default function AppsPage() {
       });
       setCreds(res);
       setDeleteStep("idle");
+      setLeaveStep("idle");
     } catch (err) {
-      setError(err instanceof Error ? err.message : t("createFailed"));
+      const code = err instanceof ApiError ? err.code : undefined;
+      setError(
+        code === "DOMAIN_IN_USE"
+          ? t("domainInUse")
+          : code === "DOMAIN_ALREADY_YOURS"
+            ? t("domainAlreadyYours")
+            : code === "DOMAIN_ALREADY_REGISTERED"
+              ? t("domainInUse")
+              : err instanceof Error
+                ? err.message
+                : t("createFailed"),
+      );
     } finally {
       setCreating(false);
     }
@@ -228,6 +244,25 @@ export default function AppsPage() {
       await refreshApps();
     } catch (err) {
       setError(err instanceof Error ? err.message : t("deleteFailed"));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function onLeave() {
+    if (!data?.apiToken || !detailApp) return;
+    if (detailApp.role === "owner") return;
+    setBusy(true);
+    setError(null);
+    try {
+      await apiFetch(`/v1/apps/${detailApp.id}/leave`, {
+        method: "POST",
+        token: data.apiToken,
+      });
+      closeDetail();
+      await refreshApps();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("leaveFailed"));
     } finally {
       setBusy(false);
     }
@@ -422,6 +457,54 @@ export default function AppsPage() {
               <p className="rounded-lg bg-accent-soft px-3 py-2 text-sm text-accent">
                 {error}
               </p>
+            )}
+
+            {(detailApp.role === "admin" || detailApp.role === "viewer") && (
+              <div className="border-t border-border pt-6">
+                <h3 className="text-sm font-semibold text-danger">{t("leave")}</h3>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {t("leaveHint")}
+                </p>
+
+                {leaveStep === "idle" && (
+                  <button
+                    type="button"
+                    onClick={() => setLeaveStep("confirm")}
+                    className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-danger/30 bg-danger/5 px-3 py-2.5 text-sm font-medium text-danger transition hover:bg-danger/10"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    {t("leave")}
+                  </button>
+                )}
+
+                {leaveStep === "confirm" && (
+                  <div className="mt-4 space-y-3 rounded-xl border border-danger/25 bg-danger/5 p-4">
+                    <p className="text-sm font-medium text-foreground">
+                      {t("leaveConfirmAsk")}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {t("leaveConfirmWarn")}
+                    </p>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setLeaveStep("idle")}
+                        className="flex-1 rounded-lg border border-border px-3 py-2 text-sm font-medium hover:bg-muted"
+                      >
+                        {t("cancel")}
+                      </button>
+                      <button
+                        type="button"
+                        disabled={busy}
+                        onClick={() => void onLeave()}
+                        className="flex-1 rounded-lg bg-danger px-3 py-2 text-sm font-semibold text-white disabled:opacity-60"
+                      >
+                        {busy ? t("leaving") : t("leaveConfirm")}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
 
             {detailApp.role === "owner" && (

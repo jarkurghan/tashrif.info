@@ -4,11 +4,16 @@ import { useTranslations } from "next-intl";
 import { LanguageSelect } from "@/components/LanguageSelect";
 import { useDemoShell } from "@/components/demo/DemoShellContext";
 import { UserMenu } from "@/components/app/UserMenu";
-import { CalendarDays, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { DateRangePicker } from "@/components/app/DateRangePicker";
+import { usePathname } from "@/i18n/navigation";
+import { isAnalyticsPath } from "@/lib/date-range";
+import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 
 export function AppHeader({ title }: { title: string }) {
   const t = useTranslations("demo");
   const { collapsed, toggle } = useDemoShell();
+  const pathname = usePathname();
+  const showRange = isAnalyticsPath(pathname);
 
   return (
     <header className="sticky top-0 z-10 flex h-16 min-h-16 shrink-0 items-center gap-3 border-b border-border bg-background/85 px-4 backdrop-blur-md sm:px-6">
@@ -30,10 +35,7 @@ export function AppHeader({ title }: { title: string }) {
         {title}
       </h1>
 
-      <div className="hidden items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-sm text-muted-foreground md:flex">
-        <CalendarDays className="h-3.5 w-3.5" />
-        {t("dateRange")}
-      </div>
+      {showRange ? <DateRangePicker /> : null}
 
       <LanguageSelect />
 

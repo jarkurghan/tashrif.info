@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { domains as seed } from "@/lib/demo-data";
 import { Sheet } from "@/components/ui/Sheet";
-import { Eye, Plus } from "lucide-react";
+import { Eye, LogOut, Plus } from "lucide-react";
 
 type Row = (typeof seed)[number];
 
@@ -16,6 +16,7 @@ export default function DomainsPage() {
   const [addOpen, setAddOpen] = useState(false);
   const [domainInput, setDomainInput] = useState("");
   const [detail, setDetail] = useState<Row | null>(null);
+  const [leaveStep, setLeaveStep] = useState<"idle" | "confirm">("idle");
 
   function onCreate(e: React.FormEvent) {
     e.preventDefault();
@@ -85,7 +86,10 @@ export default function DomainsPage() {
                   <td className="px-3 py-2 text-right md:px-4 md:py-3">
                     <button
                       type="button"
-                      onClick={() => setDetail(a)}
+                      onClick={() => {
+                        setLeaveStep("idle");
+                        setDetail(a);
+                      }}
                       className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline md:text-sm"
                     >
                       <Eye className="h-3.5 w-3.5" />
@@ -137,7 +141,10 @@ export default function DomainsPage() {
 
       <Sheet
         open={Boolean(detail)}
-        onClose={() => setDetail(null)}
+        onClose={() => {
+          setDetail(null);
+          setLeaveStep("idle");
+        }}
         title={detail?.domain ?? t("details")}
         description={t("detailsHint")}
         wide
@@ -159,6 +166,59 @@ export default function DomainsPage() {
               </div>
             </dl>
             <p className="text-sm text-muted-foreground">{t("secretHidden")}</p>
+
+            {(detail.role === "admin" || detail.role === "viewer") && (
+              <div className="border-t border-border pt-6">
+                <h3 className="text-sm font-semibold text-danger">{t("leave")}</h3>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {t("leaveHint")}
+                </p>
+
+                {leaveStep === "idle" && (
+                  <button
+                    type="button"
+                    onClick={() => setLeaveStep("confirm")}
+                    className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-danger/30 bg-danger/5 px-3 py-2.5 text-sm font-medium text-danger transition hover:bg-danger/10"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    {t("leave")}
+                  </button>
+                )}
+
+                {leaveStep === "confirm" && (
+                  <div className="mt-4 space-y-3 rounded-xl border border-danger/25 bg-danger/5 p-4">
+                    <p className="text-sm font-medium text-foreground">
+                      {t("leaveConfirmAsk")}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {t("leaveConfirmWarn")}
+                    </p>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setLeaveStep("idle")}
+                        className="flex-1 rounded-lg border border-border px-3 py-2 text-sm font-medium hover:bg-muted"
+                      >
+                        {t("cancel")}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setRows((prev) =>
+                            prev.filter((r) => r.clientId !== detail.clientId),
+                          );
+                          setDetail(null);
+                          setLeaveStep("idle");
+                        }}
+                        className="flex-1 rounded-lg bg-danger px-3 py-2 text-sm font-semibold text-white"
+                      >
+                        {t("leaveConfirm")}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
       </Sheet>

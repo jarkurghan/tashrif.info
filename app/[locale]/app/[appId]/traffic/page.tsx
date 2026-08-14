@@ -11,11 +11,13 @@ import {
   type TrafficOverview,
 } from "@/components/app/TrafficDashboard";
 import type { RankedItem } from "@/lib/demo-data";
+import { useDateRange } from "@/components/app/DateRangeProvider";
 
 export default function TrafficPage() {
   const { activeAppId: appId } = useActiveApp();
   const { data } = useSession();
   const t = useTranslations("demo");
+  const { queryString, ready } = useDateRange();
 
   const [overview, setOverview] = useState<TrafficOverview | null>(null);
   const [series, setSeries] = useState<
@@ -27,24 +29,28 @@ export default function TrafficPage() {
   const [uaRaw, setUaRaw] = useState<{ label: string; value: number }[]>([]);
 
   useEffect(() => {
-    if (!data?.apiToken || !appId) return;
+    if (!data?.apiToken || !appId || !ready) return;
     const token = data.apiToken;
     void (async () => {
       const [ov, ts, pg, loc, ref, ua] = await Promise.all([
-        apiFetch<TrafficOverview>(`/v1/apps/${appId}/overview`, { token }),
+        apiFetch<TrafficOverview>(`/v1/apps/${appId}/overview?${queryString}`, { token }),
         apiFetch<{ series: { date: string; sessions: number; pageviews: number }[] }>(
-          `/v1/apps/${appId}/timeseries`,
+          `/v1/apps/${appId}/timeseries?${queryString}`,
           { token },
         ),
-        apiFetch<{ items: RankedItem[] }>(`/v1/apps/${appId}/pages`, { token }),
-        apiFetch<{ items: RankedItem[] }>(`/v1/apps/${appId}/locations`, {
+        apiFetch<{ items: RankedItem[] }>(`/v1/apps/${appId}/pages?${queryString}`, {
           token,
         }),
-        apiFetch<{ items: RankedItem[] }>(`/v1/apps/${appId}/referrers`, {
-          token,
-        }),
+        apiFetch<{ items: RankedItem[] }>(
+          `/v1/apps/${appId}/locations?${queryString}`,
+          { token },
+        ),
+        apiFetch<{ items: RankedItem[] }>(
+          `/v1/apps/${appId}/referrers?${queryString}`,
+          { token },
+        ),
         apiFetch<{ items: { label: string; value: number }[] }>(
-          `/v1/apps/${appId}/user-agents`,
+          `/v1/apps/${appId}/user-agents?${queryString}`,
           { token },
         ),
       ]);
@@ -55,7 +61,7 @@ export default function TrafficPage() {
       setReferrers(ref.items);
       setUaRaw(ua.items);
     })().catch(console.error);
-  }, [data?.apiToken, appId]);
+  }, [data?.apiToken, appId, queryString, ready]);
 
   return (
     <>

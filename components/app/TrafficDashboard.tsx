@@ -198,6 +198,7 @@ export function TrafficDashboard({
           tabs={[{ id: "page", label: t("tabs.page") }]}
           datasets={{ page: pages }}
           empty={t("empty")}
+          limit={8}
         />
         <RankedList
           title={t("tabs.referrer")}

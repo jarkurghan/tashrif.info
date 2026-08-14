@@ -8,16 +8,15 @@ import { apiFetch } from "@/lib/api";
 import { AppHeader } from "@/components/app/AppHeader";
 import { Select } from "@/components/ui/Select";
 import { Filter, Search } from "lucide-react";
-import { cn } from "@/lib/cn";
 import { formatUserAgent } from "@/lib/parse-user-agent";
 import { countryLabel, flagEmoji } from "@/lib/geo-display";
+import { useDateRange } from "@/components/app/DateRangeProvider";
 
 type LogItem = {
   id: string;
   time: string;
   method: string | null;
   path: string;
-  status: number | null;
   country: string | null;
   ip: string | null;
   visitorId: string;
@@ -73,6 +72,7 @@ export default function LogsAnalyticsPage() {
   const t = useTranslations("demo.logs");
   const title = useTranslations("demo");
   const locale = useLocale();
+  const { queryString, range, ready } = useDateRange();
   const [query, setQuery] = useState("");
   const [method, setMethod] = useState("ALL");
   const [page, setPage] = useState(1);
@@ -80,7 +80,11 @@ export default function LogsAnalyticsPage() {
   const [items, setItems] = useState<LogItem[]>([]);
 
   useEffect(() => {
-    if (!data?.apiToken || !appId) return;
+    setPage(1);
+  }, [range]);
+
+  useEffect(() => {
+    if (!data?.apiToken || !appId || !ready) return;
     const params = new URLSearchParams({
       page: String(page),
       pageSize: String(PAGE_SIZE),
@@ -88,7 +92,7 @@ export default function LogsAnalyticsPage() {
       method,
     });
     apiFetch<{ items: LogItem[]; total: number }>(
-      `/v1/apps/${appId}/logs?${params}`,
+      `/v1/apps/${appId}/logs?${params}&${queryString}`,
       { token: data.apiToken },
     )
       .then((r) => {
@@ -96,7 +100,7 @@ export default function LogsAnalyticsPage() {
         setTotal(r.total);
       })
       .catch(console.error);
-  }, [data?.apiToken, appId, page, query, method]);
+  }, [data?.apiToken, appId, page, query, method, queryString, ready]);
 
   const from = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
   const to = Math.min(total, (page - 1) * PAGE_SIZE + items.length);
@@ -151,9 +155,6 @@ export default function LogsAnalyticsPage() {
                   </th>
                   <th className="px-3 py-2.5 md:px-4 md:py-3">{t("path")}</th>
                   <th className="hidden px-3 py-2.5 md:table-cell md:px-4 md:py-3">
-                    {t("status")}
-                  </th>
-                  <th className="hidden px-3 py-2.5 md:table-cell md:px-4 md:py-3">
                     {t("country")}
                   </th>
                   <th className="px-3 py-2.5 md:hidden">{t("ip")}</th>
@@ -190,18 +191,6 @@ export default function LogsAnalyticsPage() {
                           {row.method}
                         </span>
                       ) : null}
-                    </td>
-                    <td className="hidden px-3 py-2 md:table-cell md:px-4 md:py-2.5">
-                      <span
-                        className={cn(
-                          "rounded-full px-2 py-0.5 text-[11px] font-medium md:text-xs",
-                          (row.status ?? 200) < 400
-                            ? "bg-success-soft text-success"
-                            : "bg-accent-soft text-accent",
-                        )}
-                      >
-                        {row.status ?? "—"}
-                      </span>
                     </td>
                     <td className="hidden px-3 py-2 md:table-cell md:px-4 md:py-2.5">
                       <CountryCell code={row.country} locale={locale} />

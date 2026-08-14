@@ -12,18 +12,18 @@ export function FeatureSteps() {
   ];
 
   return (
-    <section className="border-t border-border/70 bg-card/40 py-20">
+    <section className="border-t border-border/70 bg-card/40 py-10 sm:py-16 lg:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="max-w-xl">
-          <h2 className="text-3xl font-semibold tracking-tight">{t("title")}</h2>
-          <p className="mt-2 text-muted-foreground">{t("sub")}</p>
+          <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{t("title")}</h2>
+          <p className="mt-1.5 text-muted-foreground sm:mt-2">{t("sub")}</p>
         </div>
-        <ol className="mt-12 grid gap-6 md:grid-cols-3">
+        <ol className="mt-6 grid gap-5 sm:mt-10 sm:gap-6 md:mt-12 md:grid-cols-3">
           {items.map((item, i) => {
             const Icon = icons[i];
             return (
               <li key={item.title} className="relative">
-                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-primary-soft text-primary">
+                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-primary-soft text-primary sm:mb-4 sm:h-11 sm:w-11">
                   <Icon className="h-5 w-5" />
                 </div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-primary">

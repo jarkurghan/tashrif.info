@@ -5,7 +5,6 @@ import { useLocale, useTranslations } from "next-intl";
 import { logs } from "@/lib/demo-data";
 import { Select } from "@/components/ui/Select";
 import { Filter, Search } from "lucide-react";
-import { cn } from "@/lib/cn";
 import { formatUserAgent } from "@/lib/parse-user-agent";
 import { countryLabel, flagEmoji } from "@/lib/geo-display";
 
@@ -126,9 +125,6 @@ export function LogsTable() {
                 {t("path")}
               </th>
               <th className="hidden px-3 py-2.5 font-medium md:table-cell md:px-4 md:py-3">
-                {t("status")}
-              </th>
-              <th className="hidden px-3 py-2.5 font-medium md:table-cell md:px-4 md:py-3">
                 {t("country")}
               </th>
               <th className="px-3 py-2.5 font-medium md:hidden">{t("ip")}</th>
@@ -161,18 +157,6 @@ export function LogsTable() {
                   {row.path}
                   <span className="mt-0.5 block font-mono text-[11px] font-normal text-muted-foreground md:hidden">
                     {row.method}
-                  </span>
-                </td>
-                <td className="hidden px-3 py-2 md:table-cell md:px-4 md:py-2.5">
-                  <span
-                    className={cn(
-                      "rounded-full px-2 py-0.5 text-[11px] font-medium md:text-xs",
-                      row.status < 400
-                        ? "bg-success-soft text-success"
-                        : "bg-accent-soft text-accent",
-                    )}
-                  >
-                    {row.status}
                   </span>
                 </td>
                 <td className="hidden px-3 py-2 md:table-cell md:px-4 md:py-2.5">

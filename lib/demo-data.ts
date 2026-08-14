@@ -1,3 +1,5 @@
+import type { RangeKey } from "./date-range";
+
 export type Metric = {
   key: "users" | "pageviews" | "lastVisit" | "newUsers" | "viewsPerUser";
   value: string;
@@ -35,7 +37,6 @@ export type LogEntry = {
   time: string;
   method: "GET" | "POST" | "PUT";
   path: string;
-  status: number;
   country: string;
   ip: string;
   visitorId: string;
@@ -94,16 +95,81 @@ export const demoOverview = {
   },
 };
 
-/** Last 24 hours, Tashkent-shaped curve (quiet night, evening peak). */
-export const trafficSeries: SeriesPoint[] = [
+function pad2(n: number) {
+  return String(n).padStart(2, "0");
+}
+
+const HOURLY_SESSIONS = [
   52, 41, 38, 36, 44, 78, 210, 420, 580, 640, 610, 720, 780, 740, 690, 810, 960,
   1120, 1280, 1180, 920, 640, 310, 120,
-].map((sessions, hour) => ({
-  date: `2026-08-12 ${String(hour).padStart(2, "0")}:00`,
-  sessions,
-  pageviews: Math.round(sessions * 2.15),
-  durationMin: 3.2 + (hour % 5) * 0.4,
-}));
+];
+
+function point(date: string, sessions: number, hour = 0): SeriesPoint {
+  return {
+    date,
+    sessions,
+    pageviews: Math.round(sessions * 2.15),
+    durationMin: 3.2 + (hour % 5) * 0.4,
+  };
+}
+
+/** Last 24 hours, Tashkent-shaped curve (quiet night, evening peak). */
+export const trafficSeries: SeriesPoint[] = HOURLY_SESSIONS.map((sessions, hour) =>
+  point(`2026-08-12 ${String(hour).padStart(2, "0")}:00`, sessions, hour),
+);
+
+const WEEKDAY_FACTOR = [0.62, 1, 1.06, 1.1, 1.08, 0.92, 0.55];
+
+const TARGET_POINTS = 24;
+
+function downsampleSeries(points: SeriesPoint[]): SeriesPoint[] {
+  if (points.length <= TARGET_POINTS + 2) return points;
+  const step = Math.ceil(points.length / TARGET_POINTS);
+  const out: SeriesPoint[] = [];
+  for (let i = 0; i < points.length; i += step) {
+    const chunk = points.slice(i, i + step);
+    const sessions = chunk.reduce((s, p) => s + p.sessions, 0);
+    const pageviews = chunk.reduce((s, p) => s + p.pageviews, 0);
+    const durationMin = chunk.reduce((s, p) => s + p.durationMin, 0) / chunk.length;
+    out.push({ date: chunk[0].date, sessions, pageviews, durationMin });
+  }
+  return out;
+}
+
+export function demoSeriesForRange(key: RangeKey, now = new Date()): SeriesPoint[] {
+  if (key === "24h") {
+    return downsampleSeries(
+      Array.from({ length: 24 }, (_, i) => {
+        const d = new Date(now);
+        d.setUTCMinutes(0, 0, 0);
+        d.setUTCHours(d.getUTCHours() - 23 + i);
+        const hour = d.getUTCHours();
+        const sessions = HOURLY_SESSIONS[hour] ?? 100;
+        return point(
+          `${d.getUTCFullYear()}-${pad2(d.getUTCMonth() + 1)}-${pad2(d.getUTCDate())} ${pad2(hour)}:00`,
+          sessions,
+          hour,
+        );
+      }),
+    );
+  }
+
+  const days = key === "7d" ? 7 : key === "30d" ? 30 : 90;
+  return downsampleSeries(
+    Array.from({ length: days }, (_, i) => {
+      const d = new Date(now);
+      d.setUTCHours(0, 0, 0, 0);
+      d.setUTCDate(d.getUTCDate() - (days - 1 - i));
+      const base = 4200 + ((i * 173) % 2200);
+      const sessions = Math.round(base * WEEKDAY_FACTOR[d.getUTCDay()]!);
+      return point(
+        `${d.getUTCFullYear()}-${pad2(d.getUTCMonth() + 1)}-${pad2(d.getUTCDate())}`,
+        sessions,
+        i,
+      );
+    }),
+  );
+}
 
 export const countries: RankedItem[] = [
   { label: "UZ", value: 4820, percent: 38, code: "UZ" },
@@ -180,7 +246,6 @@ function makeLogs(): LogEntry[] {
   ];
   const countryCodes = ["UZ", "UZ", "KZ", "RU", "TR", "UZ", "DE", "US"];
   const methods: LogEntry["method"][] = ["GET", "GET", "GET", "POST", "GET"];
-  const statuses = [200, 200, 200, 201, 304, 200, 404];
   const agents = [CHROME_WIN, SAFARI_IOS, CHROME_ANDROID, CHROME_MAC, FIREFOX_LINUX];
   const ipBases = [
     [213, 230],
@@ -199,7 +264,6 @@ function makeLogs(): LogEntry[] {
       time: `2026-08-12T${pad(hour)}:${pad(min)}:${pad(sec)}+05:00`,
       method: methods[i % methods.length],
       path: paths[i % paths.length],
-      status: statuses[i % statuses.length],
       country: countryCodes[i % countryCodes.length],
       ip: `${a}.${b}.${(i * 3) % 220}.${(i * 13) % 250}`,
       visitorId: `vis_${(2400 + ((i * 41) % 7000)).toString(16)}`,

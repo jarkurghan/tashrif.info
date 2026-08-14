@@ -23,32 +23,32 @@ export function MetricsPreview() {
   ];
 
   return (
-    <section className="py-20">
+    <section className="py-10 sm:py-16 lg:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="max-w-xl">
-          <h2 className="text-3xl font-semibold tracking-tight">{t("title")}</h2>
-          <p className="mt-2 text-muted-foreground">{t("sub")}</p>
+          <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{t("title")}</h2>
+          <p className="mt-1.5 text-muted-foreground sm:mt-2">{t("sub")}</p>
         </div>
 
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-10 sm:gap-4 lg:grid-cols-4">
           {cards.map((c) => (
             <div
               key={c.label}
-              className="rounded-xl border border-border bg-card p-5 shadow-sm"
+              className="rounded-xl border border-border bg-card p-3.5 shadow-sm sm:p-5"
             >
-              <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-primary-soft text-primary">
+              <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-primary-soft text-primary sm:mb-3 sm:h-9 sm:w-9">
                 <c.icon className="h-4 w-4" />
               </div>
-              <p className="text-sm text-muted-foreground">{c.label}</p>
-              <p className="mt-1 text-2xl font-semibold tabular-nums">{c.value}</p>
+              <p className="text-xs text-muted-foreground sm:text-sm">{c.label}</p>
+              <p className="mt-1 text-xl font-semibold tabular-nums sm:text-2xl">{c.value}</p>
             </div>
           ))}
         </div>
 
-        <div className="mt-14">
-          <h3 className="text-xl font-semibold tracking-tight">{p("title")}</h3>
+        <div className="mt-8 sm:mt-14">
+          <h3 className="text-lg font-semibold tracking-tight sm:text-xl">{p("title")}</h3>
           <p className="mt-1 text-sm text-muted-foreground">{p("sub")}</p>
-          <div className="mt-6 h-56 rounded-xl border border-border bg-card p-4 shadow-sm">
+          <div className="mt-4 h-44 rounded-xl border border-border bg-card p-3 shadow-sm sm:mt-6 sm:h-56 sm:p-4">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={landingSparkline}>
                 <defs>
