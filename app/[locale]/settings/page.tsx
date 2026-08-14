@@ -126,7 +126,7 @@ export default function SettingsPage() {
           aria-hidden
         />
 
-        <div className="relative mx-auto grid w-full max-w-5xl gap-10 px-4 py-8 sm:px-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-14 lg:py-10">
+        <div className="relative mx-auto grid w-full max-w-5xl gap-10 px-3 py-8 sm:px-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-14 lg:py-10">
           {/* Identity column */}
           <aside className="lg:sticky lg:top-6 lg:self-start">
             <div className="flex flex-col items-start gap-5 sm:flex-row sm:items-center lg:flex-col lg:items-start">

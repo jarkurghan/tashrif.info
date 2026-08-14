@@ -73,7 +73,7 @@ export default function TrafficPage() {
   return (
     <>
       <AppHeader title={t("titles.traffic")} />
-      <main className="min-h-0 flex-1 space-y-5 overflow-y-auto overflow-x-hidden p-4 sm:p-6">
+      <main className="min-h-0 flex-1 space-y-5 overflow-y-auto overflow-x-hidden px-3 py-4 sm:p-6">
         <TrafficDashboard
           overview={overview}
           series={series}

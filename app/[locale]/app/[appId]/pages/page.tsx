@@ -91,7 +91,7 @@ export default function PagesAnalyticsPage() {
   return (
     <>
       <AppHeader title={t("titles.pages")} />
-      <main className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6">
+      <main className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-3 py-4 sm:p-6">
         <div className="rounded-xl border border-border bg-card shadow-sm">
           <div className="flex flex-col gap-3 border-b border-border p-4 sm:flex-row sm:items-center sm:justify-between">
             <div>

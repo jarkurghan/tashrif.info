@@ -229,7 +229,7 @@ export default function ReportsPage() {
   return (
     <>
       <AppHeader title={title("titles.reports")} />
-      <main className="min-h-0 flex-1 space-y-6 overflow-y-auto overflow-x-hidden p-4 sm:p-6">
+      <main className="min-h-0 flex-1 space-y-6 overflow-y-auto overflow-x-hidden px-3 py-4 sm:p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h2 className="text-lg font-semibold tracking-tight">

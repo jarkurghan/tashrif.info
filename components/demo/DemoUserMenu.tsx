@@ -3,7 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { FolderKanban, Home } from "lucide-react";
+import { FolderKanban, LogOut } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 export function DemoUserMenu() {
@@ -68,8 +68,8 @@ export function DemoUserMenu() {
           onClick={() => setOpen(false)}
           className="flex items-center gap-2.5 px-3 py-2 text-sm text-foreground transition hover:bg-muted"
         >
-          <Home className="h-4 w-4 text-muted-foreground" />
-          tashrif.info
+          <LogOut className="h-4 w-4 text-muted-foreground" />
+          {t("account.logout")}
         </Link>
       </div>
     </div>
