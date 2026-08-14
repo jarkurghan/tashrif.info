@@ -6,6 +6,7 @@ import { MetricCard } from "@/components/demo/MetricCard";
 import { RankedList } from "@/components/demo/RankedList";
 import { TrafficMap } from "@/components/app/TrafficMap";
 import { TrafficChart } from "@/components/app/TrafficChart";
+import { Link } from "@/i18n/navigation";
 import {
   groupByBrowser,
   groupByOs,
@@ -82,6 +83,7 @@ export type TrafficDashboardProps = {
   referrers: RankedItem[];
   uaRaw: { label: string; value: number }[];
   print?: boolean;
+  setupHref?: string;
 };
 
 export function TrafficDashboard({
@@ -92,6 +94,7 @@ export function TrafficDashboard({
   referrers,
   uaRaw,
   print,
+  setupHref,
 }: TrafficDashboardProps) {
   const t = useTranslations("demo");
   const locale = useLocale();
@@ -150,6 +153,9 @@ export function TrafficDashboard({
     : null;
   const perUserTrend = ratioTrend(perUser, perUserPrev);
 
+  const showSetup =
+    Boolean(setupHref) && !print && overview != null && overview.lastVisit === null;
+
   return (
     <div
       className="space-y-5"
@@ -189,6 +195,21 @@ export function TrafficDashboard({
           className="col-span-2 xl:col-span-1"
         />
       </div>
+
+      {showSetup && setupHref && (
+        <div className="rounded-xl border border-primary/25 bg-primary-soft/30 px-4 py-3.5 sm:px-5">
+          <p className="text-sm font-semibold tracking-tight">{t("setupTitle")}</p>
+          <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+            {t("setupBody")}
+          </p>
+          <Link
+            href={setupHref}
+            className="mt-3 inline-flex text-sm font-medium text-primary hover:underline"
+          >
+            {t("setupCta")}
+          </Link>
+        </div>
+      )}
 
       <TrafficChart series={series} />
 

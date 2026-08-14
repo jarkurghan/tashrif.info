@@ -8,7 +8,11 @@ import { AppHeader } from "@/components/app/AppHeader";
 import { useActiveApp, type AppRow } from "@/components/app/ActiveAppProvider";
 import { Sheet } from "@/components/ui/Sheet";
 import { cn } from "@/lib/cn";
-import { Check, Copy, Eye, LogOut, Plus, Trash2 } from "lucide-react";
+import {
+  CopyButton,
+  IntegrationSnippet,
+} from "@/components/app/IntegrationSnippet";
+import { Eye, LogOut, Plus, Trash2 } from "lucide-react";
 
 type Creds = {
   app: { id: string; domain: string; name: string; role?: string };
@@ -19,68 +23,6 @@ type Creds = {
 type DeleteStep = "idle" | "confirm" | "type";
 type LeaveStep = "idle" | "confirm";
 
-function CopyButton({
-  value,
-  label,
-  copiedLabel,
-}: {
-  value: string;
-  label: string;
-  copiedLabel: string;
-}) {
-  const [copied, setCopied] = useState(false);
-
-  async function onCopy() {
-    try {
-      await navigator.clipboard.writeText(value);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1600);
-    } catch {
-      /* ignore */
-    }
-  }
-
-  return (
-    <button
-      type="button"
-      onClick={() => void onCopy()}
-      className="inline-flex shrink-0 items-center gap-1 rounded-md border border-border bg-background px-2 py-1 text-[11px] font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
-      aria-label={label}
-    >
-      {copied ? (
-        <>
-          <Check className="h-3 w-3 text-primary" />
-          {copiedLabel}
-        </>
-      ) : (
-        <>
-          <Copy className="h-3 w-3" />
-          {label}
-        </>
-      )}
-    </button>
-  );
-}
-
-function integrationSnippet(clientId: string) {
-  return `# .env.local
-NEXT_PUBLIC_TASHRIF_CLIENT_ID=${clientId}
-
-# app/layout.tsx
-import { Tashrif } from "tashrif/react";
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <body>
-        {children}
-        <Tashrif />
-      </body>
-    </html>
-  );
-}`;
-}
-
 function CredsBlock({
   creds,
   t,
@@ -88,8 +30,6 @@ function CredsBlock({
   creds: Creds;
   t: (key: string) => string;
 }) {
-  const snippet = integrationSnippet(creds.clientId);
-
   return (
     <div className="space-y-4 rounded-xl border border-primary/25 bg-primary-soft/30 p-4">
       <div>
@@ -98,24 +38,23 @@ function CredsBlock({
           {t("secretOnceHint")}
         </p>
       </div>
-      <dl className="space-y-3 font-mono text-xs">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <dt className="text-muted-foreground">client_id</dt>
-            <dd className="mt-0.5 break-all text-foreground">{creds.clientId}</dd>
-          </div>
-          <CopyButton
-            value={creds.clientId}
-            label={t("copy")}
-            copiedLabel={t("copied")}
-          />
+      <div className="flex items-start justify-between gap-3 font-mono text-xs">
+        <div className="min-w-0">
+          <p className="text-muted-foreground">client_id</p>
+          <p className="mt-0.5 break-all text-foreground">{creds.clientId}</p>
         </div>
-        <div className="flex items-start justify-between gap-3">
+        <CopyButton
+          value={creds.clientId}
+          label={t("copy")}
+          copiedLabel={t("copied")}
+        />
+      </div>
+      <IntegrationSnippet clientId={creds.clientId} />
+      <div className="rounded-lg border border-border/80 bg-background/60 p-3">
+        <div className="flex items-start justify-between gap-3 font-mono text-xs">
           <div className="min-w-0">
-            <dt className="text-muted-foreground">client_secret</dt>
-            <dd className="mt-0.5 break-all text-foreground">
-              {creds.clientSecret}
-            </dd>
+            <p className="text-muted-foreground">{t("optionalSecret")}</p>
+            <p className="mt-0.5 break-all text-foreground">{creds.clientSecret}</p>
           </div>
           <CopyButton
             value={creds.clientSecret}
@@ -123,20 +62,9 @@ function CredsBlock({
             copiedLabel={t("copied")}
           />
         </div>
-      </dl>
-      <p className="text-xs leading-relaxed text-muted-foreground">{t("secretServerHint")}</p>
-      <div>
-        <div className="mb-1.5 flex items-center justify-between gap-2">
-          <span className="text-xs text-muted-foreground">{t("envSnippet")}</span>
-          <CopyButton
-            value={snippet}
-            label={t("copy")}
-            copiedLabel={t("copied")}
-          />
-        </div>
-        <pre className="overflow-x-auto rounded-lg border border-border bg-card p-3 text-[11px] leading-relaxed">
-          {snippet}
-        </pre>
+        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+          {t("secretServerHint")}
+        </p>
       </div>
     </div>
   );
@@ -149,17 +77,10 @@ function IntegrationBlock({
   clientId: string;
   t: (key: string) => string;
 }) {
-  const snippet = integrationSnippet(clientId);
   return (
     <div className="space-y-2">
       <p className="text-sm text-muted-foreground">{t("secretHidden")}</p>
-      <div className="mb-1.5 flex items-center justify-between gap-2">
-        <span className="text-xs text-muted-foreground">{t("envSnippet")}</span>
-        <CopyButton value={snippet} label={t("copy")} copiedLabel={t("copied")} />
-      </div>
-      <pre className="overflow-x-auto rounded-lg border border-border bg-card p-3 text-[11px] leading-relaxed">
-        {snippet}
-      </pre>
+      <IntegrationSnippet clientId={clientId} />
     </div>
   );
 }

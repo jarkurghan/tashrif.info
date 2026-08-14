@@ -81,6 +81,7 @@ export default function TrafficPage() {
           locations={locations}
           referrers={referrers}
           uaRaw={uaRaw}
+          setupHref="/app/domains"
         />
       </main>
     </>

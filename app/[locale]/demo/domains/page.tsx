@@ -4,6 +4,10 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { domains as seed } from "@/lib/demo-data";
 import { Sheet } from "@/components/ui/Sheet";
+import {
+  CopyButton,
+  IntegrationSnippet,
+} from "@/components/app/IntegrationSnippet";
 import { Eye, LogOut, Plus } from "lucide-react";
 
 type Row = (typeof seed)[number];
@@ -158,7 +162,14 @@ export default function DomainsPage() {
               </div>
               <div className="flex justify-between gap-3 px-4 py-3 text-sm">
                 <dt className="text-muted-foreground">client_id</dt>
-                <dd className="font-mono text-xs">{detail.clientId}</dd>
+                <dd className="flex min-w-0 items-center gap-2 font-mono text-xs">
+                  <span className="truncate">{detail.clientId}</span>
+                  <CopyButton
+                    value={detail.clientId}
+                    label={t("copy")}
+                    copiedLabel={t("copied")}
+                  />
+                </dd>
               </div>
               <div className="flex justify-between gap-3 px-4 py-3 text-sm">
                 <dt className="text-muted-foreground">{t("role")}</dt>
@@ -166,6 +177,7 @@ export default function DomainsPage() {
               </div>
             </dl>
             <p className="text-sm text-muted-foreground">{t("secretHidden")}</p>
+            <IntegrationSnippet clientId={detail.clientId} />
 
             {(detail.role === "admin" || detail.role === "viewer") && (
               <div className="border-t border-border pt-6">
