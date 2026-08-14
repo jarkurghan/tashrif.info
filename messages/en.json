@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "tashrif.info — Modern website analytics",
-    "description": "Privacy-friendly web analytics for visitors, sessions, pages, and countries. Next.js SDK, a live dashboard, and Telegram reports — connect in a few lines of code.",
+    "description": "Privacy-friendly web analytics for visitors, sessions, pages, and countries. A React layout component, a live dashboard, and Telegram reports — connect in a few lines of code.",
     "keywords": "web analytics, website stats, visitors, tashrif.info, Next.js analytics, Telegram reports, privacy analytics, Uzbekistan analytics",
     "loginTitle": "Sign in",
     "loginDescription": "Sign in to the tashrif.info dashboard with Google. Manage visits, pages, logs, and Telegram reports.",
@@ -19,20 +19,20 @@
   "hero": {
     "brand": "tashrif.info",
     "headline": "See every visit. Ship better products.",
-    "sub": "Users, pageviews, countries, and pages — connect with a few lines of the npm SDK on the server.",
+    "sub": "Users, pageviews, countries, and pages — add one React component and a public client ID.",
     "ctaDemo": "Explore demo",
     "ctaAdd": "Add domain"
   },
   "steps": {
     "title": "How it works",
-    "sub": "Domain, keys, then a live board — three steps.",
+    "sub": "Domain, client ID, then a live board — three steps.",
     "one": {
       "title": "Add a domain",
-      "desc": "Sign in with Google, create a domain in the dashboard — you get a client_id and client_secret."
+      "desc": "Sign in with Google, create a domain in the dashboard — you get a client ID for tracking."
     },
     "two": {
-      "title": "Connect the SDK",
-      "desc": "Install the tashrif npm package and call track() from Next.js middleware (or any server)."
+      "title": "Add the tracker",
+      "desc": "Install the tashrif npm package and add <Tashrif /> from tashrif/react to your root layout."
     },
     "three": {
       "title": "Watch traffic",
@@ -56,7 +56,7 @@
     "title": "See your site’s traffic on one clear board",
     "body": "tashrif.info is lightweight web analytics for visitors, pages, and sources. Your data, your panel — not a heavy ad tracker.",
     "boardTitle": "Traffic, pages, and logs",
-    "boardDesc": "Map and chart, which paths hold people, every request: path, country, IP, user-agent.",
+    "boardDesc": "Map and chart, which paths hold people, each pageview: path, country, IP, user-agent.",
     "reportsTitle": "Telegram reports",
     "reportsDesc": "Daily, weekly, or monthly. Stats as text; logs and traffic as PDF. Sent at 06:00 Tashkent for the previous period.",
     "teamTitle": "Team",
@@ -65,8 +65,8 @@
   "why": {
     "title": "Why tashrif.info",
     "sub": "What you need. Nothing extra.",
-    "sdkTitle": "A few lines of SDK",
-    "sdkDesc": "Call track() with your client_id and secret — visits are written to the board.",
+    "sdkTitle": "One React component",
+    "sdkDesc": "Set NEXT_PUBLIC_TASHRIF_CLIENT_ID and render <Tashrif /> — visits are written to the board.",
     "telegramTitle": "Reports in Telegram",
     "telegramDesc": "At 06:00 Tashkent, the previous day, week, or month. No need to open the dashboard.",
     "localeTitle": "Uzbek and English",
@@ -211,7 +211,7 @@
     },
     "domains": {
       "add": "Add domain",
-      "addHint": "We’ll create collect credentials for this domain.",
+      "addHint": "We'll create a client ID for this domain.",
       "name": "Domain",
       "appId": "App ID",
       "status": "Status",
@@ -223,16 +223,17 @@
       "empty": "No domains yet.",
       "actions": "Actions",
       "details": "Details",
-      "detailsHint": "Credentials, rotate secret, leave, or delete this domain.",
+      "detailsHint": "Client ID, integration snippet, leave, or delete this domain.",
       "cancel": "Cancel",
       "back": "Back",
       "creating": "Creating…",
       "copy": "Copy",
       "copied": "Copied",
-      "secretOnceTitle": "Save these credentials now",
-      "secretOnceHint": "The client secret is shown only once. Store it in server env — never in the browser.",
-      "secretHidden": "The client secret is not stored in readable form. Rotate to issue a new one.",
-      "envSnippet": ".env snippet",
+      "secretOnceTitle": "Connect your site",
+      "secretOnceHint": "Copy your client ID into NEXT_PUBLIC_TASHRIF_CLIENT_ID and add <Tashrif /> to your root layout. Safe in the browser — no secret required.",
+      "secretServerHint": "client_secret is optional: only for the server/middleware SDK. Never put it in the browser. Shown once.",
+      "secretHidden": "Use the snippet below with your client ID. Do not also call track() from middleware — that would double-count.",
+      "envSnippet": "Integration snippet",
       "rotate": "Rotate client secret",
       "rotateHint": "The previous secret stops working immediately.",
       "dangerZone": "Danger zone",

@@ -62,6 +62,25 @@ function CopyButton({
   );
 }
 
+function integrationSnippet(clientId: string) {
+  return `# .env.local
+NEXT_PUBLIC_TASHRIF_CLIENT_ID=${clientId}
+
+# app/layout.tsx
+import { Tashrif } from "tashrif/react";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        {children}
+        <Tashrif />
+      </body>
+    </html>
+  );
+}`;
+}
+
 function CredsBlock({
   creds,
   t,
@@ -69,15 +88,7 @@ function CredsBlock({
   creds: Creds;
   t: (key: string) => string;
 }) {
-  const envSnippet = `# .env
-TASHRIF_CLIENT_ID=${creds.clientId}
-TASHRIF_CLIENT_SECRET=${creds.clientSecret}
-
-# middleware.ts
-import { track, buildPayload } from "tashrif";
-const { payload, setCookies } = buildPayload(req);
-for (const c of setCookies ?? []) res.cookies.set(c.name, c.value, c.options);
-void track(payload);`;
+  const snippet = integrationSnippet(creds.clientId);
 
   return (
     <div className="space-y-4 rounded-xl border border-primary/25 bg-primary-soft/30 p-4">
@@ -113,19 +124,42 @@ void track(payload);`;
           />
         </div>
       </dl>
+      <p className="text-xs leading-relaxed text-muted-foreground">{t("secretServerHint")}</p>
       <div>
         <div className="mb-1.5 flex items-center justify-between gap-2">
           <span className="text-xs text-muted-foreground">{t("envSnippet")}</span>
           <CopyButton
-            value={envSnippet}
+            value={snippet}
             label={t("copy")}
             copiedLabel={t("copied")}
           />
         </div>
         <pre className="overflow-x-auto rounded-lg border border-border bg-card p-3 text-[11px] leading-relaxed">
-          {envSnippet}
+          {snippet}
         </pre>
       </div>
+    </div>
+  );
+}
+
+function IntegrationBlock({
+  clientId,
+  t,
+}: {
+  clientId: string;
+  t: (key: string) => string;
+}) {
+  const snippet = integrationSnippet(clientId);
+  return (
+    <div className="space-y-2">
+      <p className="text-sm text-muted-foreground">{t("secretHidden")}</p>
+      <div className="mb-1.5 flex items-center justify-between gap-2">
+        <span className="text-xs text-muted-foreground">{t("envSnippet")}</span>
+        <CopyButton value={snippet} label={t("copy")} copiedLabel={t("copied")} />
+      </div>
+      <pre className="overflow-x-auto rounded-lg border border-border bg-card p-3 text-[11px] leading-relaxed">
+        {snippet}
+      </pre>
     </div>
   );
 }
@@ -401,7 +435,7 @@ export default function AppsPage() {
         </form>
       </Sheet>
 
-      {/* Detail / secret / delete sheet */}
+      {/* Detail / integration / delete sheet */}
       <Sheet
         open={Boolean(detailApp)}
         onClose={closeDetail}
@@ -436,7 +470,10 @@ export default function AppsPage() {
             {creds && <CredsBlock creds={creds} t={t} />}
 
             {!creds && (
-              <p className="text-sm text-muted-foreground">{t("secretHidden")}</p>
+              <IntegrationBlock
+                clientId={detailApp.clientId ?? detailApp.id}
+                t={t}
+              />
             )}
 
             {(detailApp.role === "owner" || detailApp.role === "admin") && (

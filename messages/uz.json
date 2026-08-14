@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "tashrif.info — Zamonaviy veb analitika",
-    "description": "Tashrifchilar, seanslar, sahifalar va mamlakatlar uchun maxfiylikka e'tiborli veb analitika. Next.js SDK, jonli panel va Telegram hisobotlari — bir necha qator kod bilan.",
+    "description": "Tashrifchilar, seanslar, sahifalar va mamlakatlar uchun maxfiylikka e'tiborli veb analitika. React layout komponenti, jonli panel va Telegram hisobotlari — bir necha qator kod bilan.",
     "keywords": "veb analitika, sayt statistikasi, tashrifchilar, tashrif.info, Next.js analitika, Telegram hisobot, O'zbekiston analitika, privacy analytics",
     "loginTitle": "Kirish",
     "loginDescription": "tashrif.info dashboardiga Google orqali kiring. Sayt tashriflari, sahifalar, loglar va Telegram hisobotlarini boshqaring.",
@@ -19,20 +19,20 @@
   "hero": {
     "brand": "tashrif.info",
     "headline": "Har bir tashrifni ko'ring. Yaxshiroq mahsulot yarating.",
-    "sub": "Foydalanuvchilar, sahifa ko‘rishlar, mamlakatlar va sahifalar — npm SDK orqali serverda bir necha qator bilan ulanadi.",
+    "sub": "Foydalanuvchilar, sahifa ko‘rishlar, mamlakatlar va sahifalar — bitta React komponent va ochiq client ID bilan ulanadi.",
     "ctaDemo": "Demoni ko'rish",
     "ctaAdd": "Domen qo'shish"
   },
   "steps": {
     "title": "Qanday ishlaydi",
-    "sub": "Domen, kalitlar, keyin jonli board — uchta qadam.",
+    "sub": "Domen, client ID, keyin jonli board — uchta qadam.",
     "one": {
       "title": "Domen qo‘shing",
-      "desc": "Google bilan kiring, dashboardda domen yarating — client_id va client_secret beriladi."
+      "desc": "Google bilan kiring, dashboardda domen yarating — kuzatuv uchun client ID beriladi."
     },
     "two": {
-      "title": "SDK ulang",
-      "desc": "npm `tashrif` paketini qo‘shing va Next.js middleware (yoki server) dan track() chaqiring."
+      "title": "Trackerni qo‘shing",
+      "desc": "npm `tashrif` paketini o‘rnating va root layoutga `tashrif/react` dan `<Tashrif />` qo‘shing."
     },
     "three": {
       "title": "Trafikni kuzating",
@@ -56,7 +56,7 @@
     "title": "Saytingiz oqimini bitta tiniq boardda ko‘ring",
     "body": "tashrif.info — tashrifchilar, sahifalar va manbalarni yig‘adigan yengil veb analitika. Og‘ir reklama-trackerlar o‘rniga o‘zingizning ma’lumotingiz va o‘zingizning panelingiz.",
     "boardTitle": "Trafik, sahifalar, loglar",
-    "boardDesc": "Xarita va grafik, qaysi yo‘llar ishlaydi, har bir so‘rov: yo‘l, mamlakat, IP, user-agent.",
+    "boardDesc": "Xarita va grafik, qaysi yo‘llar ishlaydi, har bir pageview: yo‘l, mamlakat, IP, user-agent.",
     "reportsTitle": "Telegram hisobotlar",
     "reportsDesc": "Kunlik, haftalik yoki oylik. Statistika — matn; log va trafik — PDF. Toshkent 06:00 da oldingi davr yuboriladi.",
     "teamTitle": "Jamoa",
@@ -65,8 +65,8 @@
   "why": {
     "title": "Nega tashrif.info",
     "sub": "Kerakli narsa. Shovqinsiz.",
-    "sdkTitle": "Bir necha qator SDK",
-    "sdkDesc": "client_id va secret bilan track() chaqirasiz — tashriflar boardga yoziladi.",
+    "sdkTitle": "Bitta React komponent",
+    "sdkDesc": "NEXT_PUBLIC_TASHRIF_CLIENT_ID ni o‘rnating va <Tashrif /> render qiling — tashriflar boardga yoziladi.",
     "telegramTitle": "Hisobotlar Telegramda",
     "telegramDesc": "Toshkent 06:00 da oldingi kun, hafta yoki oy. Boardni ochmasangiz ham.",
     "localeTitle": "O‘zbek va ingliz",
@@ -211,7 +211,7 @@
     },
     "domains": {
       "add": "Domen qo'shish",
-      "addHint": "Bu domen uchun collect credentiallari yaratiladi.",
+      "addHint": "Bu domen uchun client ID yaratiladi.",
       "name": "Domen",
       "appId": "App ID",
       "status": "Holat",
@@ -223,16 +223,17 @@
       "empty": "Hali domen yo'q.",
       "actions": "Amallar",
       "details": "Batafsil",
-      "detailsHint": "Credentiallar, secretni almashtirish, chiqish yoki domenni o'chirish.",
+      "detailsHint": "Client ID, integratsiya namunasi, chiqish yoki domenni o'chirish.",
       "cancel": "Bekor qilish",
       "back": "Orqaga",
       "creating": "Yaratilmoqda…",
       "copy": "Nusxa",
       "copied": "Nusxalandi",
-      "secretOnceTitle": "Credentiallarni hozir saqlang",
-      "secretOnceHint": "Client secret faqat bir marta ko'rsatiladi. Uni server .env da saqlang — brauzerda emas.",
-      "secretHidden": "Client secret o'qiladigan ko'rinishda saqlanmaydi. Yangisini olish uchun rotate qiling.",
-      "envSnippet": ".env namunasi",
+      "secretOnceTitle": "Saytingizni ulang",
+      "secretOnceHint": "Client ID ni NEXT_PUBLIC_TASHRIF_CLIENT_ID ga qo‘ying va root layoutga <Tashrif /> qo‘shing. Brauzerda xavfsiz — secret kerak emas.",
+      "secretServerHint": "client_secret ixtiyoriy: faqat server/middleware SDK uchun. Brauzerga qo‘ymang. Bir marta ko‘rsatiladi.",
+      "secretHidden": "Quyidagi namunadan client ID bilan foydalaning. Middleware dan track() ni ham chaqirmang — ikki marta yoziladi.",
+      "envSnippet": "Integratsiya namunasi",
       "rotate": "Client secretni almashtirish",
       "rotateHint": "Eski secret darhol ishlamay qoladi.",
       "dangerZone": "Xavfli zona",
