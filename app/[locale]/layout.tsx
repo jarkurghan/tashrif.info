@@ -1,10 +1,10 @@
 import { AuthProvider } from "@/components/AuthProvider";
-import { SocialEnvLog } from "@/components/SocialEnvLog";
 import { Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
+import { publicPageMetadata } from "@/lib/seo";
 import "../globals.css";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -29,10 +29,13 @@ export async function generateMetadata({
 }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "meta" });
-  return {
-    title: t("title"),
+  return publicPageMetadata({
+    locale,
+    path: "",
+    title: { absolute: t("title") },
     description: t("description"),
-  };
+    keywords: t("keywords"),
+  });
 }
 
 export default async function LocaleLayout({
@@ -58,7 +61,6 @@ export default async function LocaleLayout({
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <NextIntlClientProvider messages={messages}>
           <AuthProvider>
-            <SocialEnvLog />
             {children}
           </AuthProvider>
         </NextIntlClientProvider>

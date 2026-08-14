@@ -1,17 +1,9 @@
 import type { RangeKey } from "./date-range";
 
-export type Metric = {
-  key: "users" | "pageviews" | "lastVisit" | "newUsers" | "viewsPerUser";
-  value: string;
-  trend: string;
-  positive?: boolean;
-};
-
 export type SeriesPoint = {
   date: string;
   sessions: number;
   pageviews: number;
-  durationMin: number;
 };
 
 export type RankedItem = {
@@ -104,19 +96,13 @@ const HOURLY_SESSIONS = [
   1120, 1280, 1180, 920, 640, 310, 120,
 ];
 
-function point(date: string, sessions: number, hour = 0): SeriesPoint {
+function point(date: string, sessions: number): SeriesPoint {
   return {
     date,
     sessions,
     pageviews: Math.round(sessions * 2.15),
-    durationMin: 3.2 + (hour % 5) * 0.4,
   };
 }
-
-/** Last 24 hours, Tashkent-shaped curve (quiet night, evening peak). */
-export const trafficSeries: SeriesPoint[] = HOURLY_SESSIONS.map((sessions, hour) =>
-  point(`2026-08-12 ${String(hour).padStart(2, "0")}:00`, sessions, hour),
-);
 
 const WEEKDAY_FACTOR = [0.62, 1, 1.06, 1.1, 1.08, 0.92, 0.55];
 
@@ -130,8 +116,7 @@ function downsampleSeries(points: SeriesPoint[]): SeriesPoint[] {
     const chunk = points.slice(i, i + step);
     const sessions = chunk.reduce((s, p) => s + p.sessions, 0);
     const pageviews = chunk.reduce((s, p) => s + p.pageviews, 0);
-    const durationMin = chunk.reduce((s, p) => s + p.durationMin, 0) / chunk.length;
-    out.push({ date: chunk[0].date, sessions, pageviews, durationMin });
+    out.push({ date: chunk[0].date, sessions, pageviews });
   }
   return out;
 }
@@ -148,7 +133,6 @@ export function demoSeriesForRange(key: RangeKey, now = new Date()): SeriesPoint
         return point(
           `${d.getUTCFullYear()}-${pad2(d.getUTCMonth() + 1)}-${pad2(d.getUTCDate())} ${pad2(hour)}:00`,
           sessions,
-          hour,
         );
       }),
     );
@@ -165,7 +149,6 @@ export function demoSeriesForRange(key: RangeKey, now = new Date()): SeriesPoint
       return point(
         `${d.getUTCFullYear()}-${pad2(d.getUTCMonth() + 1)}-${pad2(d.getUTCDate())}`,
         sessions,
-        i,
       );
     }),
   );
@@ -324,14 +307,6 @@ export const reportChats: ReportChat[] = [
     chatId: "-1001987654321",
     reports: [{ id: "r4", schedule: "weekly", kind: "stats" }],
   },
-];
-
-export const metrics: Metric[] = [
-  { key: "users", value: "8.4k", trend: "+1.2k" },
-  { key: "pageviews", value: "19.7k", trend: "+3.4k" },
-  { key: "newUsers", value: "2.1k", trend: "+460" },
-  { key: "viewsPerUser", value: "2.3", trend: "+0.1" },
-  { key: "lastVisit", value: "14 daqiqa", trend: "" },
 ];
 
 export function formatCount(n: number) {

@@ -1,6 +1,12 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import type { Provider } from "next-auth/providers";
+import { cookies } from "next/headers";
+import {
+  isAppLocale,
+  LOCALE_PREFERENCE_COOKIE,
+  type AppLocale,
+} from "@/lib/locale-preference";
 
 function apiUrl() {
   return (
@@ -14,12 +20,22 @@ function authSecret() {
   return process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || undefined;
 }
 
+async function preferredLocale(): Promise<AppLocale | undefined> {
+  try {
+    const value = (await cookies()).get(LOCALE_PREFERENCE_COOKIE)?.value;
+    return isAppLocale(value) ? value : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 async function syncToApi(input: {
   provider: "google";
   providerAccountId: string;
   email?: string | null;
   name?: string | null;
   image?: string | null;
+  locale?: AppLocale;
 }) {
   const res = await fetch(`${apiUrl()}/v1/auth/sync`, {
     method: "POST",
@@ -79,6 +95,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             email: user.email,
             name: user.name,
             image: user.image,
+            locale: await preferredLocale(),
           });
           token.apiToken = synced.token;
           token.userId = synced.user.id;

@@ -1,14 +1,17 @@
 {
   "meta": {
     "title": "tashrif.info — Modern website analytics",
-    "description": "Privacy-friendly analytics for visitors, sessions, countries, and pages. Connect in a few lines of code."
+    "description": "Privacy-friendly web analytics for visitors, sessions, pages, and countries. Next.js SDK, a live dashboard, and Telegram reports — connect in a few lines of code.",
+    "keywords": "web analytics, website stats, visitors, tashrif.info, Next.js analytics, Telegram reports, privacy analytics, Uzbekistan analytics",
+    "loginTitle": "Sign in",
+    "loginDescription": "Sign in to the tashrif.info dashboard with Google. Manage visits, pages, logs, and Telegram reports.",
+    "demoTitle": "Demo dashboard",
+    "demoDescription": "Try the tashrif.info demo: traffic, pages, countries, and logs. Explore the analytics board without signing up."
   },
   "nav": {
-    "home": "Home",
     "demo": "Demo",
     "login": "Log in",
     "addDomain": "Add domain",
-    "docs": "Docs",
     "dashboard": "Dashboard",
     "traffic": "Traffic",
     "reports": "Reports"
@@ -16,31 +19,31 @@
   "hero": {
     "brand": "tashrif.info",
     "headline": "See every visit. Ship better products.",
-    "sub": "Modern analytics for visitor counts, unique sessions, countries, and pages — connected with a few lines of middleware.",
+    "sub": "Users, pageviews, countries, and pages — connect with a few lines of the npm SDK on the server.",
     "ctaDemo": "Explore demo",
     "ctaAdd": "Add domain"
   },
   "steps": {
     "title": "How it works",
-    "sub": "From install to a live board in three steps.",
+    "sub": "Domain, keys, then a live board — three steps.",
     "one": {
-      "title": "Install the SDK",
-      "desc": "Add the npm package and call it from Next.js middleware."
+      "title": "Add a domain",
+      "desc": "Sign in with Google, create a domain in the dashboard — you get a client_id and client_secret."
     },
     "two": {
-      "title": "Register your app",
-      "desc": "Create a domain in the dashboard and get your app_id."
+      "title": "Connect the SDK",
+      "desc": "Install the tashrif npm package and call track() from Next.js middleware (or any server)."
     },
     "three": {
-      "title": "Watch traffic live",
-      "desc": "Sessions, pages, and countries stream into your board in realtime."
+      "title": "Watch traffic",
+      "desc": "Traffic, pages, and logs land on the board live. Telegram reports are optional."
     }
   },
   "metricsSection": {
     "title": "Metrics that matter",
-    "sub": "Clear numbers without the clutter.",
-    "visitors": "Visitors",
-    "sessions": "Sessions",
+    "sub": "The same numbers as on the board — without the clutter.",
+    "users": "Users",
+    "pageviews": "Pageviews",
     "countries": "Countries",
     "pages": "Pages"
   },
@@ -53,9 +56,9 @@
     "title": "See your site’s traffic on one clear board",
     "body": "tashrif.info is lightweight web analytics for visitors, pages, and sources. Your data, your panel — not a heavy ad tracker.",
     "boardTitle": "Traffic, pages, and logs",
-    "boardDesc": "Map and chart, which pages hold people, every request: path, status, country, IP.",
+    "boardDesc": "Map and chart, which paths hold people, every request: path, country, IP, user-agent.",
     "reportsTitle": "Telegram reports",
-    "reportsDesc": "Daily, weekly, or monthly stats, logs, and traffic PDFs in chat.",
+    "reportsDesc": "Daily, weekly, or monthly. Stats as text; logs and traffic as PDF. Sent at 06:00 Tashkent for the previous period.",
     "teamTitle": "Team",
     "teamDesc": "Owner, admin, and viewer — each person gets the right access."
   },
@@ -63,11 +66,11 @@
     "title": "Why tashrif.info",
     "sub": "What you need. Nothing extra.",
     "sdkTitle": "A few lines of SDK",
-    "sdkDesc": "Add the package — visits start landing on your board.",
+    "sdkDesc": "Call track() with your client_id and secret — visits are written to the board.",
     "telegramTitle": "Reports in Telegram",
-    "telegramDesc": "Yesterday’s picture arrives at 06:00. No need to open the dashboard.",
+    "telegramDesc": "At 06:00 Tashkent, the previous day, week, or month. No need to open the dashboard.",
     "localeTitle": "Uzbek and English",
-    "localeDesc": "UI and reports follow your language — the one your team actually uses.",
+    "localeDesc": "UI and reports follow your account language — Uzbek or English.",
     "teamTitle": "Roles for the team",
     "teamDesc": "Viewers see analytics. Admins manage reports and access. Owners run everything."
   },
@@ -80,20 +83,16 @@
   "footer": {
     "product": "Product",
     "features": "Features",
-    "tagline": "Web analytics that makes site visits easy to see.",
-    "rights": ""
+    "tagline": "Web analytics that makes site visits easy to see."
   },
   "login": {
     "title": "Welcome back",
     "sub": "Sign in with Google to open your dashboard.",
-    "comingSoon": "Authentication coming soon",
     "google": "Continue with Google",
-    "github": "Continue with GitHub",
     "back": "Back to home"
   },
   "demo": {
     "siteName": "Demo Site",
-    "dateRange": "Last 24 hours",
     "ranges": {
       "label": "Range",
       "24h": "24 hours",
@@ -159,28 +158,20 @@
     },
     "metrics": {
       "users": "Users",
-      "sessions": "Sessions",
       "pageviews": "Pageviews",
-      "bounce": "Bounce rate",
-      "duration": "Session duration",
       "lastVisit": "Last visit",
       "newUsers": "New visitors",
       "viewsPerUser": "Views / visitor"
     },
     "charts": {
       "sessions": "Sessions",
-      "duration": "Session duration",
       "pageviews": "Pageviews"
     },
     "empty": "No data yet",
     "tabs": {
       "country": "Country",
-      "region": "Region",
-      "city": "City",
       "page": "Pages",
       "userAgent": "User-Agent",
-      "entry": "Entry pages",
-      "exit": "Exit pages",
       "referrer": "Referrers",
       "browser": "Browsers",
       "os": "OS",

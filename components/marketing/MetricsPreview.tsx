@@ -16,8 +16,8 @@ export function MetricsPreview() {
   const p = useTranslations("preview");
 
   const cards = [
-    { icon: Users, label: t("visitors"), value: "10.6k" },
-    { icon: Waypoints, label: t("sessions"), value: "11.4k" },
+    { icon: Users, label: t("users"), value: "10.6k" },
+    { icon: Waypoints, label: t("pageviews"), value: "11.4k" },
     { icon: Globe2, label: t("countries"), value: "64" },
     { icon: FileText, label: t("pages"), value: "128" },
   ];

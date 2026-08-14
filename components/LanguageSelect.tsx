@@ -7,6 +7,7 @@ import { routing, type Locale } from "@/i18n/routing";
 import { Select } from "@/components/ui/Select";
 import { cn } from "@/lib/cn";
 import { apiFetch } from "@/lib/api";
+import { setLocalePreference } from "@/lib/locale-preference";
 
 export function LanguageSelect({ className }: { className?: string }) {
   const locale = useLocale();
@@ -24,6 +25,7 @@ export function LanguageSelect({ className }: { className?: string }) {
       value={locale}
       onChange={(next) => {
         const nextLocale = next as Locale;
+        setLocalePreference(nextLocale);
         void (async () => {
           try {
             if (session?.apiToken) {
