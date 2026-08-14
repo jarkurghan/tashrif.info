@@ -10,6 +10,7 @@ import { Sheet } from "@/components/ui/Sheet";
 import { Select } from "@/components/ui/Select";
 import { cn } from "@/lib/cn";
 import { Eye, Plus, Trash2 } from "lucide-react";
+import { useLiveRefetch } from "@/components/app/LiveAppSocket";
 
 type Schedule = "daily" | "weekly" | "monthly";
 type Kind = "stats" | "log" | "traffic";
@@ -61,9 +62,9 @@ export default function ReportsPage() {
   const [addingReport, setAddingReport] = useState(false);
   const [busy, setBusy] = useState(false);
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (opts?: { silent?: boolean }) => {
     if (!data?.apiToken || !appId) return;
-    setLoading(true);
+    if (!opts?.silent) setLoading(true);
     try {
       const res = await apiFetch<{ chats: Chat[] }>(
         `/v1/apps/${appId}/telegram`,
@@ -77,13 +78,15 @@ export default function ReportsPage() {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed");
     } finally {
-      setLoading(false);
+      if (!opts?.silent) setLoading(false);
     }
   }, [data?.apiToken, appId]);
 
   useEffect(() => {
     void load();
   }, [load]);
+
+  useLiveRefetch(() => void load({ silent: true }), 400, "telegram");
 
   function openDetail(chat: Chat) {
     setDetailChat(chat);

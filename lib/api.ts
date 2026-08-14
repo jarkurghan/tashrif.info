@@ -4,6 +4,13 @@ export function getApiBase() {
   return env.apiUrl.replace(/\/$/, "");
 }
 
+export function getWsUrl() {
+  const base = getApiBase();
+  if (base.startsWith("https://")) return `wss://${base.slice("https://".length)}/ws`;
+  if (base.startsWith("http://")) return `ws://${base.slice("http://".length)}/ws`;
+  return `${base}/ws`;
+}
+
 export class ApiError extends Error {
   status: number;
   code?: string;

@@ -17,6 +17,7 @@ import {
   rangeSearchParams,
   type RangeKey,
 } from "@/lib/date-range";
+import { useLiveRefetch } from "@/components/app/LiveAppSocket";
 
 type DateRangeContextValue = {
   range: RangeKey;
@@ -25,6 +26,7 @@ type DateRangeContextValue = {
   to: Date;
   searchParams: URLSearchParams;
   queryString: string;
+  freshQueryString: () => string;
   ready: boolean;
 };
 
@@ -33,6 +35,7 @@ const DateRangeContext = createContext<DateRangeContextValue | null>(null);
 export function DateRangeProvider({ children }: { children: ReactNode }) {
   const [range, setRangeState] = useState<RangeKey>(DEFAULT_RANGE);
   const [ready, setReady] = useState(false);
+  const [clock, setClock] = useState(() => Date.now());
 
   useEffect(() => {
     try {
@@ -53,9 +56,14 @@ export function DateRangeProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const freshQueryString = useCallback(() => rangeSearchParams(range).toString(), [range]);
+
+  useLiveRefetch(() => setClock(Date.now()), 400);
+
   const value = useMemo(() => {
-    const { from, to } = rangeBounds(range);
-    const searchParams = rangeSearchParams(range);
+    const now = new Date(clock);
+    const { from, to } = rangeBounds(range, now);
+    const searchParams = rangeSearchParams(range, now);
     return {
       range: ready ? range : DEFAULT_RANGE,
       setRange,
@@ -63,9 +71,10 @@ export function DateRangeProvider({ children }: { children: ReactNode }) {
       to,
       searchParams,
       queryString: searchParams.toString(),
+      freshQueryString,
       ready,
     };
-  }, [range, ready, setRange]);
+  }, [range, ready, setRange, clock, freshQueryString]);
 
   return (
     <DateRangeContext.Provider value={value}>{children}</DateRangeContext.Provider>

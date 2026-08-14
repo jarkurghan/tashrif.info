@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useActiveApp } from "@/components/app/ActiveAppProvider";
 import { useLocale, useTranslations } from "next-intl";
@@ -11,6 +11,7 @@ import { Filter, Search } from "lucide-react";
 import { formatUserAgent } from "@/lib/parse-user-agent";
 import { countryLabel, flagEmoji } from "@/lib/geo-display";
 import { useDateRange } from "@/components/app/DateRangeProvider";
+import { useLivePageviews, type LivePageview } from "@/components/app/LiveAppSocket";
 
 type LogItem = {
   id: string;
@@ -101,6 +102,25 @@ export default function LogsAnalyticsPage() {
       })
       .catch(console.error);
   }, [data?.apiToken, appId, page, query, method, queryString, ready]);
+
+  const filtersRef = useRef({ page, query, method });
+  filtersRef.current = { page, query, method };
+
+  useLivePageviews((item: LivePageview) => {
+    const { page: p, query: q, method: m } = filtersRef.current;
+    if (p !== 1) return;
+    if (m !== "ALL" && item.method !== m) return;
+    const needle = q.trim().toLowerCase();
+    if (needle) {
+      const hay = `${item.path} ${item.ip ?? ""} ${item.visitorId} ${item.userAgent ?? ""}`.toLowerCase();
+      if (!hay.includes(needle)) return;
+    }
+    setItems((prev) => {
+      if (prev.some((row) => row.id === item.id)) return prev;
+      return [item, ...prev].slice(0, PAGE_SIZE);
+    });
+    setTotal((n) => n + 1);
+  });
 
   const from = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
   const to = Math.min(total, (page - 1) * PAGE_SIZE + items.length);

@@ -7,6 +7,7 @@ import { InviteWarningBanner } from "@/components/app/IncomingInvites";
 import { AppSidebar } from "@/components/app/AppSidebar";
 import { LocaleSync } from "@/components/LocaleSync";
 import { DateRangeProvider } from "@/components/app/DateRangeProvider";
+import { LiveAppSocketProvider } from "@/components/app/LiveAppSocket";
 import { useDemoShell } from "@/components/demo/DemoShellContext";
 
 function MobileSidebarBackdrop() {
@@ -26,6 +27,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <DemoShellProvider>
       <ActiveAppProvider>
+        <LiveAppSocketProvider>
         <InviteInboxProvider>
           <DateRangeProvider>
           <LocaleSync />
@@ -39,6 +41,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
           </DateRangeProvider>
         </InviteInboxProvider>
+        </LiveAppSocketProvider>
       </ActiveAppProvider>
     </DemoShellProvider>
   );

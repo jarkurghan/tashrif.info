@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useActiveApp } from "@/components/app/ActiveAppProvider";
 import { useLocale, useTranslations } from "next-intl";
@@ -39,10 +39,16 @@ export default function PagesAnalyticsPage() {
   const [items, setItems] = useState<PageRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
+  const loadedRef = useRef(false);
 
   useEffect(() => {
+    loadedRef.current = false;
+  }, [appId]);
+
+  const load = useCallback(() => {
     if (!data?.apiToken || !appId || !ready) return;
-    setLoading(true);
+    const silent = loadedRef.current;
+    if (!silent) setLoading(true);
     apiFetch<{ items: PageRow[] }>(`/v1/apps/${appId}/pages?${queryString}`, {
       token: data.apiToken,
     })
@@ -59,8 +65,15 @@ export default function PagesAnalyticsPage() {
         ),
       )
       .catch(console.error)
-      .finally(() => setLoading(false));
+      .finally(() => {
+        loadedRef.current = true;
+        if (!silent) setLoading(false);
+      });
   }, [data?.apiToken, appId, queryString, ready]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();

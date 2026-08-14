@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useActiveApp } from "@/components/app/ActiveAppProvider";
 import { useTranslations } from "next-intl";
@@ -28,19 +28,22 @@ export default function TrafficPage() {
   const [referrers, setReferrers] = useState<RankedItem[]>([]);
   const [uaRaw, setUaRaw] = useState<{ label: string; value: number }[]>([]);
 
-  useEffect(() => {
+  const load = useCallback(() => {
     if (!data?.apiToken || !appId || !ready) return;
     const token = data.apiToken;
     void (async () => {
       const [ov, ts, pg, loc, ref, ua] = await Promise.all([
-        apiFetch<TrafficOverview>(`/v1/apps/${appId}/overview?${queryString}`, { token }),
+        apiFetch<TrafficOverview>(`/v1/apps/${appId}/overview?${queryString}`, {
+          token,
+        }),
         apiFetch<{ series: { date: string; sessions: number; pageviews: number }[] }>(
           `/v1/apps/${appId}/timeseries?${queryString}`,
           { token },
         ),
-        apiFetch<{ items: RankedItem[] }>(`/v1/apps/${appId}/pages?${queryString}`, {
-          token,
-        }),
+        apiFetch<{ items: RankedItem[] }>(
+          `/v1/apps/${appId}/pages?${queryString}`,
+          { token },
+        ),
         apiFetch<{ items: RankedItem[] }>(
           `/v1/apps/${appId}/locations?${queryString}`,
           { token },
@@ -62,6 +65,10 @@ export default function TrafficPage() {
       setUaRaw(ua.items);
     })().catch(console.error);
   }, [data?.apiToken, appId, queryString, ready]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
 
   return (
     <>

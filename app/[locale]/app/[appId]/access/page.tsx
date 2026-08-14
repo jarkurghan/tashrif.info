@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useActiveApp } from "@/components/app/ActiveAppProvider";
 import { useInviteInbox } from "@/components/app/InviteInboxProvider";
@@ -12,6 +12,7 @@ import { Sheet } from "@/components/ui/Sheet";
 import { UserPlus } from "lucide-react";
 import { Select } from "@/components/ui/Select";
 import { cn } from "@/lib/cn";
+import { useLiveRefetch } from "@/components/app/LiveAppSocket";
 
 type Member = {
   userId: string;
@@ -56,7 +57,7 @@ export default function AccessPage() {
   const [revokeTarget, setRevokeTarget] = useState<RevokeTarget | null>(null);
   const [revoking, setRevoking] = useState(false);
 
-  async function load() {
+  const load = useCallback(async () => {
     if (!data?.apiToken || !appId) return;
     const res = await apiFetch<{
       members: Member[];
@@ -64,12 +65,13 @@ export default function AccessPage() {
     }>(`/v1/apps/${appId}/members`, { token: data.apiToken });
     setMembers(res.members);
     setOutgoing(res.invitations);
-  }
+  }, [data?.apiToken, appId]);
 
   useEffect(() => {
     void load().catch(console.error);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data?.apiToken, appId]);
+  }, [load]);
+
+  useLiveRefetch(() => void load().catch(console.error), 400, "access");
 
   async function invite(e: React.FormEvent) {
     e.preventDefault();

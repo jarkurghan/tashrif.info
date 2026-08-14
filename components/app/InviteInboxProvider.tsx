@@ -11,6 +11,7 @@ import {
 import { useSession } from "next-auth/react";
 import { apiFetch } from "@/lib/api";
 import { useActiveApp } from "@/components/app/ActiveAppProvider";
+import { useLiveRefetch } from "@/components/app/LiveAppSocket";
 
 export type InboxInvite = {
   id: string;
@@ -40,9 +41,9 @@ export function InviteInboxProvider({ children }: { children: React.ReactNode })
   const [invites, setInvites] = useState<InboxInvite[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const refreshInbox = useCallback(async () => {
+  const refreshInbox = useCallback(async (opts?: { silent?: boolean }) => {
     if (status === "loading") {
-      setLoading(true);
+      if (!opts?.silent) setLoading(true);
       return;
     }
     if (!apiToken) {
@@ -50,7 +51,7 @@ export function InviteInboxProvider({ children }: { children: React.ReactNode })
       setLoading(false);
       return;
     }
-    setLoading(true);
+    if (!opts?.silent) setLoading(true);
     try {
       const res = await apiFetch<{ invitations: InboxInvite[] }>(
         "/v1/invitations/inbox",
@@ -60,13 +61,15 @@ export function InviteInboxProvider({ children }: { children: React.ReactNode })
     } catch {
       setInvites([]);
     } finally {
-      setLoading(false);
+      if (!opts?.silent) setLoading(false);
     }
   }, [apiToken, status]);
 
   useEffect(() => {
     void refreshInbox();
   }, [refreshInbox]);
+
+  useLiveRefetch(() => void refreshInbox({ silent: true }), 400, "inbox");
 
   const acceptInvite = useCallback(
     async (id: string) => {
