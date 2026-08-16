@@ -74,7 +74,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en">
       <body>
         {children}
-        <Tashrif />
+        <Tashrif clientId={process.env.NEXT_PUBLIC_TASHRIF_CLIENT_ID!} />
       </body>
     </html>
   );
