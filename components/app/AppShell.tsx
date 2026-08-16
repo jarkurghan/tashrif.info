@@ -1,7 +1,10 @@
 "use client";
 
 import { DemoShellProvider } from "@/components/demo/DemoShellContext";
-import { ActiveAppProvider } from "@/components/app/ActiveAppProvider";
+import {
+  ActiveAppProvider,
+  useActiveApp,
+} from "@/components/app/ActiveAppProvider";
 import { InviteInboxProvider } from "@/components/app/InviteInboxProvider";
 import { InviteWarningBanner } from "@/components/app/IncomingInvites";
 import { AppSidebar } from "@/components/app/AppSidebar";
@@ -23,6 +26,21 @@ function MobileSidebarBackdrop() {
   );
 }
 
+function AppMainPane({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+      {children}
+    </div>
+  );
+}
+
+function AppMain({ children }: { children: React.ReactNode }) {
+  const { activeAppId } = useActiveApp();
+  return (
+    <AppMainPane key={activeAppId ?? "none"}>{children}</AppMainPane>
+  );
+}
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <DemoShellProvider>
@@ -36,7 +54,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <MobileSidebarBackdrop />
             <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
               <InviteWarningBanner />
-              {children}
+              <AppMain>{children}</AppMain>
             </div>
           </div>
           </DateRangeProvider>

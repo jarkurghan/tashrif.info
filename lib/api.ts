@@ -23,6 +23,12 @@ export class ApiError extends Error {
   }
 }
 
+export function isAbortError(err: unknown): boolean {
+  if (!err || typeof err !== "object") return false;
+  if (err instanceof DOMException && err.name === "AbortError") return true;
+  return "name" in err && (err as { name: string }).name === "AbortError";
+}
+
 export async function apiFetch<T>(
   path: string,
   opts: RequestInit & { token?: string } = {},

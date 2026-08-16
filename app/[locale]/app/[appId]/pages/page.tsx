@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useActiveApp } from "@/components/app/ActiveAppProvider";
 import { useLocale, useTranslations } from "next-intl";
-import { apiFetch } from "@/lib/api";
+import { apiFetch, isAbortError } from "@/lib/api";
 import { AppHeader } from "@/components/app/AppHeader";
 import { Search } from "lucide-react";
 import { useDateRange } from "@/components/app/DateRangeProvider";
@@ -46,13 +46,16 @@ export default function PagesAnalyticsPage() {
   }, [appId]);
 
   const load = useCallback(() => {
-    if (!data?.apiToken || !appId || !ready) return;
+    if (!data?.apiToken || !appId || !ready) return undefined;
     const silent = loadedRef.current;
     if (!silent) setLoading(true);
+    const ac = new AbortController();
     apiFetch<{ items: PageRow[] }>(`/v1/apps/${appId}/pages?${queryString}`, {
       token: data.apiToken,
+      signal: ac.signal,
     })
-      .then((r) =>
+      .then((r) => {
+        if (ac.signal.aborted) return;
         setItems(
           (r.items ?? []).map((row) => ({
             path: row.path,
@@ -62,17 +65,22 @@ export default function PagesAnalyticsPage() {
             countries: toCount(row.countries),
             percent: toCount(row.percent),
           })),
-        ),
-      )
-      .catch(console.error)
+        );
+      })
+      .catch((err) => {
+        if (isAbortError(err)) return;
+        console.error(err);
+      })
       .finally(() => {
+        if (ac.signal.aborted) return;
         loadedRef.current = true;
         if (!silent) setLoading(false);
       });
+    return () => ac.abort();
   }, [data?.apiToken, appId, queryString, ready]);
 
   useEffect(() => {
-    load();
+    return load();
   }, [load]);
 
   const filtered = useMemo(() => {

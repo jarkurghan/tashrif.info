@@ -6,7 +6,7 @@ import { useActiveApp } from "@/components/app/ActiveAppProvider";
 import { useInviteInbox } from "@/components/app/InviteInboxProvider";
 import { IncomingInviteRow } from "@/components/app/IncomingInvites";
 import { useTranslations } from "next-intl";
-import { apiFetch, ApiError } from "@/lib/api";
+import { apiFetch, ApiError, isAbortError } from "@/lib/api";
 import { AppHeader } from "@/components/app/AppHeader";
 import { Sheet } from "@/components/ui/Sheet";
 import { UserPlus } from "lucide-react";
@@ -57,21 +57,33 @@ export default function AccessPage() {
   const [revokeTarget, setRevokeTarget] = useState<RevokeTarget | null>(null);
   const [revoking, setRevoking] = useState(false);
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (opts?: { signal?: AbortSignal }) => {
     if (!data?.apiToken || !appId) return;
     const res = await apiFetch<{
       members: Member[];
       invitations: OutgoingInvite[];
-    }>(`/v1/apps/${appId}/members`, { token: data.apiToken });
+    }>(`/v1/apps/${appId}/members`, {
+      token: data.apiToken,
+      signal: opts?.signal,
+    });
+    if (opts?.signal?.aborted) return;
     setMembers(res.members);
     setOutgoing(res.invitations);
   }, [data?.apiToken, appId]);
 
   useEffect(() => {
-    void load().catch(console.error);
+    const ac = new AbortController();
+    void load({ signal: ac.signal }).catch((err) => {
+      if (!isAbortError(err)) console.error(err);
+    });
+    return () => ac.abort();
   }, [load]);
 
-  useLiveRefetch(() => void load().catch(console.error), 400, "access");
+  useLiveRefetch(() => {
+    void load().catch((err) => {
+      if (!isAbortError(err)) console.error(err);
+    });
+  }, 400, "access");
 
   async function invite(e: React.FormEvent) {
     e.preventDefault();

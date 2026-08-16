@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useActiveApp } from "@/components/app/ActiveAppProvider";
 import { useLocale, useTranslations } from "next-intl";
-import { apiFetch } from "@/lib/api";
+import { apiFetch, isAbortError } from "@/lib/api";
 import { AppHeader } from "@/components/app/AppHeader";
 import { Select } from "@/components/ui/Select";
 import { Filter, Search } from "lucide-react";
@@ -86,6 +86,7 @@ export default function LogsAnalyticsPage() {
 
   useEffect(() => {
     if (!data?.apiToken || !appId || !ready) return;
+    const ac = new AbortController();
     const params = new URLSearchParams({
       page: String(page),
       pageSize: String(PAGE_SIZE),
@@ -94,13 +95,18 @@ export default function LogsAnalyticsPage() {
     });
     apiFetch<{ items: LogItem[]; total: number }>(
       `/v1/apps/${appId}/logs?${params}&${queryString}`,
-      { token: data.apiToken },
+      { token: data.apiToken, signal: ac.signal },
     )
       .then((r) => {
+        if (ac.signal.aborted) return;
         setItems(r.items);
         setTotal(r.total);
       })
-      .catch(console.error);
+      .catch((err) => {
+        if (isAbortError(err)) return;
+        console.error(err);
+      });
+    return () => ac.abort();
   }, [data?.apiToken, appId, page, query, method, queryString, ready]);
 
   const filtersRef = useRef({ page, query, method });

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useActiveApp } from "@/components/app/ActiveAppProvider";
 import { useTranslations } from "next-intl";
-import { apiFetch } from "@/lib/api";
+import { apiFetch, isAbortError } from "@/lib/api";
 import { AppHeader } from "@/components/app/AppHeader";
 import { Sheet } from "@/components/ui/Sheet";
 import { Select } from "@/components/ui/Select";
@@ -62,28 +62,33 @@ export default function ReportsPage() {
   const [addingReport, setAddingReport] = useState(false);
   const [busy, setBusy] = useState(false);
 
-  const load = useCallback(async (opts?: { silent?: boolean }) => {
+  const load = useCallback(async (opts?: { silent?: boolean; signal?: AbortSignal }) => {
     if (!data?.apiToken || !appId) return;
     if (!opts?.silent) setLoading(true);
     try {
       const res = await apiFetch<{ chats: Chat[] }>(
         `/v1/apps/${appId}/telegram`,
-        { token: data.apiToken },
+        { token: data.apiToken, signal: opts?.signal },
       );
+      if (opts?.signal?.aborted) return;
       setChats(res.chats);
       setDetailChat((prev) =>
         prev ? (res.chats.find((c) => c.id === prev.id) ?? null) : null,
       );
       setError(null);
     } catch (err) {
+      if (isAbortError(err) || opts?.signal?.aborted) return;
       setError(err instanceof Error ? err.message : "Failed");
     } finally {
+      if (opts?.signal?.aborted) return;
       if (!opts?.silent) setLoading(false);
     }
   }, [data?.apiToken, appId]);
 
   useEffect(() => {
-    void load();
+    const ac = new AbortController();
+    void load({ signal: ac.signal });
+    return () => ac.abort();
   }, [load]);
 
   useLiveRefetch(() => void load({ silent: true }), 400, "telegram");

@@ -1,10 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useActiveApp } from "@/components/app/ActiveAppProvider";
 import { useTranslations } from "next-intl";
-import { apiFetch } from "@/lib/api";
+import { apiFetch, isAbortError } from "@/lib/api";
 import { AppHeader } from "@/components/app/AppHeader";
 import {
   TrafficDashboard,
@@ -28,47 +28,55 @@ export default function TrafficPage() {
   const [referrers, setReferrers] = useState<RankedItem[]>([]);
   const [uaRaw, setUaRaw] = useState<{ label: string; value: number }[]>([]);
 
-  const load = useCallback(() => {
+  useEffect(() => {
     if (!data?.apiToken || !appId || !ready) return;
     const token = data.apiToken;
-    void (async () => {
-      const [ov, ts, pg, loc, ref, ua] = await Promise.all([
-        apiFetch<TrafficOverview>(`/v1/apps/${appId}/overview?${queryString}`, {
-          token,
-        }),
-        apiFetch<{ series: { date: string; sessions: number; pageviews: number }[] }>(
-          `/v1/apps/${appId}/timeseries?${queryString}`,
-          { token },
-        ),
-        apiFetch<{ items: RankedItem[] }>(
-          `/v1/apps/${appId}/pages?${queryString}`,
-          { token },
-        ),
-        apiFetch<{ items: RankedItem[] }>(
-          `/v1/apps/${appId}/locations?${queryString}`,
-          { token },
-        ),
-        apiFetch<{ items: RankedItem[] }>(
-          `/v1/apps/${appId}/referrers?${queryString}`,
-          { token },
-        ),
-        apiFetch<{ items: { label: string; value: number }[] }>(
-          `/v1/apps/${appId}/user-agents?${queryString}`,
-          { token },
-        ),
-      ]);
-      setOverview(ov);
-      setSeries(ts.series);
-      setPages(pg.items);
-      setLocations(loc.items);
-      setReferrers(ref.items);
-      setUaRaw(ua.items);
-    })().catch(console.error);
-  }, [data?.apiToken, appId, queryString, ready]);
+    const ac = new AbortController();
+    const { signal } = ac;
 
-  useEffect(() => {
-    load();
-  }, [load]);
+    void (async () => {
+      try {
+        const [ov, ts, pg, loc, ref, ua] = await Promise.all([
+          apiFetch<TrafficOverview>(`/v1/apps/${appId}/overview?${queryString}`, {
+            token,
+            signal,
+          }),
+          apiFetch<{ series: { date: string; sessions: number; pageviews: number }[] }>(
+            `/v1/apps/${appId}/timeseries?${queryString}`,
+            { token, signal },
+          ),
+          apiFetch<{ items: RankedItem[] }>(
+            `/v1/apps/${appId}/pages?${queryString}`,
+            { token, signal },
+          ),
+          apiFetch<{ items: RankedItem[] }>(
+            `/v1/apps/${appId}/locations?${queryString}`,
+            { token, signal },
+          ),
+          apiFetch<{ items: RankedItem[] }>(
+            `/v1/apps/${appId}/referrers?${queryString}`,
+            { token, signal },
+          ),
+          apiFetch<{ items: { label: string; value: number }[] }>(
+            `/v1/apps/${appId}/user-agents?${queryString}`,
+            { token, signal },
+          ),
+        ]);
+        if (signal.aborted) return;
+        setOverview(ov);
+        setSeries(ts.series);
+        setPages(pg.items);
+        setLocations(loc.items);
+        setReferrers(ref.items);
+        setUaRaw(ua.items);
+      } catch (err) {
+        if (isAbortError(err)) return;
+        console.error(err);
+      }
+    })();
+
+    return () => ac.abort();
+  }, [data?.apiToken, appId, queryString, ready]);
 
   return (
     <>

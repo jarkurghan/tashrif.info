@@ -10,8 +10,8 @@ import {
 
 /**
  * URL is source of truth for /app/[appId]/...
- * Sync active site to the URL app when allowed.
- * Redirect only after apps finished loading and the URL app is inaccessible.
+ * Adopt the URL app when the URL itself changes (back/forward, direct load).
+ * Do not revert a newer SiteSelect choice while router.replace is still in flight.
  */
 export function ActiveAppGuard({ children }: { children: React.ReactNode }) {
   const params = useParams<{ appId: string }>();
@@ -20,6 +20,8 @@ export function ActiveAppGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { apps, activeAppId, loading, setActiveAppId } = useActiveApp();
   const redirected = useRef(false);
+  const activeAppIdRef = useRef(activeAppId);
+  activeAppIdRef.current = activeAppId;
 
   const urlAllowed =
     Boolean(urlAppId) && apps.some((a) => a.id === urlAppId);
@@ -36,7 +38,7 @@ export function ActiveAppGuard({ children }: { children: React.ReactNode }) {
     if (loading || !urlAppId || redirected.current) return;
 
     if (urlAllowed) {
-      if (urlAppId !== activeAppId) setActiveAppId(urlAppId);
+      setActiveAppId(urlAppId);
       if (viewerBlocked) {
         router.replace(`/app/${urlAppId}/traffic`);
       }
@@ -45,8 +47,9 @@ export function ActiveAppGuard({ children }: { children: React.ReactNode }) {
 
     // Apps loaded; this appId is not in the list → leave this route once.
     redirected.current = true;
-    if (activeAppId) {
-      router.replace(`/app/${activeAppId}${appSubPath(pathname)}`);
+    const fallback = activeAppIdRef.current;
+    if (fallback) {
+      router.replace(`/app/${fallback}${appSubPath(pathname)}`);
     } else {
       router.replace("/app/domains");
     }
@@ -55,7 +58,6 @@ export function ActiveAppGuard({ children }: { children: React.ReactNode }) {
     urlAppId,
     urlAllowed,
     viewerBlocked,
-    activeAppId,
     pathname,
     router,
     setActiveAppId,
