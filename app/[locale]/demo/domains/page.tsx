@@ -176,7 +176,7 @@ export default function DomainsPage() {
                 <dd className="font-medium">{roles(detail.role)}</dd>
               </div>
             </dl>
-            <p className="text-sm text-muted-foreground">{t("secretHidden")}</p>
+            <p className="text-sm text-muted-foreground">{t("secretOnceHint")}</p>
             <IntegrationSnippet clientId={detail.clientId} />
 
             {(detail.role === "admin" || detail.role === "viewer") && (

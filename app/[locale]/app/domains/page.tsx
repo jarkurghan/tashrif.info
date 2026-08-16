@@ -14,72 +14,50 @@ import {
 } from "@/components/app/IntegrationSnippet";
 import { Eye, LogOut, Plus, Trash2 } from "lucide-react";
 
-type Creds = {
+type CreateAppRes = {
   app: { id: string; domain: string; name: string; role?: string };
   clientId: string;
-  clientSecret: string;
 };
 
 type DeleteStep = "idle" | "confirm" | "type";
 type LeaveStep = "idle" | "confirm";
 
-function CredsBlock({
-  creds,
+function ConnectBlock({
+  clientId,
+  highlight,
   t,
 }: {
-  creds: Creds;
+  clientId: string;
+  highlight?: boolean;
   t: (key: string) => string;
 }) {
   return (
-    <div className="space-y-4 rounded-xl border border-primary/25 bg-primary-soft/30 p-4">
+    <div
+      className={cn(
+        "space-y-4",
+        highlight &&
+          "rounded-xl border border-primary/25 bg-primary-soft/30 p-4",
+      )}
+    >
       <div>
         <p className="text-sm font-semibold">{t("secretOnceTitle")}</p>
         <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
           {t("secretOnceHint")}
         </p>
       </div>
-      <div className="flex items-start justify-between gap-3 font-mono text-xs">
-        <div className="min-w-0">
-          <p className="text-muted-foreground">client_id</p>
-          <p className="mt-0.5 break-all text-foreground">{creds.clientId}</p>
-        </div>
-        <CopyButton
-          value={creds.clientId}
-          label={t("copy")}
-          copiedLabel={t("copied")}
-        />
-      </div>
-      <IntegrationSnippet clientId={creds.clientId} />
-      <div className="rounded-lg border border-border/80 bg-background/60 p-3">
+      {highlight && (
         <div className="flex items-start justify-between gap-3 font-mono text-xs">
           <div className="min-w-0">
-            <p className="text-muted-foreground">{t("optionalSecret")}</p>
-            <p className="mt-0.5 break-all text-foreground">{creds.clientSecret}</p>
+            <p className="text-muted-foreground">client_id</p>
+            <p className="mt-0.5 break-all text-foreground">{clientId}</p>
           </div>
           <CopyButton
-            value={creds.clientSecret}
+            value={clientId}
             label={t("copy")}
             copiedLabel={t("copied")}
           />
         </div>
-        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-          {t("secretServerHint")}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function IntegrationBlock({
-  clientId,
-  t,
-}: {
-  clientId: string;
-  t: (key: string) => string;
-}) {
-  return (
-    <div className="space-y-2">
-      <p className="text-sm text-muted-foreground">{t("secretHidden")}</p>
+      )}
       <IntegrationSnippet clientId={clientId} />
     </div>
   );
@@ -97,7 +75,7 @@ export default function AppsPage() {
   const [creating, setCreating] = useState(false);
 
   const [detailApp, setDetailApp] = useState<AppRow | null>(null);
-  const [creds, setCreds] = useState<Creds | null>(null);
+  const [justCreated, setJustCreated] = useState(false);
   const [deleteStep, setDeleteStep] = useState<DeleteStep>("idle");
   const [leaveStep, setLeaveStep] = useState<LeaveStep>("idle");
   const [confirmDomain, setConfirmDomain] = useState("");
@@ -106,7 +84,7 @@ export default function AppsPage() {
 
   const closeDetail = useCallback(() => {
     setDetailApp(null);
-    setCreds(null);
+    setJustCreated(false);
     setDeleteStep("idle");
     setLeaveStep("idle");
     setConfirmDomain("");
@@ -115,7 +93,7 @@ export default function AppsPage() {
 
   const openDetail = useCallback((app: AppRow) => {
     setDetailApp(app);
-    setCreds(null);
+    setJustCreated(false);
     setDeleteStep("idle");
     setLeaveStep("idle");
     setConfirmDomain("");
@@ -128,7 +106,7 @@ export default function AppsPage() {
     setCreating(true);
     setError(null);
     try {
-      const res = await apiFetch<Creds>("/v1/apps", {
+      const res = await apiFetch<CreateAppRes>("/v1/apps", {
         method: "POST",
         token: data.apiToken,
         body: JSON.stringify({ domain: domainInput.trim() }),
@@ -144,7 +122,7 @@ export default function AppsPage() {
         role: res.app.role ?? "owner",
         clientId: res.clientId,
       });
-      setCreds(res);
+      setJustCreated(true);
       setDeleteStep("idle");
       setLeaveStep("idle");
     } catch (err) {
@@ -162,24 +140,6 @@ export default function AppsPage() {
       );
     } finally {
       setCreating(false);
-    }
-  }
-
-  async function onRotate() {
-    if (!data?.apiToken || !detailApp) return;
-    if (detailApp.role !== "owner") return;
-    setBusy(true);
-    setError(null);
-    try {
-      const res = await apiFetch<Creds>(
-        `/v1/apps/${detailApp.id}/rotate-secret`,
-        { method: "POST", token: data.apiToken },
-      );
-      setCreds(res);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t("rotateFailed"));
-    } finally {
-      setBusy(false);
     }
   }
 
@@ -388,28 +348,11 @@ export default function AppsPage() {
               </div>
             </dl>
 
-            {creds && <CredsBlock creds={creds} t={t} />}
-
-            {!creds && (
-              <IntegrationBlock
-                clientId={detailApp.clientId ?? detailApp.id}
-                t={t}
-              />
-            )}
-
-            {(detailApp.role === "owner" || detailApp.role === "admin") && (
-              <div className="space-y-3">
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => void onRotate()}
-                  className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm font-medium transition hover:bg-muted disabled:opacity-60"
-                >
-                  {t("rotate")}
-                </button>
-                <p className="text-xs text-muted-foreground">{t("rotateHint")}</p>
-              </div>
-            )}
+            <ConnectBlock
+              clientId={detailApp.clientId ?? detailApp.id}
+              highlight={justCreated}
+              t={t}
+            />
 
             {error && detailApp && (
               <p className="rounded-lg bg-accent-soft px-3 py-2 text-sm text-accent">
