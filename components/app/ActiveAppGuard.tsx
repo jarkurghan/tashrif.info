@@ -20,6 +20,8 @@ export function ActiveAppGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { apps, activeAppId, loading, setActiveAppId } = useActiveApp();
   const redirected = useRef(false);
+  const activeAppIdRef = useRef(activeAppId);
+  activeAppIdRef.current = activeAppId;
 
   const urlAllowed =
     Boolean(urlAppId) && apps.some((a) => a.id === urlAppId);
@@ -36,7 +38,10 @@ export function ActiveAppGuard({ children }: { children: React.ReactNode }) {
     if (loading || !urlAppId || redirected.current) return;
 
     if (urlAllowed) {
-      if (urlAppId !== activeAppId) setActiveAppId(urlAppId);
+      // Only adopt URL → context when the URL itself changed. Do not depend on
+      // activeAppId: SiteSelect updates context before router.replace completes,
+      // and syncing back to the stale param would refetch the previous site.
+      if (urlAppId !== activeAppIdRef.current) setActiveAppId(urlAppId);
       if (viewerBlocked) {
         router.replace(`/app/${urlAppId}/traffic`);
       }
@@ -45,8 +50,9 @@ export function ActiveAppGuard({ children }: { children: React.ReactNode }) {
 
     // Apps loaded; this appId is not in the list → leave this route once.
     redirected.current = true;
-    if (activeAppId) {
-      router.replace(`/app/${activeAppId}${appSubPath(pathname)}`);
+    const currentId = activeAppIdRef.current;
+    if (currentId) {
+      router.replace(`/app/${currentId}${appSubPath(pathname)}`);
     } else {
       router.replace("/app/domains");
     }
@@ -55,7 +61,6 @@ export function ActiveAppGuard({ children }: { children: React.ReactNode }) {
     urlAppId,
     urlAllowed,
     viewerBlocked,
-    activeAppId,
     pathname,
     router,
     setActiveAppId,
