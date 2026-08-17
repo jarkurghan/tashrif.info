@@ -58,7 +58,7 @@
     "boardTitle": "Trafik, sahifalar, loglar",
     "boardDesc": "Xarita va grafik, qaysi yo‘llar ishlaydi, har bir pageview: yo‘l, mamlakat, IP, user-agent.",
     "reportsTitle": "Telegram hisobotlar",
-    "reportsDesc": "Kunlik, haftalik yoki oylik. Statistika — matn; log va trafik — PDF. Toshkent 06:00 da oldingi davr yuboriladi.",
+    "reportsDesc": "Kunlik, haftalik yoki oylik. Statistika — matn; log va trafik — PDF. Toshkent 10:00 da oldingi davr yuboriladi.",
     "teamTitle": "Jamoa",
     "teamDesc": "Owner, admin va viewer — har kim o‘z ruxsati bilan ishlaydi."
   },
@@ -68,7 +68,7 @@
     "sdkTitle": "Bitta React komponent",
     "sdkDesc": "NEXT_PUBLIC_TASHRIF_CLIENT_ID ni o‘rnating va uni <Tashrif /> ga clientId sifatida bering — tashriflar boardga yoziladi.",
     "telegramTitle": "Hisobotlar Telegramda",
-    "telegramDesc": "Toshkent 06:00 da oldingi kun, hafta yoki oy. Boardni ochmasangiz ham.",
+    "telegramDesc": "Toshkent 10:00 da oldingi kun, hafta yoki oy. Boardni ochmasangiz ham.",
     "localeTitle": "O‘zbek va ingliz",
     "localeDesc": "Interfeys va hisobotlar hisob tilingizda — o‘zbek yoki ingliz.",
     "teamTitle": "Rollar bilan jamoa",

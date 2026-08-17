@@ -58,7 +58,7 @@
     "boardTitle": "Traffic, pages, and logs",
     "boardDesc": "Map and chart, which paths hold people, each pageview: path, country, IP, user-agent.",
     "reportsTitle": "Telegram reports",
-    "reportsDesc": "Daily, weekly, or monthly. Stats as text; logs and traffic as PDF. Sent at 06:00 Tashkent for the previous period.",
+    "reportsDesc": "Daily, weekly, or monthly. Stats as text; logs and traffic as PDF. Sent at 10:00 Tashkent for the previous period.",
     "teamTitle": "Team",
     "teamDesc": "Owner, admin, and viewer — each person gets the right access."
   },
@@ -68,7 +68,7 @@
     "sdkTitle": "One React component",
     "sdkDesc": "Set NEXT_PUBLIC_TASHRIF_CLIENT_ID and pass it as clientId to <Tashrif /> — visits are written to the board.",
     "telegramTitle": "Reports in Telegram",
-    "telegramDesc": "At 06:00 Tashkent, the previous day, week, or month. No need to open the dashboard.",
+    "telegramDesc": "At 10:00 Tashkent, the previous day, week, or month. No need to open the dashboard.",
     "localeTitle": "Uzbek and English",
     "localeDesc": "UI and reports follow your account language — Uzbek or English.",
     "teamTitle": "Roles for the team",
