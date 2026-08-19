@@ -8,5 +8,5 @@ export default async function DemoIndexPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  redirect({ href: "/demo/traffic", locale });
+  redirect({ href: "/demo/home", locale });
 }

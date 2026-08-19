@@ -11,6 +11,7 @@ import { cn } from "@/lib/cn";
 import {
   Activity,
   FileText,
+  Home,
   LayoutDashboard,
   PanelLeftClose,
   PanelLeftOpen,
@@ -123,6 +124,7 @@ export function AppSidebar() {
 
   const analytics = base
     ? ([
+        { href: `${base}/home`, key: "home", icon: Home },
         { href: `${base}/traffic`, key: "traffic", icon: LayoutDashboard },
         { href: `${base}/pages`, key: "pages", icon: FileText },
         { href: `${base}/logs`, key: "logs", icon: ScrollText },
@@ -159,7 +161,7 @@ export function AppSidebar() {
     >
       <div className={cn("flex h-16 shrink-0 items-center gap-2 border-b border-border", RAIL)}>
         <Link
-          href={activeAppId ? `/app/${activeAppId}/traffic` : "/app"}
+          href={activeAppId ? `/app/${activeAppId}/home` : "/app"}
           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground"
           aria-label="tashrif.info"
           title="tashrif.info"

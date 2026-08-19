@@ -79,11 +79,15 @@ export const demoOverview = {
   users: 8420,
   pageviews: 19680,
   newUsers: 2140,
+  sessions: 9120,
+  bounceRate: 0.42,
   lastVisit: new Date(Date.now() - 14 * 60 * 1000).toISOString(),
   previous: {
     users: 7180,
     pageviews: 16240,
     newUsers: 1680,
+    sessions: 7800,
+    bounceRate: 0.48,
   },
 };
 
@@ -95,6 +99,11 @@ const HOURLY_SESSIONS = [
   52, 41, 38, 36, 44, 78, 210, 420, 580, 640, 610, 720, 780, 740, 690, 810, 960,
   1120, 1280, 1180, 920, 640, 310, 120,
 ];
+
+export const demoHourly = HOURLY_SESSIONS.map((sessions, hour) => ({
+  hour,
+  pageviews: Math.round(sessions * 2.15),
+}));
 
 function point(date: string, sessions: number): SeriesPoint {
   return {

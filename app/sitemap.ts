@@ -6,6 +6,7 @@ const publicPaths = [
   "",
   "/login",
   "/demo",
+  "/demo/home",
   "/demo/traffic",
   "/demo/pages",
   "/demo/logs",
@@ -21,7 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${SITE_URL}${localePath(locale, path)}`,
       lastModified: now,
       changeFrequency: path === "" ? "weekly" : "monthly",
-      priority: path === "" ? 1 : path === "/demo" || path === "/demo/traffic" ? 0.8 : 0.6,
+      priority: path === "" ? 1 : path === "/demo" || path === "/demo/home" ? 0.8 : 0.6,
     })),
   );
 }

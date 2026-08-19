@@ -12,6 +12,7 @@ import {
   YAxis,
 } from "recharts";
 import { useTranslations } from "next-intl";
+import { cn } from "@/lib/cn";
 
 function formatTick(v: string) {
   const s = String(v);
@@ -52,8 +53,10 @@ function downsample(
 
 export function TrafficChart({
   series,
+  className,
 }: {
   series: { date: string; sessions: number; pageviews: number }[];
+  className?: string;
 }) {
   const t = useTranslations("demo.charts");
   const [compact, setCompact] = useState(false);
@@ -72,11 +75,12 @@ export function TrafficChart({
 
   return (
     <div
-      className={
+      className={cn(
         compact
           ? "h-64 w-full rounded-xl border border-border bg-card p-3 shadow-sm"
-          : "h-72 w-full rounded-xl border border-border bg-card p-4 shadow-sm sm:h-80"
-      }
+          : "h-72 w-full rounded-xl border border-border bg-card p-4 shadow-sm sm:h-80",
+        className,
+      )}
     >
       {ready ? (
         <ResponsiveContainer width="100%" height="100%">

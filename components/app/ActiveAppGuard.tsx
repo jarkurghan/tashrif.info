@@ -40,7 +40,7 @@ export function ActiveAppGuard({ children }: { children: React.ReactNode }) {
     if (urlAllowed) {
       setActiveAppId(urlAppId);
       if (viewerBlocked) {
-        router.replace(`/app/${urlAppId}/traffic`);
+        router.replace(`/app/${urlAppId}/home`);
       }
       return;
     }

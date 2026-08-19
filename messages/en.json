@@ -112,6 +112,7 @@
       "placeholder": "Select site…"
     },
     "nav": {
+      "home": "Home",
       "traffic": "Traffic",
       "pages": "Pages",
       "logs": "Logs",
@@ -149,6 +150,7 @@
       "loading": "Loading profile…"
     },
     "titles": {
+      "home": "Home",
       "traffic": "Traffic",
       "pages": "Pages",
       "logs": "Request logs",
@@ -166,6 +168,27 @@
     "charts": {
       "sessions": "Sessions",
       "pageviews": "Pageviews"
+    },
+    "home": {
+      "sources": "Traffic sources",
+      "hourly": "Views by hour (UTC)",
+      "bounce": "Bounce rate",
+      "bounceHint": "Share of sessions with a single pageview.",
+      "traffic": "Traffic",
+      "trafficHint": "Sessions and pageviews over the selected range.",
+      "peak": "Peak",
+      "peakHour": "Peak",
+      "pagesPerSession": "Pages / session",
+      "newShare": "New visitors",
+      "funnel": "Volume",
+      "newVsReturning": "New vs returning",
+      "returning": "Returning",
+      "devices": "Devices",
+      "desktop": "Desktop",
+      "mobile": "Mobile",
+      "tablet": "Tablet",
+      "depth": "Depth",
+      "depthHint": "Pageviews per session over time."
     },
     "empty": "No data yet",
     "setupTitle": "Waiting for the first visit",

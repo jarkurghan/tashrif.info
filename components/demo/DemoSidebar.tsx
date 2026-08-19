@@ -9,6 +9,7 @@ import { cn } from "@/lib/cn";
 import {
   Activity,
   FileText,
+  Home,
   LayoutDashboard,
   PanelLeftClose,
   PanelLeftOpen,
@@ -24,6 +25,7 @@ const ITEM =
 const EASE = "duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]";
 
 const analytics = [
+  { href: "/demo/home", key: "home", icon: Home },
   { href: "/demo/traffic", key: "traffic", icon: LayoutDashboard },
   { href: "/demo/pages", key: "pages", icon: FileText },
   { href: "/demo/logs", key: "logs", icon: ScrollText },
@@ -133,7 +135,7 @@ export function DemoSidebar() {
       >
         <div className={cn("flex h-16 shrink-0 items-center gap-2 border-b border-border", RAIL)}>
           <Link
-            href="/demo/traffic"
+            href="/demo/home"
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground"
             aria-label="tashrif.info"
             title="tashrif.info"

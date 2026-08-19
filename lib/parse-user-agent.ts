@@ -215,3 +215,17 @@ export function groupByOs(items: { label: string; value: number }[]) {
     return p.osVersion ? `${p.os} ${p.osVersion}` : p.os;
   });
 }
+
+function detectDevice(ua: string): string {
+  if (/iPad|tablet|PlayBook|Silk/i.test(ua) && !/Mobile/i.test(ua)) return "Tablet";
+  if (/iPad/i.test(ua)) return "Tablet";
+  if (/Mobile|iPhone|iPod|Android|Windows Phone|webOS|BlackBerry/i.test(ua)) {
+    if (/Android/i.test(ua) && !/Mobile/i.test(ua)) return "Tablet";
+    return "Mobile";
+  }
+  return "Desktop";
+}
+
+export function groupByDevice(items: { label: string; value: number }[]) {
+  return accumulate(items, detectDevice);
+}

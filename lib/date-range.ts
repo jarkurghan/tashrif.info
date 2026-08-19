@@ -32,5 +32,8 @@ export function rangeSearchParams(key: RangeKey, now = new Date()): URLSearchPar
 }
 
 export function isAnalyticsPath(pathname: string) {
-  return /(^|\/)(traffic|pages|logs)$/.test(pathname) || /(^|\/)demo$/.test(pathname);
+  return (
+    /(^|\/)(home|traffic|pages|logs)$/.test(pathname) ||
+    /(^|\/)demo$/.test(pathname)
+  );
 }

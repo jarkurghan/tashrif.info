@@ -21,7 +21,7 @@ export function SiteSelect() {
     const sub =
       pathname.startsWith("/app/") && pathname !== "/app"
         ? appSubPath(pathname)
-        : "/traffic";
+        : "/home";
     router.replace(`/app/${nextId}${sub}`);
   }
 

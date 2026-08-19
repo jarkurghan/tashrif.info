@@ -5,7 +5,7 @@ import { useRouter } from "@/i18n/navigation";
 import { useActiveApp } from "@/components/app/ActiveAppProvider";
 
 /**
- * /app → active site traffic (or domains if none selected / empty).
+ * /app → active site home (or domains if none selected / empty).
  */
 export default function AppIndexPage() {
   const router = useRouter();
@@ -15,12 +15,12 @@ export default function AppIndexPage() {
     if (loading) return;
 
     if (activeAppId) {
-      router.replace(`/app/${activeAppId}/traffic`);
+      router.replace(`/app/${activeAppId}/home`);
       return;
     }
 
     if (apps.length === 1) {
-      router.replace(`/app/${apps[0]!.id}/traffic`);
+      router.replace(`/app/${apps[0]!.id}/home`);
       return;
     }
 

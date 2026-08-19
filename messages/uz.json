@@ -112,6 +112,7 @@
       "placeholder": "Saytni tanlang…"
     },
     "nav": {
+      "home": "Bosh sahifa",
       "traffic": "Trafik",
       "pages": "Sahifalar",
       "logs": "Loglar",
@@ -149,6 +150,7 @@
       "loading": "Profil yuklanmoqda…"
     },
     "titles": {
+      "home": "Bosh sahifa",
       "traffic": "Trafik",
       "pages": "Sahifalar",
       "logs": "So'rov loglari",
@@ -166,6 +168,27 @@
     "charts": {
       "sessions": "Seanslar",
       "pageviews": "Sahifa ko'rishlar"
+    },
+    "home": {
+      "sources": "Trafik manbalari",
+      "hourly": "Soat bo‘yicha ko‘rishlar (UTC)",
+      "bounce": "Bounce",
+      "bounceHint": "Faqat bitta sahifa ko‘rilgan seanslar ulushi.",
+      "traffic": "Trafik",
+      "trafficHint": "Tanlangan davrdagi seanslar va sahifa ko‘rishlar.",
+      "peak": "Cho‘qqi",
+      "peakHour": "Cho‘qqi",
+      "pagesPerSession": "Sahifa / seans",
+      "newShare": "Yangi tashrifchilar",
+      "funnel": "Hajm",
+      "newVsReturning": "Yangi va qaytgan",
+      "returning": "Qaytgan",
+      "devices": "Qurilmalar",
+      "desktop": "Desktop",
+      "mobile": "Mobil",
+      "tablet": "Planshet",
+      "depth": "Chuqurlik",
+      "depthHint": "Seansdagi sahifa ko‘rishlar vaqt bo‘yicha."
     },
     "empty": "Hali ma'lumot yo'q",
     "setupTitle": "Birinchi tashrif kutilmoqda",

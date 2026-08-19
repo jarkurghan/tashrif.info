@@ -182,8 +182,8 @@ export function useActiveApp() {
   return ctx;
 }
 
-/** Sub-route after /app/[appId], e.g. /traffic or /logs */
+/** Sub-route after /app/[appId], e.g. /home or /logs */
 export function appSubPath(pathname: string): string {
   const match = pathname.match(/^\/app\/[^/]+(\/.*)?$/);
-  return match?.[1] || "/traffic";
+  return match?.[1] || "/home";
 }

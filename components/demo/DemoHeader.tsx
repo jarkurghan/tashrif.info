@@ -9,9 +9,10 @@ import { DateRangePicker } from "@/components/app/DateRangePicker";
 import { isAnalyticsPath } from "@/lib/date-range";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 
-const titleKeyByPath: Record<string, "traffic" | "pages" | "logs" | "domains" | "access" | "reports"> =
+const titleKeyByPath: Record<string, "home" | "traffic" | "pages" | "logs" | "domains" | "access" | "reports"> =
   {
-    "/demo": "traffic",
+    "/demo": "home",
+    "/demo/home": "home",
     "/demo/traffic": "traffic",
     "/demo/pages": "pages",
     "/demo/logs": "logs",
@@ -24,7 +25,7 @@ export function DemoHeader() {
   const t = useTranslations("demo");
   const pathname = usePathname();
   const { collapsed, toggle } = useDemoShell();
-  const key = titleKeyByPath[pathname] ?? "traffic";
+  const key = titleKeyByPath[pathname] ?? "home";
   const showRange = isAnalyticsPath(pathname);
 
   return (
